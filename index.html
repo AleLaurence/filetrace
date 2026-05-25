@@ -1383,27 +1383,44 @@ function renderLookupPage(){
       </button>
     </div>
     <!-- Camera viewfinder (hidden until activated) -->
-    <div id="qr-camera-wrap" style="display:none;position:relative;background:#000;aspect-ratio:1/1;max-height:320px;overflow:hidden">
-      <video id="qr-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
+    <div id="qr-camera-wrap" style="display:none;position:relative;width:100%;aspect-ratio:1/1;background:#000;overflow:hidden">
+      <video id="qr-video" autoplay playsinline muted style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block"></video>
       <canvas id="qr-canvas" style="display:none"></canvas>
-      <!-- Targeting frame overlay -->
+
+      <!-- Dark vignette corners to focus the eye -->
+      <div style="position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at center,transparent 42%,rgba(0,0,0,.55) 100%)"></div>
+
+      <!-- Targeting frame overlay — perfectly centred -->
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
-        <div style="width:62%;aspect-ratio:1/1;position:relative">
-          <div style="position:absolute;top:0;left:0;width:22px;height:22px;border-top:3px solid #fff;border-left:3px solid #fff;border-radius:3px 0 0 0"></div>
-          <div style="position:absolute;top:0;right:0;width:22px;height:22px;border-top:3px solid #fff;border-right:3px solid #fff;border-radius:0 3px 0 0"></div>
-          <div style="position:absolute;bottom:0;left:0;width:22px;height:22px;border-bottom:3px solid #fff;border-left:3px solid #fff;border-radius:0 0 0 3px"></div>
-          <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-bottom:3px solid #fff;border-right:3px solid #fff;border-radius:0 0 3px 0"></div>
+        <div style="width:58%;aspect-ratio:1/1;position:relative">
+          <!-- animated scan line -->
+          <div id="qr-scanline" style="position:absolute;left:4px;right:4px;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);border-radius:1px;animation:scanline 1.8s ease-in-out infinite;top:0"></div>
+          <!-- corners -->
+          <div style="position:absolute;top:0;left:0;width:24px;height:24px;border-top:3px solid #fff;border-left:3px solid #fff;border-radius:4px 0 0 0"></div>
+          <div style="position:absolute;top:0;right:0;width:24px;height:24px;border-top:3px solid #fff;border-right:3px solid #fff;border-radius:0 4px 0 0"></div>
+          <div style="position:absolute;bottom:0;left:0;width:24px;height:24px;border-bottom:3px solid #fff;border-left:3px solid #fff;border-radius:0 0 0 4px"></div>
+          <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;border-bottom:3px solid #fff;border-right:3px solid #fff;border-radius:0 0 4px 0"></div>
         </div>
       </div>
-      <!-- Scan status -->
-      <div id="qr-status" style="position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:12px;font-weight:600;text-align:center;letter-spacing:.2px">
+
+      <!-- Scan status pill -->
+      <div id="qr-status" style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);white-space:nowrap;padding:6px 16px;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.15);border-radius:999px;color:#fff;font-size:12px;font-weight:600;letter-spacing:.3px;text-align:center">
         Scanning…
       </div>
+
       <!-- Close button -->
-      <button onclick="stopCameraScanner()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;line-height:1">✕</button>
+      <button onclick="stopCameraScanner()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;line-height:1;transition:.15s">✕</button>
     </div>
     <div id="qr-scan-err" style="padding:0;max-height:0;overflow:hidden;transition:all .2s"></div>
   </div>
+  <style>
+    @keyframes scanline {
+      0%   { top: 4px; opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 1; }
+      100% { top: calc(100% - 6px); opacity: 0; }
+    }
+  </style>
 
   <!-- Manual ID lookup -->
   <div class="table-wrap" style="padding:1.5rem">
