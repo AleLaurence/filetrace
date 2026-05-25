@@ -1,0 +1,2346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>FileTrace — Borrow & Return Tracker</title>
+<script>/*! qrcode-svg v1.1.0 | https://github.com/papnkukn/qrcode-svg | MIT license */
+function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedData=[];for(var e=0,r=this.data.length;e<r;e++){var o=[],n=this.data.charCodeAt(e);n>65536?(o[0]=240|(1835008&n)>>>18,o[1]=128|(258048&n)>>>12,o[2]=128|(4032&n)>>>6,o[3]=128|63&n):n>2048?(o[0]=224|(61440&n)>>>12,o[1]=128|(4032&n)>>>6,o[2]=128|63&n):n>128?(o[0]=192|(1984&n)>>>6,o[1]=128|63&n):o[0]=n,this.parsedData.push(o)}this.parsedData=Array.prototype.concat.apply([],this.parsedData),this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function QRCodeModel(t,e){this.typeNumber=t,this.errorCorrectLevel=e,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}QR8bitByte.prototype={getLength:function(t){return this.parsedData.length},write:function(t){for(var e=0,r=this.parsedData.length;e<r;e++)t.put(this.parsedData[e],8)}},QRCodeModel.prototype={addData:function(t){var e=new QR8bitByte(t);this.dataList.push(e),this.dataCache=null},isDark:function(t,e){if(t<0||this.moduleCount<=t||e<0||this.moduleCount<=e)throw new Error(t+","+e);return this.modules[t][e]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(t,e){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var r=0;r<this.moduleCount;r++){this.modules[r]=new Array(this.moduleCount);for(var o=0;o<this.moduleCount;o++)this.modules[r][o]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(t,e),this.typeNumber>=7&&this.setupTypeNumber(t),null==this.dataCache&&(this.dataCache=QRCodeModel.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,e)},setupPositionProbePattern:function(t,e){for(var r=-1;r<=7;r++)if(!(t+r<=-1||this.moduleCount<=t+r))for(var o=-1;o<=7;o++)e+o<=-1||this.moduleCount<=e+o||(this.modules[t+r][e+o]=0<=r&&r<=6&&(0==o||6==o)||0<=o&&o<=6&&(0==r||6==r)||2<=r&&r<=4&&2<=o&&o<=4)},getBestMaskPattern:function(){for(var t=0,e=0,r=0;r<8;r++){this.makeImpl(!0,r);var o=QRUtil.getLostPoint(this);(0==r||t>o)&&(t=o,e=r)}return e},createMovieClip:function(t,e,r){var o=t.createEmptyMovieClip(e,r);this.make();for(var n=0;n<this.modules.length;n++)for(var i=1*n,a=0;a<this.modules[n].length;a++){var s=1*a;this.modules[n][a]&&(o.beginFill(0,100),o.moveTo(s,i),o.lineTo(s+1,i),o.lineTo(s+1,i+1),o.lineTo(s,i+1),o.endFill())}return o},setupTimingPattern:function(){for(var t=8;t<this.moduleCount-8;t++)null==this.modules[t][6]&&(this.modules[t][6]=t%2==0);for(var e=8;e<this.moduleCount-8;e++)null==this.modules[6][e]&&(this.modules[6][e]=e%2==0)},setupPositionAdjustPattern:function(){for(var t=QRUtil.getPatternPosition(this.typeNumber),e=0;e<t.length;e++)for(var r=0;r<t.length;r++){var o=t[e],n=t[r];if(null==this.modules[o][n])for(var i=-2;i<=2;i++)for(var a=-2;a<=2;a++)this.modules[o+i][n+a]=-2==i||2==i||-2==a||2==a||0==i&&0==a}},setupTypeNumber:function(t){for(var e=QRUtil.getBCHTypeNumber(this.typeNumber),r=0;r<18;r++){var o=!t&&1==(e>>r&1);this.modules[Math.floor(r/3)][r%3+this.moduleCount-8-3]=o}for(r=0;r<18;r++){o=!t&&1==(e>>r&1);this.modules[r%3+this.moduleCount-8-3][Math.floor(r/3)]=o}},setupTypeInfo:function(t,e){for(var r=this.errorCorrectLevel<<3|e,o=QRUtil.getBCHTypeInfo(r),n=0;n<15;n++){var i=!t&&1==(o>>n&1);n<6?this.modules[n][8]=i:n<8?this.modules[n+1][8]=i:this.modules[this.moduleCount-15+n][8]=i}for(n=0;n<15;n++){i=!t&&1==(o>>n&1);n<8?this.modules[8][this.moduleCount-n-1]=i:n<9?this.modules[8][15-n-1+1]=i:this.modules[8][15-n-1]=i}this.modules[this.moduleCount-8][8]=!t},mapData:function(t,e){for(var r=-1,o=this.moduleCount-1,n=7,i=0,a=this.moduleCount-1;a>0;a-=2)for(6==a&&a--;;){for(var s=0;s<2;s++)if(null==this.modules[o][a-s]){var h=!1;i<t.length&&(h=1==(t[i]>>>n&1)),QRUtil.getMask(e,o,a-s)&&(h=!h),this.modules[o][a-s]=h,-1==--n&&(i++,n=7)}if((o+=r)<0||this.moduleCount<=o){o-=r,r=-r;break}}}},QRCodeModel.PAD0=236,QRCodeModel.PAD1=17,QRCodeModel.createData=function(t,e,r){for(var o=QRRSBlock.getRSBlocks(t,e),n=new QRBitBuffer,i=0;i<r.length;i++){var a=r[i];n.put(a.mode,4),n.put(a.getLength(),QRUtil.getLengthInBits(a.mode,t)),a.write(n)}var s=0;for(i=0;i<o.length;i++)s+=o[i].dataCount;if(n.getLengthInBits()>8*s)throw new Error("code length overflow. ("+n.getLengthInBits()+">"+8*s+")");for(n.getLengthInBits()+4<=8*s&&n.put(0,4);n.getLengthInBits()%8!=0;)n.putBit(!1);for(;!(n.getLengthInBits()>=8*s||(n.put(QRCodeModel.PAD0,8),n.getLengthInBits()>=8*s));)n.put(QRCodeModel.PAD1,8);return QRCodeModel.createBytes(n,o)},QRCodeModel.createBytes=function(t,e){for(var r=0,o=0,n=0,i=new Array(e.length),a=new Array(e.length),s=0;s<e.length;s++){var h=e[s].dataCount,l=e[s].totalCount-h;o=Math.max(o,h),n=Math.max(n,l),i[s]=new Array(h);for(var u=0;u<i[s].length;u++)i[s][u]=255&t.buffer[u+r];r+=h;var g=QRUtil.getErrorCorrectPolynomial(l),d=new QRPolynomial(i[s],g.getLength()-1).mod(g);a[s]=new Array(g.getLength()-1);for(u=0;u<a[s].length;u++){var f=u+d.getLength()-a[s].length;a[s][u]=f>=0?d.get(f):0}}var c=0;for(u=0;u<e.length;u++)c+=e[u].totalCount;var R=new Array(c),p=0;for(u=0;u<o;u++)for(s=0;s<e.length;s++)u<i[s].length&&(R[p++]=i[s][u]);for(u=0;u<n;u++)for(s=0;s<e.length;s++)u<a[s].length&&(R[p++]=a[s][u]);return R};for(var QRMode={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},QRErrorCorrectLevel={L:1,M:0,Q:3,H:2},QRMaskPattern={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},QRUtil={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(t){for(var e=t<<10;QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G15)>=0;)e^=QRUtil.G15<<QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G15);return(t<<10|e)^QRUtil.G15_MASK},getBCHTypeNumber:function(t){for(var e=t<<12;QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G18)>=0;)e^=QRUtil.G18<<QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G18);return t<<12|e},getBCHDigit:function(t){for(var e=0;0!=t;)e++,t>>>=1;return e},getPatternPosition:function(t){return QRUtil.PATTERN_POSITION_TABLE[t-1]},getMask:function(t,e,r){switch(t){case QRMaskPattern.PATTERN000:return(e+r)%2==0;case QRMaskPattern.PATTERN001:return e%2==0;case QRMaskPattern.PATTERN010:return r%3==0;case QRMaskPattern.PATTERN011:return(e+r)%3==0;case QRMaskPattern.PATTERN100:return(Math.floor(e/2)+Math.floor(r/3))%2==0;case QRMaskPattern.PATTERN101:return e*r%2+e*r%3==0;case QRMaskPattern.PATTERN110:return(e*r%2+e*r%3)%2==0;case QRMaskPattern.PATTERN111:return(e*r%3+(e+r)%2)%2==0;default:throw new Error("bad maskPattern:"+t)}},getErrorCorrectPolynomial:function(t){for(var e=new QRPolynomial([1],0),r=0;r<t;r++)e=e.multiply(new QRPolynomial([1,QRMath.gexp(r)],0));return e},getLengthInBits:function(t,e){if(1<=e&&e<10)switch(t){case QRMode.MODE_NUMBER:return 10;case QRMode.MODE_ALPHA_NUM:return 9;case QRMode.MODE_8BIT_BYTE:case QRMode.MODE_KANJI:return 8;default:throw new Error("mode:"+t)}else if(e<27)switch(t){case QRMode.MODE_NUMBER:return 12;case QRMode.MODE_ALPHA_NUM:return 11;case QRMode.MODE_8BIT_BYTE:return 16;case QRMode.MODE_KANJI:return 10;default:throw new Error("mode:"+t)}else{if(!(e<41))throw new Error("type:"+e);switch(t){case QRMode.MODE_NUMBER:return 14;case QRMode.MODE_ALPHA_NUM:return 13;case QRMode.MODE_8BIT_BYTE:return 16;case QRMode.MODE_KANJI:return 12;default:throw new Error("mode:"+t)}}},getLostPoint:function(t){for(var e=t.getModuleCount(),r=0,o=0;o<e;o++)for(var n=0;n<e;n++){for(var i=0,a=t.isDark(o,n),s=-1;s<=1;s++)if(!(o+s<0||e<=o+s))for(var h=-1;h<=1;h++)n+h<0||e<=n+h||0==s&&0==h||a==t.isDark(o+s,n+h)&&i++;i>5&&(r+=3+i-5)}for(o=0;o<e-1;o++)for(n=0;n<e-1;n++){var l=0;t.isDark(o,n)&&l++,t.isDark(o+1,n)&&l++,t.isDark(o,n+1)&&l++,t.isDark(o+1,n+1)&&l++,0!=l&&4!=l||(r+=3)}for(o=0;o<e;o++)for(n=0;n<e-6;n++)t.isDark(o,n)&&!t.isDark(o,n+1)&&t.isDark(o,n+2)&&t.isDark(o,n+3)&&t.isDark(o,n+4)&&!t.isDark(o,n+5)&&t.isDark(o,n+6)&&(r+=40);for(n=0;n<e;n++)for(o=0;o<e-6;o++)t.isDark(o,n)&&!t.isDark(o+1,n)&&t.isDark(o+2,n)&&t.isDark(o+3,n)&&t.isDark(o+4,n)&&!t.isDark(o+5,n)&&t.isDark(o+6,n)&&(r+=40);var u=0;for(n=0;n<e;n++)for(o=0;o<e;o++)t.isDark(o,n)&&u++;return r+=10*(Math.abs(100*u/e/e-50)/5)}},QRMath={glog:function(t){if(t<1)throw new Error("glog("+t+")");return QRMath.LOG_TABLE[t]},gexp:function(t){for(;t<0;)t+=255;for(;t>=256;)t-=255;return QRMath.EXP_TABLE[t]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},i=0;i<8;i++)QRMath.EXP_TABLE[i]=1<<i;for(i=8;i<256;i++)QRMath.EXP_TABLE[i]=QRMath.EXP_TABLE[i-4]^QRMath.EXP_TABLE[i-5]^QRMath.EXP_TABLE[i-6]^QRMath.EXP_TABLE[i-8];for(i=0;i<255;i++)QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]]=i;function QRPolynomial(t,e){if(null==t.length)throw new Error(t.length+"/"+e);for(var r=0;r<t.length&&0==t[r];)r++;this.num=new Array(t.length-r+e);for(var o=0;o<t.length-r;o++)this.num[o]=t[o+r]}function QRRSBlock(t,e){this.totalCount=t,this.dataCount=e}function QRBitBuffer(){this.buffer=[],this.length=0}QRPolynomial.prototype={get:function(t){return this.num[t]},getLength:function(){return this.num.length},multiply:function(t){for(var e=new Array(this.getLength()+t.getLength()-1),r=0;r<this.getLength();r++)for(var o=0;o<t.getLength();o++)e[r+o]^=QRMath.gexp(QRMath.glog(this.get(r))+QRMath.glog(t.get(o)));return new QRPolynomial(e,0)},mod:function(t){if(this.getLength()-t.getLength()<0)return this;for(var e=QRMath.glog(this.get(0))-QRMath.glog(t.get(0)),r=new Array(this.getLength()),o=0;o<this.getLength();o++)r[o]=this.get(o);for(o=0;o<t.getLength();o++)r[o]^=QRMath.gexp(QRMath.glog(t.get(o))+e);return new QRPolynomial(r,0).mod(t)}},QRRSBlock.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],QRRSBlock.getRSBlocks=function(t,e){var r=QRRSBlock.getRsBlockTable(t,e);if(null==r)throw new Error("bad rs block @ typeNumber:"+t+"/errorCorrectLevel:"+e);for(var o=r.length/3,n=[],i=0;i<o;i++)for(var a=r[3*i+0],s=r[3*i+1],h=r[3*i+2],l=0;l<a;l++)n.push(new QRRSBlock(s,h));return n},QRRSBlock.getRsBlockTable=function(t,e){switch(e){case QRErrorCorrectLevel.L:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+0];case QRErrorCorrectLevel.M:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+1];case QRErrorCorrectLevel.Q:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+2];case QRErrorCorrectLevel.H:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+3];default:return}},QRBitBuffer.prototype={get:function(t){var e=Math.floor(t/8);return 1==(this.buffer[e]>>>7-t%8&1)},put:function(t,e){for(var r=0;r<e;r++)this.putBit(1==(t>>>e-r-1&1))},getLengthInBits:function(){return this.length},putBit:function(t){var e=Math.floor(this.length/8);this.buffer.length<=e&&this.buffer.push(0),t&&(this.buffer[e]|=128>>>this.length%8),this.length++}};var QRCodeLimitLength=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]];function QRCode(t){if(this.options={padding:4,width:256,height:256,typeNumber:4,color:"#000000",background:"#ffffff",ecl:"M"},"string"==typeof t&&(t={content:t}),t)for(var e in t)this.options[e]=t[e];if("string"!=typeof this.options.content)throw new Error("Expected 'content' as string!");if(0===this.options.content.length)throw new Error("Expected 'content' to be non-empty!");if(!(this.options.padding>=0))throw new Error("Expected 'padding' value to be non-negative!");if(!(this.options.width>0&&this.options.height>0))throw new Error("Expected 'width' or 'height' value to be higher than zero!");var r=this.options.content,o=function(t,e){for(var r=function(t){var e=encodeURI(t).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return e.length+(e.length!=t?3:0)}(t),o=1,n=0,i=0,a=QRCodeLimitLength.length;i<=a;i++){var s=QRCodeLimitLength[i];if(!s)throw new Error("Content too long: expected "+n+" but got "+r);switch(e){case"L":n=s[0];break;case"M":n=s[1];break;case"Q":n=s[2];break;case"H":n=s[3];break;default:throw new Error("Unknwon error correction level: "+e)}if(r<=n)break;o++}if(o>QRCodeLimitLength.length)throw new Error("Content too long");return o}(r,this.options.ecl),n=function(t){switch(t){case"L":return QRErrorCorrectLevel.L;case"M":return QRErrorCorrectLevel.M;case"Q":return QRErrorCorrectLevel.Q;case"H":return QRErrorCorrectLevel.H;default:throw new Error("Unknwon error correction level: "+t)}}(this.options.ecl);this.qrcode=new QRCodeModel(o,n),this.qrcode.addData(r),this.qrcode.make()}QRCode.prototype.svg=function(t){var e=this.options||{},r=this.qrcode.modules;void 0===t&&(t={container:e.container||"svg"});for(var o=void 0===e.pretty||!!e.pretty,n=o?"  ":"",i=o?"\r\n":"",a=e.width,s=e.height,h=r.length,l=a/(h+2*e.padding),u=s/(h+2*e.padding),g=void 0!==e.join&&!!e.join,d=void 0!==e.swap&&!!e.swap,f=void 0===e.xmlDeclaration||!!e.xmlDeclaration,c=void 0!==e.predefined&&!!e.predefined,R=c?n+'<defs><path id="qrmodule" d="M0 0 h'+u+" v"+l+' H0 z" style="fill:'+e.color+';shape-rendering:crispEdges;" /></defs>'+i:"",p=n+'<rect x="0" y="0" width="'+a+'" height="'+s+'" style="fill:'+e.background+';shape-rendering:crispEdges;"/>'+i,m="",Q="",v=0;v<h;v++)for(var E=0;E<h;E++){if(r[E][v]){var M=E*l+e.padding*l,C=v*u+e.padding*u;if(d){var B=M;M=C,C=B}if(g){var w=l+M,L=u+C;M=Number.isInteger(M)?Number(M):M.toFixed(2),C=Number.isInteger(C)?Number(C):C.toFixed(2),w=Number.isInteger(w)?Number(w):w.toFixed(2),Q+="M"+M+","+C+" V"+(L=Number.isInteger(L)?Number(L):L.toFixed(2))+" H"+w+" V"+C+" H"+M+" Z "}else m+=c?n+'<use x="'+M.toString()+'" y="'+C.toString()+'" href="#qrmodule" />'+i:n+'<rect x="'+M.toString()+'" y="'+C.toString()+'" width="'+l+'" height="'+u+'" style="fill:'+e.color+';shape-rendering:crispEdges;"/>'+i}}g&&(m=n+'<path x="0" y="0" style="fill:'+e.color+';shape-rendering:crispEdges;" d="'+Q+'" />');var T="";switch(t.container){case"svg":f&&(T+='<?xml version="1.0" standalone="yes"?>'+i),T+='<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'+a+'" height="'+s+'">'+i,T+=R+p+m,T+="</svg>";break;case"svg-viewbox":f&&(T+='<?xml version="1.0" standalone="yes"?>'+i),T+='<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 '+a+" "+s+'">'+i,T+=R+p+m,T+="</svg>";break;case"g":T+='<g width="'+a+'" height="'+s+'">'+i,T+=R+p+m,T+="</g>";break;default:T+=(R+p+m).replace(/^\s+/,"")}return T},QRCode.prototype.save=function(t,e){var r=this.svg();"function"!=typeof e&&(e=function(t,e){});try{require("fs").writeFile(t,r,e)}catch(t){e(t)}};</script>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#0d0f18;--surface:#161923;--surface2:#1e2235;--border:#272d42;
+    --accent:#7c6eff;--accent2:#b4a4ff;--text:#eaecf4;--muted:#7880a0;
+    --green:#22c55e;--amber:#f59e0b;--red:#ef4444;
+    --radius:16px;--font:'Segoe UI',system-ui,sans-serif;
+    --shadow-sm:0 2px 8px rgba(0,0,0,.28);
+    --shadow-md:0 8px 32px rgba(0,0,0,.45);
+    --shadow-lg:0 24px 64px rgba(0,0,0,.6);
+    --blur:blur(20px)
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;height:100dvh}
+  body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;min-height:100dvh;font-size:14px}
+  button{cursor:pointer;border:none;font-family:inherit;font-size:14px;transition:all .18s ease}
+  input,select,textarea{font-family:inherit;font-size:14px;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:12px;padding:10px 14px;width:100%;outline:none;transition:border .2s,box-shadow .2s}
+  input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)22}
+  select option{background:var(--surface)}
+
+  /* AUTH */
+  .auth-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+  .auth-box{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2.5rem;width:100%;max-width:400px;box-shadow:var(--shadow-md)}
+  .logo{font-size:26px;font-weight:700;letter-spacing:-1px;margin-bottom:4px}
+  .logo span{color:var(--accent)}
+  .auth-sub{color:var(--muted);font-size:13px;margin-bottom:2rem}
+  .auth-tabs{display:flex;gap:8px;margin-bottom:1.5rem}
+  .tab-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--muted);font-weight:500;transition:.2s}
+  .tab-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .field{margin-bottom:1rem}
+  .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+  .btn-primary{width:100%;padding:11px;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;font-size:14px;margin-top:.5rem;transition:.15s}
+  .btn-primary:hover{background:#5a52e8}
+  .err{color:var(--red);font-size:12px;margin-top:.5rem}
+  .ok-msg{color:var(--green);font-size:12px;margin-top:.5rem}
+
+  /* APP LAYOUT */
+  .app{display:flex;height:100vh;height:100dvh;overflow:hidden}
+
+  /* ── SIDEBAR EXPANDED ── */
+  /* ── SIDEBAR ── */
+  .sidebar{
+    width:224px;background:var(--surface);border-right:1px solid var(--border);
+    display:flex;flex-direction:column;flex-shrink:0;position:relative;
+    height:100%;
+    transition:width .3s cubic-bezier(.4,0,.2,1);overflow:hidden
+  }
+  .sidebar.collapsed{width:64px;cursor:pointer}
+
+  /* inner is always 224px wide — sidebar clips it via overflow:hidden */
+  .sidebar-inner{
+    width:224px;flex-shrink:0;
+    display:flex;flex-direction:column;height:100%;
+    padding:1rem .75rem;gap:2px;
+  }
+
+  /* ── Logo row (holds logo + toggle inline) ── */
+  .sidebar-logo{
+    display:flex;align-items:center;gap:8px;
+    padding:.3rem .25rem;margin-bottom:.75rem;
+    min-height:38px;flex-shrink:0;overflow:hidden;
+  }
+  .sidebar-logo .logo-icon{
+    width:30px;height:30px;flex-shrink:0;
+    background:var(--accent)22;border:1.5px solid var(--accent)55;
+    border-radius:9px;display:flex;align-items:center;justify-content:center
+  }
+  .sidebar-logo .logo-icon svg{width:16px;height:16px;color:var(--accent)}
+  .sidebar-logo .logo-text{
+    flex:1;font-size:18px;font-weight:700;letter-spacing:-.5px;white-space:nowrap;
+    overflow:hidden;transition:opacity .2s ease;
+  }
+  .sidebar-logo .logo-text span{color:var(--accent)}
+  .sidebar.collapsed .logo-text{opacity:0;pointer-events:none}
+
+  /* ── Toggle button — inline flex item, never overlaps ── */
+  .sidebar-toggle{
+    width:26px;height:26px;border-radius:8px;padding:0;flex-shrink:0;
+    background:var(--surface2);border:1px solid var(--border);
+    color:var(--muted);display:flex;align-items:center;justify-content:center;
+    cursor:pointer;z-index:1;
+    transition:background .15s,color .15s,border-color .15s
+  }
+  .sidebar-toggle svg{
+    width:13px;height:13px;
+    transition:transform .3s cubic-bezier(.4,0,.2,1)
+  }
+  .sidebar-toggle:hover{background:var(--border);color:var(--text);border-color:var(--muted)}
+  .sidebar.collapsed .sidebar-toggle svg{transform:rotate(180deg)}
+
+  /* ── Nav items ── */
+  .nav-item{
+    display:flex;align-items:center;gap:10px;
+    padding:9px 10px;border-radius:10px;margin-bottom:1px;
+    color:var(--muted);cursor:pointer;
+    font-size:13.5px;font-weight:500;white-space:nowrap;
+    position:relative;
+    transition:background .15s,color .15s
+  }
+  .nav-item:hover{background:var(--surface2);color:var(--text)}
+  .nav-item.active{background:var(--accent)1a;color:var(--accent2)}
+  .nav-item.active::before{
+    content:'';position:absolute;left:0;top:20%;bottom:20%;
+    width:3px;border-radius:0 3px 3px 0;background:var(--accent2)
+  }
+  .nav-item svg{width:18px;height:18px;flex-shrink:0}
+  .nav-item .nav-label{overflow:hidden;transition:opacity .15s ease}
+  .sidebar.collapsed .nav-label{opacity:0;pointer-events:none}
+
+  /* tooltip on collapsed hover */
+  .sidebar.collapsed .nav-item:hover::after{
+    content:attr(data-label);
+    position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);
+    background:var(--surface2);border:1px solid var(--border);
+    color:var(--text);font-size:12px;font-weight:500;
+    padding:5px 11px;border-radius:8px;
+    white-space:nowrap;z-index:999;pointer-events:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.45)
+  }
+
+  /* ── Bottom user area ── */
+  .sidebar-bottom{
+    margin-top:auto;padding-top:.5rem;
+    border-top:1px solid rgba(255,255,255,.06);
+    flex-shrink:0;
+  }
+  .user-pill{
+    display:flex;align-items:center;gap:10px;
+    padding:8px 10px;border-radius:12px;cursor:default;
+    transition:background .15s;position:relative;
+    margin:0 2px;
+  }
+  .user-pill:hover{background:var(--surface2)}
+  /* collapsed: center just the avatar */
+  .sidebar.collapsed .user-pill{
+    justify-content:center;padding:8px 0;margin:0;
+  }
+  .avatar{
+    width:36px;height:36px;border-radius:10px;flex-shrink:0;
+    background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;font-size:13px;color:#fff;
+    box-shadow:0 2px 10px rgba(109,40,217,.35);
+    transition:box-shadow .15s;
+  }
+  .user-pill:hover .avatar{box-shadow:0 4px 14px rgba(109,40,217,.45)}
+  .user-pill-info{
+    flex:1;min-width:0;overflow:hidden;
+    transition:opacity .2s ease,width .3s cubic-bezier(.4,0,.2,1);
+    width:120px;
+  }
+  .sidebar.collapsed .user-pill-info{opacity:0;width:0;pointer-events:none}
+  .user-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+  .user-role{font-size:10.5px;color:var(--muted);white-space:nowrap;text-transform:capitalize;letter-spacing:.2px}
+  .logout-btn{
+    background:transparent;border:none;color:var(--muted);
+    width:26px;height:26px;border-radius:7px;flex-shrink:0;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:color .15s,background .15s,opacity .2s;
+  }
+  .logout-btn svg{width:14px;height:14px}
+  .logout-btn:hover{color:var(--red);background:rgba(239,68,68,.1)}
+  .sidebar.collapsed .logout-btn{opacity:0;width:0;pointer-events:none;overflow:hidden}
+
+  .main{flex:1;padding:2rem;overflow:auto;min-width:0}
+
+  /* CASE TYPE TAGS */
+  .case-tag{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.3px;cursor:default;user-select:none;text-transform:uppercase}
+  .tag-criminal{background:#3b3b4f;color:#c7c7e0;border:1px solid #4a4a60}
+  .tag-civil{background:#fce7f3;color:#be185d;border:1px solid #fbcfe8}
+  .tag-labor{background:#ffe4e6;color:#be123c;border:1px solid #fecdd3}
+  .tag-land{background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+  .tag-admin{background:#fdf4ff;color:#a21caf;border:1px solid #f0abfc}
+  .tag-spl{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0}
+  .tag-others{background:#1c1c1c;color:#d4d4d4;border:1px solid #3a3a3a}
+  .tag-special{background:#fefce8;color:#854d0e;border:1px solid #fde68a}
+  .tag-pcab{background:#ede9fe;color:#5b21b6;border:1px solid #ddd6fe}
+
+  /* TAG DROPDOWN */
+  .tag-wrap{position:relative;display:inline-block}
+  .tag-dropdown{position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:8px;z-index:50;min-width:200px;box-shadow:0 12px 36px rgba(0,0,0,.5);display:none}
+  .tag-wrap:focus-within .tag-dropdown,.tag-dropdown.open{display:block}
+  .tag-dropdown .case-tag{display:block;margin:3px 0;width:100%;text-align:left;padding:6px 12px;cursor:pointer;transition:.15s;border-radius:8px}
+  .tag-dropdown .case-tag:hover{filter:brightness(1.15)}
+  .tag-edit-btn{background:transparent;border:none;color:var(--muted);font-size:13px;padding:2px 6px;border-radius:4px;cursor:pointer;vertical-align:middle}
+  .tag-edit-btn:hover{color:var(--text)}
+  .page-title{font-size:22px;font-weight:700;letter-spacing:-.5px;margin-bottom:.25rem}
+  .page-sub{color:var(--muted);margin-bottom:1.5rem;font-size:13px}
+
+  /* STATS */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.25rem}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.1rem 1.4rem;box-shadow:var(--shadow-sm);transition:transform .2s ease,box-shadow .2s ease}
+  .stat:hover{transform:translateY(-1px);box-shadow:var(--shadow-md)}
+  .stat-val{font-size:28px;font-weight:700;letter-spacing:-1px}
+  .stat-label{font-size:12px;color:var(--muted);margin-top:2px}
+
+  /* TABLE */
+  .table-wrap{background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  .table-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
+  .table-title{font-weight:600;font-size:15px}
+  .btn-sm{padding:8px 16px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;white-space:nowrap;box-shadow:0 2px 8px var(--accent)44}
+  .btn-sm:hover{background:#6b5ef0;box-shadow:0 4px 14px var(--accent)55;transform:translateY(-1px)}
+  .filters{display:flex;gap:.75rem;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface2)}
+  table{width:100%;border-collapse:collapse}
+  th{text-align:left;padding:10px 16px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);font-weight:600;background:var(--surface2)}
+  td{padding:14px 16px;border-bottom:1px solid var(--border)44;font-size:13px;vertical-align:middle}
+  tr:last-child td{border-bottom:none}
+  tr:hover td{background:var(--surface2)55}
+
+  /* Solid status badges like the screenshot */
+  .badge{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:.2px}
+  .badge-available{background:#16a34a;color:#fff}
+  .badge-borrowed{background:#b45309;color:#fff}
+  .badge-overdue{background:#b91c1c;color:#fff}
+
+  /* Stacked action buttons */
+  .action-col{display:flex;flex-direction:column;gap:4px;align-items:flex-end}
+  .action-btn{background:transparent;color:var(--muted);padding:3px 8px;border-radius:5px;font-size:11px;border:1px solid var(--border);white-space:nowrap;text-align:left;min-width:62px}
+  .action-btn:hover{color:var(--text);border-color:var(--muted)}
+  .action-btn.danger:hover{color:var(--red);border-color:var(--red)}
+
+  /* MODALS */
+  .overlay{position:fixed;inset:0;background:rgba(6,8,18,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:100;padding:1.5rem;animation:overlayIn .2s ease}
+  @keyframes overlayIn{from{opacity:0}to{opacity:1}}
+  @keyframes modalIn{from{opacity:0;transform:scale(.96) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+  .modal{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2rem;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;box-sizing:border-box;box-shadow:var(--shadow-lg);animation:modalIn .22s cubic-bezier(.34,1.26,.64,1)}
+  .modal-title{font-size:18px;font-weight:700;margin-bottom:.25rem}
+  .modal-sub{color:var(--muted);font-size:13px;margin-bottom:1.5rem}
+  .modal-footer{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.5rem}
+  .btn-ghost{padding:9px 20px;border-radius:10px;background:transparent;color:var(--muted);font-weight:500;border:1px solid var(--border)}
+  .btn-ghost:hover{color:var(--text);background:var(--surface2)}
+  .btn-danger{padding:9px 20px;border-radius:10px;background:#ef444418;color:var(--red);font-weight:600;border:1px solid #ef444430}
+  .btn-danger:hover{background:#ef44442a}
+  .qr-modal{max-width:380px;text-align:center}
+  .qr-box{background:white;border-radius:18px;padding:1.5rem;display:inline-block;margin:1rem 0;box-shadow:0 4px 20px rgba(0,0,0,.35)}
+  .qr-info{background:var(--surface2);border-radius:14px;padding:1rem;text-align:left;margin-top:.75rem}
+  .qr-info-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px}
+  .qr-info-row:last-child{margin-bottom:0}
+  .qr-info-key{color:var(--muted)}
+  .print-note{font-size:12px;color:var(--muted);margin-top:.75rem}
+  .btn-print{padding:9px 18px;border-radius:8px;background:var(--surface2);color:var(--text);font-weight:600;border:1px solid var(--border)}
+  .btn-print:hover{background:var(--border)}
+
+  /* QR SCAN LANDING */
+  .scan-landing{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem;background:var(--bg)}
+  .scan-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:2rem;width:100%;max-width:420px;box-shadow:var(--shadow-md)}
+  .scan-brand{font-size:15px;font-weight:700;letter-spacing:-.5px;color:var(--muted);margin-bottom:1.5rem}
+  .scan-brand span{color:var(--accent)}
+  .folder-block{border-radius:18px;padding:1.25rem;margin-bottom:1.25rem;border:1px solid var(--border)}
+  .folder-name{font-size:19px;font-weight:700;margin-bottom:.2rem}
+  .folder-id{font-size:12px;color:var(--muted);margin-bottom:1rem}
+  .status-row{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+  .status-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+  .status-dot.available{background:var(--green)}
+  .status-dot.borrowed{background:var(--amber)}
+  .status-dot.overdue{background:var(--red)}
+  .status-label{font-size:17px;font-weight:700}
+  .status-label.available{color:var(--green)}
+  .status-label.borrowed{color:var(--amber)}
+  .status-label.overdue{color:var(--red)}
+  .info-row{display:flex;justify-content:space-between;font-size:13px;padding:6px 0;border-bottom:1px solid var(--border)44}
+  .info-row:last-child{border-bottom:none}
+  .info-key{color:var(--muted)}
+  .scan-btns{display:flex;flex-direction:column;gap:.75rem;margin-top:1.25rem}
+  .scan-btn{width:100%;padding:12px;border-radius:10px;font-weight:600;font-size:14px;transition:.15s;border:none}
+  .scan-btn.borrow{background:var(--accent);color:#fff}
+  .scan-btn.borrow:hover{background:#5a52e8}
+  .scan-btn.ret{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
+  .scan-btn.ret:hover{border-color:var(--muted)}
+  .scan-btn:disabled{opacity:.35;cursor:not-allowed}
+
+  /* PASSWORD PANEL */
+  .pw-panel{background:var(--surface2);border:1px solid var(--border);border-radius:18px;padding:1.25rem;margin-top:1rem}
+  .pw-title{font-size:14px;font-weight:600;margin-bottom:.2rem}
+  .pw-sub{font-size:12px;color:var(--muted);margin-bottom:1rem}
+  .pw-actions{display:flex;gap:.5rem;margin-top:.75rem}
+  .pw-actions .btn-ghost{flex:1;padding:9px 0;text-align:center}
+  .pw-confirm{flex:1;padding:9px 0;border-radius:8px;font-weight:600;font-size:13px;background:var(--accent);color:#fff;border:none}
+  .pw-confirm:hover{background:#5a52e8}
+  .pw-confirm.green{background:#16a34a}
+  .pw-confirm.green:hover{background:#15803d}
+
+  .scan-success{background:#22c55e14;border:1px solid #22c55e33;border-radius:18px;padding:1.25rem;text-align:center;margin-top:1rem}
+  .scan-success-icon{font-size:32px;margin-bottom:.5rem}
+  .scan-success-msg{color:#4ade80;font-weight:600;font-size:15px}
+  .scan-success-sub{color:var(--muted);font-size:12px;margin-top:.25rem}
+
+  /* Small status dots for table */
+  .status-dot-sm{display:inline-block;width:10px;height:10px;border-radius:50%;flex-shrink:0}
+  .status-dot-sm.available{background:var(--green);box-shadow:0 0 5px var(--green)88}
+  .status-dot-sm.borrowed{background:var(--amber);box-shadow:0 0 5px var(--amber)88}
+  .status-dot-sm.overdue{background:var(--red);box-shadow:0 0 5px var(--red)88}
+
+  /* Context menu */
+  .ctx-menu{position:fixed;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:6px;z-index:200;box-shadow:0 16px 48px rgba(0,0,0,.6),0 2px 8px rgba(0,0,0,.3);min-width:168px;animation:modalIn .16s cubic-bezier(.34,1.26,.64,1)}
+  .ctx-item{display:flex;align-items:center;gap:9px;padding:9px 14px;border-radius:10px;font-size:13px;font-weight:500;cursor:pointer;color:var(--text);background:transparent;border:none;width:100%;text-align:left;transition:background .13s}
+  .ctx-item:hover{background:var(--surface2)}
+  .ctx-item.danger{color:var(--red)}
+  .ctx-item.danger:hover{background:#ef444415}
+
+  /* Detail modal enhancements */
+  .detail-row{display:flex;justify-content:space-between;align-items:flex-start;font-size:13px;padding:9px 0;border-bottom:1px solid var(--border)33;gap:1rem}
+  .detail-row:last-child{border-bottom:none}
+  .detail-key{color:var(--muted);font-size:11.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;min-width:90px;padding-top:1px}
+  .detail-val{text-align:right;line-height:1.45;font-size:13.5px}
+
+  /* Edit modal */
+  .edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+  .empty-icon{font-size:40px;margin-bottom:.75rem}
+  ::-webkit-scrollbar{width:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+
+  /* Custom case-type picker */
+  .ct-wrap{position:relative}
+  .ct-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;transition:border-color .15s;box-sizing:border-box}
+  .ct-trigger:hover{border-color:var(--accent)}
+  .ct-trigger.open{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,110,255,.18)}
+  .ct-chevron{transition:transform .18s;color:var(--muted);flex-shrink:0}
+  .ct-trigger.open .ct-chevron{transform:rotate(180deg)}
+  .ct-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);overflow:hidden;animation:ctFadeIn .15s ease}
+  @keyframes ctFadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+  .ct-option{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;transition:background .12s;font-size:12.5px}
+  .ct-option:hover{background:rgba(255,255,255,.06)}
+  .ct-option.selected{background:rgba(124,110,255,.12)}
+  .ct-option.selected .ct-opt-label{color:var(--accent2);font-weight:700}
+
+  /* PDF PREVIEW MODAL */
+  #pdf-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.82);display:flex;flex-direction:column;align-items:center;justify-content:center;animation:ctFadeIn .15s ease;padding:16px}
+  #pdf-overlay .pdf-modal{width:100%;max-width:860px;height:90vh;display:flex;flex-direction:column;background:var(--surface);border-radius:20px;overflow:hidden;box-shadow:0 40px 100px rgba(0,0,0,.8),0 0 0 1px rgba(255,255,255,.07)}
+  #pdf-overlay .pdf-header{display:flex;align-items:center;justify-content:space-between;padding:.75rem 1.1rem;background:var(--surface);border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;gap:10px}
+  #pdf-overlay .pdf-title{font-size:13px;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+  #pdf-overlay .pdf-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+  #pdf-overlay iframe{flex:1;border:none;width:100%;background:#fff}
+  #pdf-overlay .pdf-login-msg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:2rem;text-align:center}
+  /* SMART AUTOCOMPLETE */
+  .ac-wrap{position:relative}
+  .ac-wrap label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+  .ac-list{position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.55);overflow-y:auto;max-height:220px;animation:ctFadeIn .12s ease}
+  .ac-item{padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text);transition:background .1s;white-space:normal;word-break:break-word;line-height:1.4}
+  .ac-item:hover,.ac-item.active{background:rgba(124,110,255,.15);color:var(--accent2)}
+  .ac-item em{color:var(--accent2);font-style:normal;font-weight:700}
+
+  /* ══════════════════════════════════════════════════════════════════
+     MOBILE RESPONSIVE STYLES
+     ══════════════════════════════════════════════════════════════════ */
+  @media (max-width: 768px) {
+    /* Force single-column on modal form grids */
+    div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+    div[style*="grid-template-columns:1fr 1fr"] { grid-template-columns: 1fr !important; }
+
+
+    /* ── App Layout: stack vertically ── */
+    .app { flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+
+    /* ── Hide sidebar entirely on mobile — replaced by bottom nav ── */
+    .sidebar { display: none !important; }
+
+    /* ── Main content fills screen ── */
+    .main {
+      flex: 1;
+      padding: .75rem .7rem;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+      min-width: 0;
+    }
+
+    /* ── Bottom Navigation Bar ── */
+    .mobile-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: calc(60px + env(safe-area-inset-bottom, 0px));
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: stretch;
+      z-index: 500;
+      box-shadow: 0 -8px 24px rgba(0,0,0,.4);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+    .mobile-nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      color: var(--muted);
+      font-size: 9.5px;
+      font-weight: 600;
+      letter-spacing: .4px;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: transparent;
+      border: none;
+      transition: color .18s;
+      position: relative;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .mobile-nav-item.active { color: var(--accent2); }
+    .mobile-nav-item.active::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 28%; right: 28%;
+      height: 2.5px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 0 0 4px 4px;
+    }
+    .mobile-nav-item svg { width: 19px; height: 19px; }
+
+    /* ── Page titles smaller ── */
+    .page-title { font-size: 17px; margin-bottom: .1rem; }
+    .page-sub { font-size: 11.5px; margin-bottom: .85rem; }
+
+    /* ── Stats: 2 columns on mobile ── */
+    .stats {
+      grid-template-columns: repeat(3, 1fr);
+      gap: .45rem;
+      margin-bottom: .8rem;
+    }
+    .stat { padding: .6rem .75rem; border-radius: 13px; }
+    .stat-val { font-size: 22px; letter-spacing: -1px; }
+    .stat-label { font-size: 10px; margin-top: 1px; }
+
+    /* ── Table: replace with card list on mobile ── */
+    .table-wrap { border-radius: 18px; overflow: hidden; }
+    .table-header {
+      padding: .7rem .9rem;
+      flex-wrap: nowrap;
+      gap: .5rem;
+    }
+    .table-title { font-size: 13.5px; font-weight: 700; }
+    .btn-sm { padding: 7px 13px; font-size: 12px; }
+
+    /* Hide the actual table — use card layout instead */
+    table { display: none; }
+
+    /* ── Mobile folder cards ── */
+    .mobile-cards { display: flex; flex-direction: column; gap: 0; background: var(--surface); }
+    .mobile-card {
+      padding: .75rem .9rem;
+      border-bottom: 1px solid var(--border)33;
+      cursor: pointer;
+      transition: background .12s;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .mobile-card:last-child { border-bottom: none; }
+    .mobile-card:active { background: var(--surface2); }
+    .mobile-card-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .mobile-card-dot.available { background: var(--green); box-shadow: 0 0 6px var(--green)88; }
+    .mobile-card-dot.borrowed  { background: var(--amber); box-shadow: 0 0 6px var(--amber)88; }
+    .mobile-card-dot.overdue   { background: var(--red);   box-shadow: 0 0 6px var(--red)88;   }
+    .mobile-card-body { flex: 1; min-width: 0; }
+    .mobile-card-id {
+      font-size: 9.5px; font-weight: 700;
+      color: var(--accent2);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      padding: 1px 7px;
+      display: inline-block;
+      margin-bottom: 2px;
+      letter-spacing: .4px;
+    }
+    .mobile-card-name {
+      font-size: 13px; font-weight: 600;
+      line-height: 1.35;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+    .mobile-card-meta {
+      font-size: 10.5px; color: var(--muted);
+      margin-top: 1px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mobile-card-right {
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+    }
+    .mobile-card-badge {
+      font-size: 9.5px; font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      letter-spacing: .3px;
+      white-space: nowrap;
+    }
+    .mobile-card-badge.available { background: #16a34a; color: #fff; }
+    .mobile-card-badge.borrowed  { background: #b45309; color: #fff; }
+    .mobile-card-badge.overdue   { background: #b91c1c; color: #fff; }
+    .mobile-card-borrower { font-size: 10.5px; color: var(--muted); max-width: 90px; text-align: right; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mobile-card-chevron { color: var(--border); margin-top: 2px; }
+
+    /* ── Filter bar on mobile ── */
+    .mobile-filters {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .5rem .9rem;
+      padding-right: 1.1rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface2);
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      /* Fade right edge to hint scroll */
+      -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+      mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    }
+    .mobile-filters::-webkit-scrollbar { display: none; }
+
+    /* ── Search panel columns: 2 col on mobile ── */
+    .search-grid-mobile { grid-template-columns: repeat(2,1fr) !important; }
+
+    /* ── Modals: full screen bottom sheet on mobile ── */
+    .overlay { padding: 0; align-items: flex-end; }
+    .modal {
+      border-radius: 22px 22px 0 0 !important;
+      max-width: 100% !important;
+      max-height: 90vh;
+      max-height: 90dvh;
+      min-height: 40vh;
+      padding: 1.25rem 1.1rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+      width: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    /* drag handle on all mobile modals */
+    .modal::before {
+      content: '';
+      display: block;
+      width: 36px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 1.1rem;
+    }
+    /* QR modal stays centered as a card */
+    .qr-modal {
+      border-radius: 22px !important;
+      max-width: 340px !important;
+      margin: auto;
+      min-height: unset;
+    }
+    .qr-modal::before { display: none; }
+
+    /* ── Detail modal: centered card, NOT a bottom sheet ── */
+    .overlay-detail {
+      padding: 12px;
+      align-items: center !important;
+      justify-content: center;
+    }
+    .detail-modal {
+      border-radius: 20px !important;
+      max-width: 100% !important;
+      width: 100% !important;
+      max-height: calc(100vh - 24px) !important;
+      max-height: calc(100dvh - 24px) !important;
+      min-height: unset !important;
+      overflow-x: hidden !important;
+      overflow-y: auto !important;
+      padding: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+    }
+    .detail-modal::before { display: none; }
+
+    /* Add folder modal: single column grid */
+    .edit-grid { grid-template-columns: 1fr !important; }
+
+    /* ── Scan landing: full screen, no side padding ── */
+    .scan-landing { padding: 1rem .75rem; align-items: flex-start; }
+    .scan-card {
+      border-radius: 20px;
+      padding: 1.25rem 1rem;
+      max-width: 100%;
+    }
+    .folder-name { font-size: 16px; }
+
+    /* ── Auth box: full width ── */
+    .auth-wrap { padding: 1rem .75rem; align-items: flex-start; padding-top: 3rem; }
+    .auth-box { padding: 1.75rem 1.25rem; border-radius: 20px; }
+
+    /* ── Lookup page ── */
+    .main > div[style*="max-width:480px"] { max-width: 100% !important; }
+
+    /* ── Context menu: full width bottom sheet on mobile ── */
+    .ctx-menu {
+      position: fixed !important;
+      bottom: calc(70px + env(safe-area-inset-bottom, 0px)) !important;
+      left: .75rem !important;
+      right: .75rem !important;
+      top: auto !important;
+      width: auto !important;
+      border-radius: 20px !important;
+      padding: 8px !important;
+    }
+    .ctx-item { padding: 13px 16px; font-size: 14px; }
+
+    /* ── Detail modal: stack 3 cols into single scrollable column ── */
+    .detail-modal-body {
+      flex-direction: column !important;
+      max-height: none !important;
+      min-height: unset !important;
+      overflow-y: auto !important;
+      flex: 1 !important;
+      -webkit-overflow-scrolling: touch;
+    }
+    /* QR column: full width, row layout */
+    .detail-modal-body > div:first-child {
+      width: 100% !important;
+      flex-direction: row !important;
+      justify-content: flex-start !important;
+      padding: .85rem 1rem !important;
+      border-right: none !important;
+      border-bottom: 1px solid rgba(255,255,255,.05) !important;
+      gap: 1rem;
+    }
+    /* Make QR image smaller on mobile */
+    .detail-modal-body > div:first-child img {
+      width: 90px !important;
+      height: 90px !important;
+    }
+    /* Middle and right columns full width */
+    .detail-modal-body > div:nth-child(2),
+    .detail-modal-body > div:nth-child(3) {
+      width: 100% !important;
+      border-right: none !important;
+      border-bottom: 1px solid rgba(255,255,255,.05) !important;
+      min-height: unset !important;
+    }
+    .detail-modal-body > div:nth-child(3) {
+      border-bottom: none !important;
+    }
+    /* Detail rows: keep horizontal layout but smaller */
+    .detail-row { gap: .5rem; }
+    .detail-val { text-align: right; font-size: 12.5px !important; }
+    .detail-key { min-width: 70px; font-size: 10.5px !important; }
+
+    /* ── PDF overlay: full screen ── */
+    #pdf-overlay { padding: 0; }
+    #pdf-overlay .pdf-modal { border-radius: 0; height: 100vh; max-width: 100%; }
+
+    /* ── Floating Add button (mobile) ── */
+    .mobile-fab {
+      position: fixed;
+      bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+      right: 14px;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-size: 24px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px var(--accent)66;
+      cursor: pointer;
+      z-index: 490;
+      transition: transform .15s, box-shadow .15s;
+    }
+    .mobile-fab:active { transform: scale(.93); box-shadow: 0 2px 10px var(--accent)44; }
+
+    /* ── Scroll to top button ── */
+    .scroll-top-btn { bottom: 140px !important; right: 16px !important; }
+
+    /* ── Autocomplete: wider on mobile ── */
+    .ac-list { left: .75rem !important; right: .75rem !important; width: auto !important; min-width: unset !important; max-width: unset !important; }
+  }
+
+  /* Extra small phones */
+  @media (max-width: 390px) {
+    .stats { grid-template-columns: repeat(2, 1fr); gap: .5rem; }
+    .stat-val { font-size: 20px; }
+    .mobile-card-name { font-size: 12px; }
+  }
+
+  /* ── Desktop: hide mobile-only elements ── */
+  @media (min-width: 769px) {
+    .mobile-nav { display: none !important; }
+    .mobile-cards { display: none !important; }
+    .mobile-fab { display: none !important; }
+    .mobile-filters { display: none !important; }
+  }
+
+  /* ── Mobile: hide desktop-only elements ── */
+  @media (max-width: 768px) {
+    .desktop-only { display: none !important; }
+  }
+
+  @media print{
+    body *{visibility:hidden}
+    .qr-print-area,.qr-print-area *{visibility:visible}
+    .qr-print-area{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:white}
+    .qr-print-area img{width:220px;height:220px}
+    .qr-print-id{font-family:monospace;font-size:18px;font-weight:700;color:#000;margin-top:12px;letter-spacing:1px}
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+// ── Data ───────────────────────────────────────────────────────────────
+let users = [
+  {id:1,name:'Admin User',email:'admin@filetrace.com',password:'admin123',role:'admin'},
+  {id:2,name:'Maria Santos',email:'maria@filetrace.com',password:'pass123',role:'user'},
+  {id:3,name:'James Lee',email:'james@filetrace.com',password:'pass123',role:'user'},
+];
+
+let files = [
+  {id:'2016-PRC-001',name:'RUBY GANIPAN vs. ENGR. MICHAEL MAGNO',category:'Administrative',location:'Cabinet A - Row 1',status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes:'',caseType:'admin',caseNo:'Administrative Case No. 870',court:'Professional Regulations Commission, Manila (Board of Civil Engineering)',caseNature:'Unprofessional and/or Dishonorable Conduct',borrowHistory:[{borrower:'James Lee',borrowedOn:'2025-03-12',returnedOn:'2025-03-19'},{borrower:'Maria Santos',borrowedOn:'2025-04-01',returnedOn:'2025-04-08'}]},
+  {id:'2016-PRC-002',name:'RUBY GANIPAN vs. PHILIPP C. SANTIAGO III',category:'Administrative',location:'Cabinet A - Row 2',status:'borrowed',borrower:'Maria Santos',borrowerEmail:'maria@filetrace.com',borrowDate:'2025-05-10',dueDate:'2025-05-20',notes:'',caseType:'admin',caseNo:'Administrative Case No. 850',court:'Professional Regulations Commission, Manila (Board of Civil Engineering)',caseNature:'Unprofessional and/or Dishonorable Conduct',borrowHistory:[{borrower:'Admin User',borrowedOn:'2025-02-03',returnedOn:'2025-02-10'}]},
+  {id:'2016-PRC-006',name:'RUBY GANIPAN vs. ENGR. ALEJO R. PONIO',category:'Administrative',location:'Cabinet A - Row 3',status:'borrowed',borrower:'James Lee',borrowerEmail:'james@filetrace.com',borrowDate:'2025-05-01',dueDate:'2025-05-08',notes:'',caseType:'admin',caseNo:'Administrative Case No. 863',court:'Professional Regulations Commission, Manila (Board of Medicine)',caseNature:'Immoral and/or Dishonorable Conduct',borrowHistory:[]},
+  {id:'2016-PRC-007',name:'RUBY GANIPAN vs. ENGR. JOSE DELA CRUZ',category:'Administrative',location:'Cabinet B - Row 1',status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes:'',caseType:'admin',caseNo:'Administrative Case No. 2655',court:'Professional Regulations Commission, Manila',caseNature:'Unprofessional Conduct',borrowHistory:[]},
+  {id:'FT-001',name:'Q1 Financial Report 2025',category:'Finance',location:'Cabinet B - Row 2',status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes:'Audited copy',caseType:'others',caseNo:'',court:'',caseNature:'',borrowHistory:[]},
+  {id:'FT-002',name:'Employee Handbook v3',category:'HR',location:'Cabinet C - Row 1',status:'borrowed',borrower:'Admin User',borrowerEmail:'admin@filetrace.com',borrowDate:'2025-05-15',dueDate:'2025-05-25',notes:'',caseType:'others',caseNo:'',court:'',caseNature:'',borrowHistory:[]},
+];
+
+let nextFileId = 10;
+let currentUser = null;
+let currentPage = 'dashboard';
+let modal = null;
+let selectedFile = null;
+let filterSearch = '';
+let filterStatus = 'all';
+let filterCategory = 'all';
+let addStep = 'form'; // 'form' | 'confirm'
+let searchModalOpen = false;
+let acState = {}; // autocomplete state
+let colSearch = {id:'',caseType:'',name:'',caseNo:'',court:'',borrower:''};
+
+// Scan page state
+let scanFileId = null;
+let scanAction = null; // 'borrow' | 'return' | null
+let scanMsg = null;    // {type:'err'|'ok', text}
+let scanDone = false;
+let scanDoneAction = null;
+
+// ── Helpers ────────────────────────────────────────────────────────────
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function pad(n){return String(n).padStart(3,'0')}
+function todayStr(){return new Date().toISOString().split('T')[0]}
+function formatDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})}
+function initials(name){return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+
+const CASE_TYPES=[
+  {key:'criminal',label:'CRIMINAL',cls:'tag-criminal'},
+  {key:'civil',label:'CIVIL',cls:'tag-civil'},
+  {key:'labor',label:'LABOR',cls:'tag-labor'},
+  {key:'land',label:'LAND',cls:'tag-land'},
+  {key:'admin',label:'ADMIN',cls:'tag-admin'},
+  {key:'spl',label:'SPL',cls:'tag-spl'},
+  {key:'others',label:'OTHERS',cls:'tag-others'},
+  {key:'special',label:'SPECIAL PROCEEDINGS',cls:'tag-special'},
+  {key:'pcab',label:'PCAB',cls:'tag-pcab'},
+];
+function getCaseTypeInfo(key){return CASE_TYPES.find(t=>t.key===key)||CASE_TYPES.find(t=>t.key==='others')}
+
+// Which custom picker is open: 'a-type' | 'e-type' | null
+let ctPickerOpen = null;
+
+function renderCaseTypePicker(id, selectedKey){
+  const ct=getCaseTypeInfo(selectedKey);
+  const isOpen=ctPickerOpen===id;
+  return`
+  <div class="ct-wrap" id="ctwrap-${id}">
+    <input type="hidden" id="${id}" value="${selectedKey||'others'}"/>
+    <div class="ct-trigger${isOpen?' open':''}" onclick="toggleCtPicker('${id}');event.stopPropagation()">
+      <span class="case-tag ${ct.cls}" style="cursor:default;pointer-events:none">${ct.label}</span>
+      <svg class="ct-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    ${isOpen?`<div class="ct-menu">
+      ${CASE_TYPES.map(t=>`
+      <div class="ct-option${t.key===selectedKey?' selected':''}" onclick="pickCaseType('${id}','${t.key}');event.stopPropagation()">
+        <span class="case-tag ${t.cls}" style="cursor:default;pointer-events:none">${t.label}</span>
+        ${t.key===selectedKey?`<svg style="margin-left:auto;color:var(--accent2)" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+      </div>`).join('')}
+    </div>`:''}
+  </div>`;
+}
+function toggleCtPicker(id){
+  ctPickerOpen=ctPickerOpen===id?null:id;
+  // Update just the picker in-place — don't call render() which would nuke the form
+  const wrap=document.getElementById('ctwrap-'+id);
+  if(!wrap)return;
+  const inp=document.getElementById(id);
+  const key=inp?inp.value:'others';
+  wrap.outerHTML=renderCaseTypePicker(id,key);
+  // Re-attach click handler for the newly rendered wrap
+}
+function pickCaseType(id,key){
+  ctPickerOpen=null;
+  // Update hidden input directly so doAdd/doEdit can read it
+  const inp=document.getElementById(id);
+  if(inp)inp.value=key;
+  // Re-render just the picker wrap so the tag updates visually
+  const wrap=document.getElementById('ctwrap-'+id);
+  if(wrap){
+    const ct=getCaseTypeInfo(key);
+    wrap.querySelector('.ct-trigger').innerHTML=`<span class="case-tag ${ct.cls}" style="cursor:default;pointer-events:none">${ct.label}</span><svg class="ct-chevron" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+    wrap.querySelector('.ct-menu')?.remove();
+  }
+}
+document.addEventListener('click',()=>{
+  if(ctPickerOpen){
+    const prevId=ctPickerOpen;
+    ctPickerOpen=null;
+    const wrap=document.getElementById('ctwrap-'+prevId);
+    const inp=document.getElementById(prevId);
+    if(wrap&&inp){wrap.outerHTML=renderCaseTypePicker(prevId,inp.value);}
+  }
+})
+function renderCaseTag(fid,caseType,inline){
+  const ct=getCaseTypeInfo(caseType);
+  return`<span class="case-tag ${ct.cls}" style="cursor:default">${ct.label}</span>`;
+}
+function toggleTagDD(fid){
+  document.querySelectorAll('.tag-dropdown.open').forEach(d=>{if(d.id!==`dd-${fid}`)d.classList.remove('open')});
+  const d=document.getElementById(`dd-${fid}`);if(d)d.classList.toggle('open');
+}
+function closeTagDD(fid){const d=document.getElementById(`dd-${fid}`);if(d)d.classList.remove('open')}
+function setFileTag(fid,type){const f=files.find(f=>f.id===fid);if(f)f.caseType=type;render()}
+document.addEventListener('click',e=>{if(!e.target.closest('.tag-wrap'))document.querySelectorAll('.tag-dropdown.open').forEach(d=>d.classList.remove('open'))});
+function syncOverdue(){}
+function getCategories(){return[...new Set(files.map(f=>f.category))].sort()}
+function filteredFiles(){
+  return files.filter(f=>{
+    const q=filterSearch.toLowerCase();
+    const mQ=!q||f.name.toLowerCase().includes(q)||f.id.toLowerCase().includes(q)||(f.borrower||'').toLowerCase().includes(q)||(f.court||'').toLowerCase().includes(q)||(f.caseNo||'').toLowerCase().includes(q)||(f.caseNature||'').toLowerCase().includes(q)||(f.location||'').toLowerCase().includes(q)||(f.caseType||'').toLowerCase().includes(q);
+    const mS=filterStatus==='all'||f.status===filterStatus;
+    const mC=filterCategory==='all'||f.category===filterCategory;
+    const cs=colSearch;
+    const mCol=(!cs.id||f.id.toLowerCase().includes(cs.id.toLowerCase()))
+      &&(!cs.caseType||f.caseType.toLowerCase().includes(cs.caseType.toLowerCase()))
+      &&(!cs.name||(f.name.toLowerCase().includes(cs.name.toLowerCase())||f.location.toLowerCase().includes(cs.name.toLowerCase())))
+      &&(!cs.caseNo||((f.caseNo||'').toLowerCase().includes(cs.caseNo.toLowerCase())||(f.caseNature||'').toLowerCase().includes(cs.caseNo.toLowerCase())))
+      &&(!cs.court||(f.court||'').toLowerCase().includes(cs.court.toLowerCase()))
+      &&(!cs.borrower||((f.borrower||'').toLowerCase().includes(cs.borrower.toLowerCase())));
+    return mQ&&mS&&mC&&mCol;
+  });
+}
+function hasColSearch(){return filterSearch.trim()!==''||Object.values(colSearch).some(v=>v.trim()!=='')}
+function clearColSearch(){filterSearch='';colSearch={id:'',caseType:'',name:'',caseNo:'',court:'',borrower:''}}
+function getStats(){return{total:files.length,available:files.filter(f=>f.status==='available').length,borrowed:files.filter(f=>f.status==='borrowed').length}}
+
+// ── Root render ────────────────────────────────────────────────────────
+function render(){
+  syncOverdue();
+  const root=document.getElementById('root');
+  const activeEl=document.activeElement;
+  const focusId=activeEl&&activeEl.id||null;
+  const focusSel=(activeEl&&activeEl.selectionStart!=null)?activeEl.selectionStart:null;
+  if(scanFileId!==null){root.innerHTML=renderScanPage();attachScan();return}
+  if(!currentUser){root.innerHTML=renderAuth();attachAuth();return}
+  root.innerHTML=renderApp();
+  attachApp();
+  if(focusId){
+    const el=document.getElementById(focusId);
+    if(el){el.focus();if(focusSel!=null&&el.setSelectionRange)el.setSelectionRange(focusSel,focusSel);}
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// AUTH
+// ══════════════════════════════════════════════════════════════════════
+function renderAuth(){
+  return`
+<div class="auth-wrap">
+  <div class="auth-box">
+    <div class="logo">File<span>Trace</span></div>
+    <div class="auth-sub">Borrow &amp; Return Tracking System</div>
+    <div class="auth-tabs">
+      <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
+      <button class="tab-btn" id="tab-reg" onclick="switchTab('register')">Register</button>
+    </div>
+    <div id="auth-login">
+      <div class="field"><label>Email</label><input id="l-email" type="email" placeholder="you@email.com"/></div>
+      <div class="field"><label>Password</label><input id="l-pass" type="password" placeholder="••••••••"/></div>
+      <div id="l-err" class="err"></div>
+      <button class="btn-primary" onclick="doLogin()">Sign In</button>
+      <div style="font-size:12px;color:var(--muted);margin-top:1rem;text-align:center">
+        Demo accounts:<br>admin@filetrace.com / admin123<br>maria@filetrace.com / pass123<br>james@filetrace.com / pass123
+      </div>
+    </div>
+    <div id="auth-register" style="display:none">
+      <div class="field"><label>Full Name</label><input id="r-name" placeholder="Your Name"/></div>
+      <div class="field"><label>Email</label><input id="r-email" type="email" placeholder="you@email.com"/></div>
+      <div class="field"><label>Password</label><input id="r-pass" type="password" placeholder="Min 6 chars"/></div>
+      <div id="r-err" class="err"></div>
+      <button class="btn-primary" onclick="doRegister()">Create Account</button>
+    </div>
+  </div>
+</div>`;
+}
+function switchTab(t){
+  document.getElementById('auth-login').style.display=t==='login'?'':'none';
+  document.getElementById('auth-register').style.display=t==='register'?'':'none';
+  document.getElementById('tab-login').className='tab-btn'+(t==='login'?' active':'');
+  document.getElementById('tab-reg').className='tab-btn'+(t==='register'?' active':'');
+}
+function doLogin(){
+  const e=document.getElementById('l-email').value.trim();
+  const p=document.getElementById('l-pass').value;
+  const u=users.find(u=>u.email===e&&u.password===p);
+  if(!u){document.getElementById('l-err').textContent='Invalid email or password.';return}
+  currentUser=u;render();
+}
+function doRegister(){
+  const n=document.getElementById('r-name').value.trim();
+  const e=document.getElementById('r-email').value.trim();
+  const p=document.getElementById('r-pass').value;
+  const err=document.getElementById('r-err');
+  if(!n||!e||!p){err.textContent='All fields required.';return}
+  if(p.length<6){err.textContent='Password min 6 chars.';return}
+  if(users.find(u=>u.email===e)){err.textContent='Email already registered.';return}
+  users.push({id:Date.now(),name:n,email:e,password:p,role:'user'});
+  currentUser=users[users.length-1];render();
+}
+function attachAuth(){
+  document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// QR SCAN LANDING PAGE
+// ══════════════════════════════════════════════════════════════════════
+function openScan(fid){
+  scanFileId=fid;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;
+  render();
+}
+function closeScan(){
+  scanFileId=null;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;
+  render();
+}
+
+function renderScanPage(){
+  const f=files.find(f=>f.id===scanFileId);
+  if(!f)return`<div class="scan-landing"><div class="scan-card"><p style="color:var(--red)">Folder not found.</p><br><button class="btn-ghost" onclick="closeScan()">← Back</button></div></div>`;
+
+  const canBorrow=f.status==='available';
+  const canReturn=f.status==='borrowed';
+  const statusLabel=f.status.charAt(0).toUpperCase()+f.status.slice(1);
+  const bgColor=f.status==='available'?'#22c55e0d':'#f59e0b0d';
+
+  return`
+<div class="scan-landing">
+  <div class="scan-card">
+    <div class="scan-brand">File<span>Trace</span> &nbsp;<span style="font-weight:400;font-size:12px">· Folder Scan</span></div>
+
+    <div class="folder-block" style="background:${bgColor}">
+      <div class="folder-name">${esc(f.name)}</div>
+      <div class="folder-id">${esc(f.id)}</div>
+      <div class="status-row">
+        <div class="status-dot ${f.status}"></div>
+        <div class="status-label ${f.status}">${statusLabel}</div>
+      </div>
+      <div class="info-row"><span class="info-key">Location</span><span>${esc(f.location)}</span></div>
+      ${f.borrower?`<div class="info-row"><span class="info-key">Borrowed by</span><span>${esc(f.borrower)}</span></div>`:''}
+      ${f.dueDate?`<div class="info-row"><span class="info-key">Due date</span><span>${formatDate(f.dueDate)}</span></div>`:''}
+      ${f.notes?`<div class="info-row"><span class="info-key">Notes</span><span style="font-size:12px">${esc(f.notes)}</span></div>`:''}
+    </div>
+
+    ${scanDone ? renderScanSuccess(f) : `
+      <div class="scan-btns">
+        <button class="scan-btn borrow" onclick="setScanAction('borrow')" ${canBorrow?'':'disabled'}>
+          ${canBorrow?'↗ Borrow this Folder':'Not available to borrow'}
+        </button>
+        <button class="scan-btn ret" onclick="setScanAction('return')" ${canReturn?'':'disabled'}>
+          ${canReturn?'↩ Return this Folder':'Nothing to return'}
+        </button>
+      </div>
+      ${scanAction ? renderPwPanel(f) : ''}
+    `}
+
+    <div style="margin-top:1.25rem;text-align:center">
+      <button onclick="closeScan()" style="background:transparent;color:var(--muted);font-size:12px;border:none;cursor:pointer;padding:4px 8px">← Back to Dashboard</button>
+    </div>
+  </div>
+</div>`;
+}
+
+function renderScanSuccess(f){
+  const isBorrow=scanDoneAction==='borrow';
+  return`
+<div class="scan-success">
+  <div class="scan-success-icon">✅</div>
+  <div class="scan-success-msg">${isBorrow?'Folder Borrowed':'Folder Returned'}</div>
+  <div class="scan-success-sub">${isBorrow?`Return by ${formatDate(f.dueDate)}`:`${esc(f.name)} is now available`}</div>
+</div>`;
+}
+
+function renderPwPanel(f){
+  const isBorrow=scanAction==='borrow';
+  const today=todayStr();
+  return`
+<div class="pw-panel">
+  <div class="pw-title">${isBorrow?'Sign in to Borrow':'Sign in to Return'}</div>
+  <div class="pw-sub">${isBorrow?'Sign in with <strong>your own account</strong> to record this borrowing under your name.':'Sign in with <strong>your own account</strong> to confirm you are returning this folder.'}</div>
+  <div class="field" style="margin-bottom:.75rem">
+    <input id="pw-email" type="email" placeholder="Your email address"/>
+  </div>
+  <div class="field" style="margin-bottom:${isBorrow?'.75rem':'0'}">
+    <input id="pw-pass" type="password" placeholder="Your password"/>
+  </div>
+  ${isBorrow?`<div class="field" style="margin-bottom:0"><label>Due Date <span style="color:var(--muted);font-weight:400;text-transform:none">(optional — defaults to 7 days)</span></label><input id="pw-due" type="date" min="${today}"/></div>`:''}
+  ${scanMsg?`<div class="${scanMsg.type==='err'?'err':'ok-msg'}" style="margin-top:.5rem">${esc(scanMsg.text)}</div>`:''}
+  <div class="pw-actions">
+    <button class="btn-ghost" onclick="setScanAction(null)">Cancel</button>
+    <button class="pw-confirm ${isBorrow?'':'green'}" onclick="confirmScan()">Confirm ${isBorrow?'Borrow':'Return'}</button>
+  </div>
+</div>`;
+}
+
+function setScanAction(a){
+  scanAction=a;scanMsg=null;
+  document.getElementById('root').innerHTML=renderScanPage();
+  attachScan();
+}
+
+function confirmScan(){
+  const email=(document.getElementById('pw-email').value||'').trim();
+  const pass=document.getElementById('pw-pass').value||'';
+  const due=scanAction==='borrow'&&document.getElementById('pw-due')?document.getElementById('pw-due').value:'';
+
+  const u=users.find(u=>u.email===email&&u.password===pass);
+  if(!u){scanMsg={type:'err',text:'Incorrect email or password. Try again.'};setScanAction(scanAction);return}
+
+  const f=files.find(f=>f.id===scanFileId);
+
+  if(scanAction==='borrow'){
+    if(f.status!=='available'){scanMsg={type:'err',text:'This folder is no longer available.'};setScanAction(scanAction);return}
+    const dueVal=document.getElementById('pw-due')?document.getElementById('pw-due').value:'';
+    const defaultDue=new Date();defaultDue.setDate(defaultDue.getDate()+7);
+    const finalDue=dueVal||defaultDue.toISOString().split('T')[0];
+    f.status='borrowed';f.borrower=u.name;f.borrowerEmail=u.email;f.borrowDate=todayStr();f.dueDate=finalDue;
+    if(!f.borrowHistory)f.borrowHistory=[];
+    f.borrowHistory.push({borrower:u.name,borrowedOn:todayStr(),returnedOn:null});
+  } else {
+    if(f.status==='available'){scanMsg={type:'err',text:'This folder is already available.'};setScanAction(scanAction);return}
+    if(u.role!=='admin'&&f.borrowerEmail&&u.email!==f.borrowerEmail){
+      scanMsg={type:'err',text:'Only '+f.borrower+' (who borrowed it) or an admin can return this folder.'};
+      setScanAction(scanAction);return;
+    }
+    if(!f.borrowHistory)f.borrowHistory=[];
+    const lastEntry=f.borrowHistory[f.borrowHistory.length-1];
+    if(lastEntry&&lastEntry.returnedOn===null)lastEntry.returnedOn=todayStr();
+    f.status='available';f.borrower=null;f.borrowerEmail=null;f.borrowDate=null;f.dueDate=null;
+  }
+
+  scanDoneAction=scanAction;
+  scanDone=true;
+  scanAction=null;
+  document.getElementById('root').innerHTML=renderScanPage();
+  attachScan();
+}
+
+function attachScan(){
+  const pw=document.getElementById('pw-pass');
+  if(pw)pw.addEventListener('keydown',e=>{if(e.key==='Enter')confirmScan()});
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// MAIN APP SHELL
+// ══════════════════════════════════════════════════════════════════════
+function renderApp(){
+  return`
+<div class="app">
+  ${renderSidebar()}
+  <div class="main">
+    ${currentPage==='dashboard'?renderDashboard():renderLookupPage()}
+    ${modal?renderModal():''}
+  </div>
+  ${renderMobileNav()}
+  ${currentPage==='dashboard'&&currentUser&&currentUser.role==='admin'?`<button class="mobile-fab" onclick="openModal('add')" title="Add Folder">+</button>`:''}
+</div>`;
+}
+
+function renderMobileNav(){
+  const iDash=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>`;
+  const iScan=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2"/><line x1="4" y1="12" x2="20" y2="12" stroke-width="2.5"/></svg>`;
+  const iUser=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+  return`
+<nav class="mobile-nav">
+  <button class="mobile-nav-item${currentPage==='dashboard'?' active':''}" onclick="goPage('dashboard')">
+    ${iDash}<span>Dashboard</span>
+  </button>
+  <button class="mobile-nav-item${currentPage==='lookup'?' active':''}" onclick="goPage('lookup')">
+    ${iScan}<span>Lookup</span>
+  </button>
+  <button class="mobile-nav-item" onclick="showMobileUser()">
+    ${iUser}<span>${currentUser?currentUser.name.split(' ')[0]:'Account'}</span>
+  </button>
+</nav>`;
+}
+
+function showMobileUser(){
+  // Show a simple bottom sheet with user info + logout
+  const existing = document.getElementById('mobile-user-sheet');
+  if(existing){existing.remove();return;}
+  const sheet = document.createElement('div');
+  sheet.id = 'mobile-user-sheet';
+  sheet.style.cssText='position:fixed;inset:0;z-index:600;background:rgba(6,8,18,.7);display:flex;align-items:flex-end;padding:0';
+  sheet.innerHTML=`
+  <div style="width:100%;background:var(--surface);border-radius:24px 24px 0 0;padding:1.5rem 1.25rem;border-top:1px solid var(--border);animation:modalIn .2s ease">
+    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1.25rem"></div>
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
+      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff">${initials(currentUser.name)}</div>
+      <div>
+        <div style="font-weight:700;font-size:15px">${esc(currentUser.name)}</div>
+        <div style="font-size:12px;color:var(--muted)">${esc(currentUser.email)} · <span style="color:var(--accent2)">${currentUser.role}</span></div>
+      </div>
+    </div>
+    <button onclick="logout();document.getElementById('mobile-user-sheet').remove()" style="width:100%;padding:13px;border-radius:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);font-weight:600;font-size:14px;cursor:pointer">Sign Out</button>
+    <div style="height:env(safe-area-inset-bottom,0px)"></div>
+  </div>`;
+  sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.remove();});
+  document.body.appendChild(sheet);
+}
+
+let sidebarCollapsed = false;
+function toggleSidebar(){
+  sidebarCollapsed=!sidebarCollapsed;
+  const sb=document.querySelector('.sidebar');
+  if(sb) sb.classList.toggle('collapsed',sidebarCollapsed);
+}
+function expandSidebar(e){
+  // Only expand when clicking the sidebar background while collapsed — not on interactive children
+  if(!sidebarCollapsed) return;
+  if(e.target.closest('.nav-item,.sidebar-toggle,.logout-btn,.user-pill')) return;
+  sidebarCollapsed=false;
+  const sb=document.querySelector('.sidebar');
+  if(sb) sb.classList.remove('collapsed');
+}
+document.addEventListener('click',function(e){
+  if(sidebarCollapsed) return;
+  if(e.target.closest('.sidebar')) return;
+  // Keep open if click is on anything interactive or inside a modal/overlay
+  if(e.target.closest('button,a,input,select,textarea,[onclick],.overlay,.modal,.ctx-menu')) return;
+  sidebarCollapsed=true;
+  const sb=document.querySelector('.sidebar');
+  if(sb) sb.classList.add('collapsed');
+},{capture:false});
+
+function renderSidebar(){
+  const c=sidebarCollapsed;
+  const nav=(id,lbl,icon)=>`<div class="nav-item${currentPage===id?' active':''}" onclick="goPage('${id}')" data-label="${lbl}" title="${c?lbl:''}">${icon}<span class="nav-label">${lbl}</span></div>`;
+  const iDash=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>`;
+  const iScan=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2"/><line x1="4" y1="12" x2="20" y2="12" stroke-width="2.5"/></svg>`;
+  const iFile=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="16" height="16"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`;
+  const iChev=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="13" height="13"><polyline points="15 18 9 12 15 6"/></svg>`;
+  return`
+<div class="sidebar${c?' collapsed':''}" onclick="expandSidebar(event)">
+  <div class="sidebar-inner">
+    <div class="sidebar-logo">
+      <div class="logo-icon">${iFile}</div>
+      <div class="logo-text">File<span>Trace</span></div>
+      <button class="sidebar-toggle" onclick="toggleSidebar()" title="${c?'Expand':'Collapse'} sidebar">${iChev}</button>
+    </div>
+    ${nav('dashboard','Dashboard',iDash)}
+    ${nav('lookup','Lookup Folder',iScan)}
+    <div class="sidebar-bottom">
+      <div class="user-pill" title="${esc(currentUser.name)}">
+        <div class="avatar">${initials(currentUser.name)}</div>
+        <div class="user-pill-info">
+          <div class="user-name">${esc(currentUser.name)}</div>
+          <div class="user-role">${currentUser.role}</div>
+        </div>
+        <button class="logout-btn" onclick="logout()" title="Sign out">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+// DASHBOARD
+function renderDashboard(){
+  const s=getStats();
+  const fs=filteredFiles();
+  const hasCS=hasColSearch();
+  const statusOpts=[
+    {v:'all',label:'All Status'},
+    {v:'available',label:'Available',color:'var(--green)'},
+    {v:'borrowed',label:'Borrowed',color:'var(--amber)'},
+  ];
+  const curStatus=statusOpts.find(o=>o.v===filterStatus);
+  const statusDot=filterStatus!=='all'?`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${curStatus.color};margin-right:5px;flex-shrink:0"></span>`:'';
+
+  return`
+<div>
+  <div class="page-title">Dashboard</div>
+  <div class="page-sub">Track, borrow, and return physical folders</div>
+  <div class="stats">
+    <div class="stat" onclick="filterStatus=filterStatus==='all'?'all':'all';render()" style="cursor:pointer;border:1px solid ${filterStatus==='all'?'var(--accent)':'var(--border)44'};transition:all .17s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"><div class="stat-val" style="${filterStatus==='all'?'color:var(--accent2)':''}">${s.total}</div><div class="stat-label">Total Folders</div></div>
+    <div class="stat" onclick="filterStatus=filterStatus==='available'?'all':'available';render()" style="cursor:pointer;border:1px solid ${filterStatus==='available'?'var(--green)':'var(--border)44'};background:${filterStatus==='available'?'rgba(34,197,94,.07)':'var(--surface)'};transition:all .17s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"><div class="stat-val" style="color:var(--green)">${s.available}</div><div class="stat-label">Available</div></div>
+    <div class="stat" onclick="filterStatus=filterStatus==='borrowed'?'all':'borrowed';render()" style="cursor:pointer;border:1px solid ${filterStatus==='borrowed'?'var(--amber)':'var(--border)44'};background:${filterStatus==='borrowed'?'rgba(245,158,11,.07)':'var(--surface)'};transition:all .17s" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'"><div class="stat-val" style="color:var(--amber)">${s.borrowed}</div><div class="stat-label">Borrowed</div></div>
+  </div>
+  <div class="table-wrap">
+    <!-- Table header -->
+    <div class="table-header" id="registry-header">
+      <div class="table-title">Folder Registry <span style="font-size:12px;color:var(--muted);font-weight:400">(${fs.length})</span></div>
+      <button class="btn-sm desktop-only" onclick="openModal('add')">+ Add Folder</button>
+    </div>
+
+    <!-- Mobile scrollable filter bar -->
+    <div class="mobile-filters">
+      ${statusOpts.map(o=>{
+        const active=filterStatus===o.v;
+        const dot=o.color?`<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${o.color};flex-shrink:0"></span>`:'';
+        return`<button onclick="filterStatus='${o.v}';render()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1px solid ${active?(o.color||'var(--accent)'):'var(--border)'};background:${active?(o.color?o.color+'22':'var(--accent)22'):'transparent'};color:${active?(o.color||'var(--accent2)'):'var(--muted)'}">${dot}${o.label}</button>`;
+      }).join('')}
+      <button onclick="searchModalOpen=!searchModalOpen;render()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1px solid ${searchModalOpen||hasCS?'var(--accent)':'var(--border)'};background:${searchModalOpen||hasCS?'rgba(124,110,255,.12)':'transparent'};color:${searchModalOpen||hasCS?'var(--accent2)':'var(--muted)'}">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Search${hasCS?` <span style="background:var(--accent);color:#fff;border-radius:10px;padding:0 5px;font-size:10px;font-weight:700">${fs.length}</span>`:''}
+      </button>
+      ${hasCS?`<button onclick="clearColSearch();render()" style="display:inline-flex;align-items:center;gap:4px;padding:5px 11px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);cursor:pointer;flex-shrink:0;white-space:nowrap">✕ Clear</button>`:''}
+    </div>
+
+    <!-- Filter bar: status pill group + search toggle (desktop only) -->
+    <div class="desktop-only" style="display:flex;align-items:center;justify-content:space-between;padding:.65rem 1.1rem;border-bottom:1px solid var(--border);background:var(--surface);gap:.75rem;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:.4rem;flex-wrap:wrap">
+        ${statusOpts.map(o=>{
+          const active=filterStatus===o.v;
+          const dot=o.color?`<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${o.color};flex-shrink:0"></span>`:'';
+          return`<button onclick="filterStatus='${o.v}';render()" style="display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid ${active?(o.color||'var(--accent)'):'var(--border)'};background:${active?(o.color?o.color+'22':'var(--accent)22'):'transparent'};color:${active?(o.color||'var(--accent2)'):'var(--muted)'}">${dot}${o.label}</button>`;
+        }).join('')}
+      </div>
+      <div style="display:flex;align-items:center;gap:.5rem">
+        ${hasCS?`<button onclick="clearColSearch();render()" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);cursor:pointer;transition:.15s" title="Clear all search filters">✕ Clear Filters</button>`:''}
+        <button onclick="searchModalOpen=!searchModalOpen;render()" style="display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid ${searchModalOpen||hasCS?'var(--accent)':'var(--border)'};background:${searchModalOpen||hasCS?'rgba(124,110,255,.12)':'transparent'};color:${searchModalOpen||hasCS?'var(--accent2)':'var(--muted)'}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          Search${hasCS?` <span style="background:var(--accent);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:2px">${fs.length}</span>`:''}
+        </button>
+      </div>
+    </div>
+
+    <!-- Search panel (shown when searchModalOpen) -->
+    ${searchModalOpen?`
+    <div style="padding:.85rem 1.1rem;background:var(--surface2);border-bottom:1px solid var(--border)">
+      <div style="margin-bottom:.65rem">
+        <div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.35rem">Search all fields</div>
+        <div style="position:relative;display:flex;align-items:center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="position:absolute;left:10px;color:var(--muted);flex-shrink:0"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input id="gs-input" placeholder="Type anything — name, case no., court, borrower, ID…" value="${esc(filterSearch)}" oninput="filterSearch=this.value;render()" style="width:100%;font-size:12.5px;padding:7px 10px 7px 30px;border-radius:10px;background:var(--bg);border:1px solid ${filterSearch?'var(--accent)':'var(--border)'};color:var(--text);outline:none;transition:.15s"/>
+          ${filterSearch?`<button onclick="filterSearch='';render()" style="position:absolute;right:9px;background:none;border:none;cursor:pointer;color:var(--muted);font-size:14px;line-height:1;padding:2px 4px" title="Clear">✕</button>`:''}
+        </div>
+      </div>
+      <div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.35rem">Filter by column</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem" class="search-grid-mobile">
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Folder ID</div>
+          <input id="cs-id" placeholder="e.g. 2016-PRC…" value="${esc(colSearch.id)}" oninput="colSearch.id=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.id?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Case Type</div>
+          <input id="cs-caseType" placeholder="e.g. ADMIN, CIVIL…" value="${esc(colSearch.caseType)}" oninput="colSearch.caseType=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.caseType?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Folder Name / Location</div>
+          <input id="cs-name" placeholder="e.g. Ganipan, Cabinet A…" value="${esc(colSearch.name)}" oninput="colSearch.name=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.name?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Case No. / Nature</div>
+          <input id="cs-caseNo" placeholder="e.g. Case No. 870…" value="${esc(colSearch.caseNo)}" oninput="colSearch.caseNo=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.caseNo?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Court</div>
+          <input id="cs-court" placeholder="e.g. PRC, Manila…" value="${esc(colSearch.court)}" oninput="colSearch.court=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.court?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Borrower</div>
+          <input id="cs-borrower" placeholder="e.g. Maria Santos…" value="${esc(colSearch.borrower)}" oninput="colSearch.borrower=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.borrower?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
+        </div>
+      </div>
+      <div style="margin-top:.6rem;font-size:11px;color:var(--muted)">
+        Showing <strong style="color:var(--text)">${fs.length}</strong> of <strong style="color:var(--text)">${files.length}</strong> folders
+        ${hasCS?` &nbsp;·&nbsp; <span style="color:var(--accent2);cursor:pointer;font-weight:600" onclick="clearColSearch();render()">Clear all filters</span>`:''}
+      </div>
+    </div>`:''}
+
+    ${fs.length===0?`<div class="empty" style="padding:3rem;text-align:center"><div class="empty-icon">📂</div><div style="color:var(--muted);margin-top:.5rem">No folders match your filters</div>${hasCS?`<button onclick="clearColSearch();render()" style="margin-top:.75rem;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(124,110,255,.12);color:var(--accent2);border:1px solid var(--accent);cursor:pointer">Clear Filters</button>`:''}
+</div>`:
+    `<table>
+      <thead>
+        <tr>
+          <th style="width:28px"></th>
+          <th style="width:130px">FOLDER ID</th>
+          <th style="width:130px">CASE TYPE</th>
+          <th>FOLDER NAME</th>
+          <th style="width:200px">CASE NO.</th>
+          <th style="width:220px">COURT</th>
+          <th style="width:120px">BORROWER</th>
+          <th style="width:110px">BORROWED ON</th>
+          <th style="width:110px">RETURNED BY</th>
+        </tr>
+      </thead>
+      <tbody>${fs.map(f=>{
+        const activeBorrow=f.borrower;
+        const borrowerCell=activeBorrow
+          ?`<td style="font-size:12.5px;color:var(--text);font-weight:500">${esc(f.borrower)}</td>
+             <td style="font-size:12px;color:var(--text)">${f.borrowDate?formatDate(f.borrowDate):'—'}</td>
+             <td style="font-size:12px;color:var(--amber);font-weight:600">Active</td>`
+          :`<td colspan="3" style="text-align:center"><span style="font-size:11.5px;font-weight:600;color:var(--green);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);padding:3px 14px;border-radius:20px;letter-spacing:.3px">Available</span></td>`;
+        return`
+        <tr class="folder-row" data-id="${esc(f.id)}" onclick="openDetail('${esc(f.id)}')" oncontextmenu="openCtxMenu(event,'${esc(f.id)}')" style="cursor:pointer">
+          <td style="text-align:center;padding:14px 8px">
+            <span class="status-dot-sm ${f.status}" title="${f.status.charAt(0).toUpperCase()+f.status.slice(1)}"></span>
+          </td>
+          <td><code style="font-size:11px;color:var(--accent2);font-weight:700;background:var(--surface2);padding:3px 8px;border-radius:6px;border:1px solid var(--border)44;letter-spacing:.3px">${esc(f.id)}</code></td>
+          <td>${renderCaseTag(f.id,f.caseType||'others')}</td>
+          <td>
+            <div style="font-weight:600;font-size:13px;color:var(--text);line-height:1.35;margin-bottom:2px">${esc(f.name)}</div>
+            <div style="font-size:11px;color:var(--muted)">${esc(f.location)}</div>
+          </td>
+          <td style="font-size:12px;line-height:1.4;color:var(--text)">${f.caseNo?esc(f.caseNo)+'<div style="font-size:11px;color:var(--muted);margin-top:2px">'+(f.caseNature?esc('(For: '+f.caseNature+')'):'')+'</div>':'<span style="color:var(--muted)">—</span>'}</td>
+          <td style="font-size:12px;color:var(--text);line-height:1.4">${f.court?esc(f.court):'<span style="color:var(--muted)">—</span>'}</td>
+          ${borrowerCell}
+        </tr>`;
+      }).join('')}
+      </tbody>
+    </table>
+    ${renderMobileCards(fs,hasCS)}`}
+  </div>
+</div>`;
+}
+
+function renderMobileCards(fs, hasCS){
+  if(fs.length===0) return '';
+  const chevron=`<svg class="mobile-card-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  return`<div class="mobile-cards">
+    ${fs.map(f=>`
+    <div class="mobile-card" onclick="openDetail('${esc(f.id)}')" oncontextmenu="openCtxMenu(event,'${esc(f.id)}')">
+      <div class="mobile-card-dot ${f.status}"></div>
+      <div class="mobile-card-body">
+        <div class="mobile-card-id">${esc(f.id)}</div>
+        <div class="mobile-card-name">${esc(f.name)}</div>
+        <div class="mobile-card-meta">${esc(f.location)}${f.court?' · '+esc(f.court):''}</div>
+      </div>
+      <div class="mobile-card-right">
+        <span class="mobile-card-badge ${f.status}">${f.status.charAt(0).toUpperCase()+f.status.slice(1)}</span>
+        ${f.borrower?`<div class="mobile-card-borrower">${esc(f.borrower)}</div>`:''}
+        ${chevron}
+      </div>
+    </div>`).join('')}
+  </div>`;
+}
+
+// LOOKUP PAGE
+function renderLookupPage(){
+  return`
+<div style="max-width:480px">
+  <div class="page-title">Folder Lookup</div>
+  <div class="page-sub">Scan a QR code or enter a Folder ID manually</div>
+
+  <!-- Camera QR Scanner -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem">
+    <div style="padding:.9rem 1.1rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-weight:700;font-size:14px">Scan QR Code</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:1px">Point camera at a folder's QR code</div>
+      </div>
+      <button id="qr-scan-btn" onclick="toggleCameraScanner()" style="display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer;box-shadow:0 2px 10px var(--accent)44;transition:all .17s">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7V2h-5M23 17v5h-5M1 7V2h5M1 17v5h5"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>
+        Open Camera
+      </button>
+    </div>
+    <!-- Camera viewfinder (hidden until activated) -->
+    <div id="qr-camera-wrap" style="display:none;position:relative;background:#000;aspect-ratio:1/1;max-height:320px;overflow:hidden">
+      <video id="qr-video" autoplay playsinline muted style="width:100%;height:100%;object-fit:cover;display:block"></video>
+      <canvas id="qr-canvas" style="display:none"></canvas>
+      <!-- Targeting frame overlay -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
+        <div style="width:62%;aspect-ratio:1/1;position:relative">
+          <div style="position:absolute;top:0;left:0;width:22px;height:22px;border-top:3px solid #fff;border-left:3px solid #fff;border-radius:3px 0 0 0"></div>
+          <div style="position:absolute;top:0;right:0;width:22px;height:22px;border-top:3px solid #fff;border-right:3px solid #fff;border-radius:0 3px 0 0"></div>
+          <div style="position:absolute;bottom:0;left:0;width:22px;height:22px;border-bottom:3px solid #fff;border-left:3px solid #fff;border-radius:0 0 0 3px"></div>
+          <div style="position:absolute;bottom:0;right:0;width:22px;height:22px;border-bottom:3px solid #fff;border-right:3px solid #fff;border-radius:0 0 3px 0"></div>
+        </div>
+      </div>
+      <!-- Scan status -->
+      <div id="qr-status" style="position:absolute;bottom:0;left:0;right:0;padding:10px 14px;background:linear-gradient(transparent,rgba(0,0,0,.75));color:#fff;font-size:12px;font-weight:600;text-align:center;letter-spacing:.2px">
+        Scanning…
+      </div>
+      <!-- Close button -->
+      <button onclick="stopCameraScanner()" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.25);color:#fff;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;line-height:1">✕</button>
+    </div>
+    <div id="qr-scan-err" style="padding:0;max-height:0;overflow:hidden;transition:all .2s"></div>
+  </div>
+
+  <!-- Manual ID lookup -->
+  <div class="table-wrap" style="padding:1.5rem">
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem">Or enter ID manually</div>
+    <div style="display:flex;gap:.75rem">
+      <input id="lu-input" placeholder="e.g. FT-001 or 2016-PRC-007" style="flex:1;text-transform:uppercase"/>
+      <button class="btn-sm" onclick="doLookup()">Open</button>
+    </div>
+    <div id="lu-err" style="margin-top:.5rem"></div>
+  </div>
+
+  <div style="margin-top:1rem;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;font-size:13px;color:var(--muted)">
+    <strong style="display:block;margin-bottom:.5rem;color:var(--text)">In production</strong>
+    Each printed QR code links to <code>yourdomain.com/scan?id=FT-001</code>. Scanning it with a phone opens this same folder scan page directly.
+  </div>
+</div>`;
+}
+function doLookup(){
+  const val=document.getElementById('lu-input').value.trim().toUpperCase();
+  const f=files.find(f=>f.id===val);
+  if(!f){document.getElementById('lu-err').innerHTML=`<span style="color:var(--red);font-size:12px">No folder found with ID "${esc(val)}"</span>`;return}
+  openScan(val);
+}
+
+// ── Camera QR Scanner ──────────────────────────────────────────────────
+let _camStream = null;
+let _camRAF = null;
+let _jsQRLoaded = false;
+
+function extractFolderIdFromQR(text){
+  // Match yourdomain.com/scan?id=XXX or just the raw ID
+  const m = text.match(/[?&]id=([^&\s]+)/i);
+  if(m) return m[1].trim().toUpperCase();
+  // If it's a plain ID (no URL), use it directly
+  const plain = text.trim().toUpperCase();
+  if(files.find(f=>f.id===plain)) return plain;
+  return null;
+}
+
+function toggleCameraScanner(){
+  const wrap = document.getElementById('qr-camera-wrap');
+  if(!wrap) return;
+  if(wrap.style.display === 'none'){
+    startCameraScanner();
+  } else {
+    stopCameraScanner();
+  }
+}
+
+function setCamBtn(label, icon){
+  const btn = document.getElementById('qr-scan-btn');
+  if(!btn) return;
+  const icons = {
+    open: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 7V2h-5M23 17v5h-5M1 7V2h5M1 17v5h5"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg>`,
+    stop: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="4" y="4" width="16" height="16" rx="2" fill="currentColor" opacity=".25"/><rect x="4" y="4" width="16" height="16" rx="2"/></svg>`
+  };
+  btn.innerHTML = (icons[icon]||'') + ' ' + label;
+  btn.style.background = icon === 'stop' ? '#ef4444' : 'var(--accent)';
+}
+
+function showCamErr(msg){
+  const el = document.getElementById('qr-scan-err');
+  if(!el) return;
+  el.innerHTML = `<div style="padding:.75rem 1.1rem;font-size:12.5px;color:var(--red);background:rgba(239,68,68,.08);border-top:1px solid rgba(239,68,68,.2)">${msg}</div>`;
+  el.style.maxHeight = '80px';
+}
+function hideCamErr(){
+  const el = document.getElementById('qr-scan-err');
+  if(el){ el.innerHTML=''; el.style.maxHeight='0'; }
+}
+
+async function startCameraScanner(){
+  hideCamErr();
+  const wrap = document.getElementById('qr-camera-wrap');
+  const video = document.getElementById('qr-video');
+  const status = document.getElementById('qr-status');
+  if(!wrap||!video) return;
+
+  // Load jsQR if not already loaded
+  if(!window.jsQR){
+    if(!_jsQRLoaded){
+      _jsQRLoaded = true;
+      await new Promise((res,rej)=>{
+        const s = document.createElement('script');
+        s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js';
+        s.onload = res; s.onerror = rej;
+        document.head.appendChild(s);
+      }).catch(()=>{});
+    }
+  }
+
+  // Try camera
+  try {
+    _camStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:1280} }
+    });
+    video.srcObject = _camStream;
+    await video.play();
+    wrap.style.display = 'block';
+    setCamBtn('Stop Camera', 'stop');
+    if(status) status.textContent = 'Scanning…';
+    _scanFrame();
+  } catch(err){
+    const msg = err.name==='NotAllowedError'
+      ? 'Camera permission denied. Please allow camera access and try again.'
+      : err.name==='NotFoundError'
+      ? 'No camera found on this device.'
+      : 'Could not access camera: ' + err.message;
+    showCamErr(msg);
+    stopCameraScanner();
+  }
+}
+
+function stopCameraScanner(){
+  if(_camRAF){ cancelAnimationFrame(_camRAF); _camRAF=null; }
+  if(_camStream){ _camStream.getTracks().forEach(t=>t.stop()); _camStream=null; }
+  const wrap = document.getElementById('qr-camera-wrap');
+  const video = document.getElementById('qr-video');
+  if(video){ video.srcObject=null; }
+  if(wrap){ wrap.style.display='none'; }
+  setCamBtn('Open Camera', 'open');
+}
+
+function _scanFrame(){
+  const video = document.getElementById('qr-video');
+  const canvas = document.getElementById('qr-canvas');
+  const status = document.getElementById('qr-status');
+  if(!video||!canvas||!_camStream) return;
+
+  // Wait until video has real dimensions
+  if(video.readyState < 2){
+    _camRAF = requestAnimationFrame(_scanFrame);
+    return;
+  }
+
+  const w = video.videoWidth, h = video.videoHeight;
+  canvas.width = w; canvas.height = h;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(video, 0, 0, w, h);
+
+  let found = false;
+
+  // Try BarcodeDetector first (native, fast)
+  if(window.BarcodeDetector){
+    window.BarcodeDetector.getSupportedFormats().then(fmts=>{
+      if(fmts.includes('qr_code')){
+        const bd = new BarcodeDetector({formats:['qr_code']});
+        const imgData = ctx.getImageData(0,0,w,h);
+        bd.detect(canvas).then(codes=>{
+          if(codes.length>0){
+            _onQRResult(codes[0].rawValue);
+          } else {
+            if(!found) _camRAF = requestAnimationFrame(_scanFrame);
+          }
+        }).catch(()=>{
+          _camRAF = requestAnimationFrame(_scanFrame);
+        });
+      }
+    });
+    return;
+  }
+
+  // Fallback: jsQR
+  if(window.jsQR){
+    const imgData = ctx.getImageData(0,0,w,h);
+    const code = jsQR(imgData.data, w, h, {inversionAttempts:'dontInvert'});
+    if(code){
+      _onQRResult(code.data);
+      return;
+    }
+  }
+  _camRAF = requestAnimationFrame(_scanFrame);
+}
+
+function _onQRResult(text){
+  stopCameraScanner();
+  const fid = extractFolderIdFromQR(text);
+  if(!fid){
+    showCamErr(`QR scanned but no matching folder found. Raw: "${text.slice(0,60)}"`);
+    return;
+  }
+  const f = files.find(f=>f.id===fid);
+  if(!f){
+    showCamErr(`Folder ID "${fid}" not found in the system.`);
+    return;
+  }
+  hideCamErr();
+  openScan(fid);
+}
+
+// MODALS
+function renderModal(){
+  if(modal==='add')return renderAddModal();
+  if(modal==='detail')return renderDetailModal();
+  if(modal==='edit')return renderEditModal();
+  if(modal==='qr')return renderQRModal();
+  if(modal==='delete')return renderDeleteModal();
+  return'';
+}
+function renderAddModal(){
+  if(addStep==='confirm')return renderAddConfirm();
+  return`
+<div class="overlay" onclick="closeModal(event,this)">
+  <div class="modal" style="border-radius:24px;max-width:720px;width:96vw;padding:1.75rem 2rem 1.5rem">
+    <div style="margin-bottom:1.25rem">
+      <div class="modal-title">Add New Folder</div>
+      <div class="modal-sub" style="margin-bottom:0">Register a physical folder into the system</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
+      <div class="field" style="margin:0">${renderSmartInput('a-id','Folder ID','e.g. 2016-PRC-001','folderid')}</div>
+      <div class="field" style="margin:0;grid-column:span 2"><label>Folder Name</label><input id="a-name" placeholder="e.g. RUBY GANIPAN vs. ENGR. MICHAEL MAGNO"/></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
+      <div class="field" style="margin:0">${renderSmartInput('a-loc','Location','e.g. Cabinet A - Row 1','location')}</div>
+      <div class="field" style="margin:0"><label>Case Type</label>${renderCaseTypePicker('a-type','others')}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
+      <div class="field" style="margin:0">${renderSmartInput('a-caseno','Case No.','e.g. Administrative Case No.','caseno')}</div>
+      <div class="field" style="margin:0">${renderSmartInput('a-court','Court / Agency','e.g. PRC, Manila','court')}</div>
+      <div class="field" style="margin:0">${renderSmartInput('a-nature','Nature of Case','e.g. Unprofessional Conduct','nature')}</div>
+    </div>
+
+    <div class="field" style="margin-bottom:.65rem"><label>Notes <span style="color:var(--muted);font-weight:400;text-transform:none;font-size:10px">(optional)</span></label><textarea id="a-notes" rows="2" style="resize:none" placeholder="Optional notes…"></textarea></div>
+
+    <div class="field" style="margin-bottom:.65rem"><label>Drive Link <span style="color:var(--muted);font-weight:400;text-transform:none;font-size:10px">(optional — Google Drive PDF link)</span></label><input id="a-drive" placeholder="https://drive.google.com/file/d/…" style="font-size:12px"/></div>
+
+    <div id="a-err" class="err" style="min-height:1.1rem;margin-bottom:.4rem"></div>
+    <div style="display:flex;justify-content:flex-end;gap:.65rem">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm" onclick="doAdd()">Add Folder</button>
+    </div>
+  </div>
+</div>`;
+}
+function makeQRImg(fid,size){
+  try{
+    const qr=new QRCode({content:`https://yourdomain.com/scan?id=${fid}`,width:size,height:size,color:'#000000',background:'#ffffff',ecl:'M',join:true,container:'svg-viewbox'});
+    const svg=qr.svg();
+    const b64=btoa(unescape(encodeURIComponent(svg)));
+    return`<img src="data:image/svg+xml;base64,${b64}" width="${size}" height="${size}" style="display:block"/>`;
+  }catch(e){return`<div style="color:var(--red);font-size:12px">QR error: ${e.message}</div>`;}
+}
+function renderAddConfirm(){
+  const f=selectedFile;
+  return`
+<div class="overlay">
+  <div class="modal" style="max-width:440px;border-radius:28px">
+    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:.25rem">
+      <div style="width:32px;height:32px;border-radius:50%;background:#22c55e22;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">✅</div>
+      <div class="modal-title" style="margin:0">Folder Added</div>
+    </div>
+    <div class="modal-sub">Review the details below, then generate a QR code to attach to the physical folder.</div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:1rem;margin-bottom:1rem">
+      <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Folder ID</span><span style="font-weight:600;color:var(--accent2)">${esc(f.id)}</span></div>
+      <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Name</span><span style="font-weight:500;max-width:60%;text-align:right">${esc(f.name)}</span></div>
+      <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Location</span><span style="max-width:60%;text-align:right">${esc(f.location)}</span></div>
+      ${f.caseNo?`<div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Case No.</span><span style="font-weight:500;max-width:60%;text-align:right">${esc(f.caseNo)}</span></div>`:''}
+      ${f.court?`<div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Court</span><span style="max-width:60%;text-align:right;font-size:12px">${esc(f.court)}</span></div>`:''}
+      ${f.caseNature?`<div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Nature</span><span style="max-width:60%;text-align:right;font-size:12px">${esc(f.caseNature)}</span></div>`:''}
+      ${f.notes?`<div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0"><span style="color:var(--muted)">Notes</span><span style="max-width:60%;text-align:right;font-size:12px">${esc(f.notes)}</span></div>`:'<div style="padding:5px 0;font-size:12px;color:var(--muted)">No notes</div>'}
+    </div>
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;text-align:center;margin-bottom:.25rem">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:.75rem;font-weight:500;text-transform:uppercase;letter-spacing:.5px">QR Code Preview</div>
+      <div class="qr-print-area"><div style="background:white;border-radius:8px;padding:1rem;display:inline-block">${makeQRImg(f.id,160)}</div><div class="qr-print-id">${esc(f.id)}</div></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:.5rem">yourdomain.com/scan?id=${esc(f.id)}</div>
+    </div>
+    <div class="modal-footer" style="justify-content:space-between;margin-top:1rem">
+      <button class="btn-ghost" onclick="closeModal()">Done</button>
+      <button class="btn-print" onclick="window.print()">🖨 Print QR</button>
+    </div>
+  </div>
+</div>`;
+}
+function renderDeleteModal(){
+  const f=selectedFile;
+  return`
+<div class="overlay" onclick="closeModal(event,this)">
+  <div class="modal" style="border-radius:28px">
+    <div class="modal-title">Delete Folder</div>
+    <div class="modal-sub">This action cannot be undone.</div>
+    <div style="background:var(--surface2);border-radius:14px;padding:1rem;font-size:13px">
+      <strong>${esc(f.name)}</strong><br>
+      <span style="color:var(--muted)">${esc(f.id)}</span>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-danger" onclick="doDelete()">Delete</button>
+    </div>
+  </div>
+</div>`;
+}
+function renderQRModal(){
+  const f=selectedFile;
+  return`
+<div class="overlay" onclick="closeModal(event,this)">
+  <div class="modal qr-modal" style="border-radius:28px">
+    <div class="modal-title">QR Code</div>
+    <div class="modal-sub">Print and attach to the physical folder</div>
+    <div class="qr-print-area"><div class="qr-box">${makeQRImg(f.id,200)}</div><div class="qr-print-id">${esc(f.id)}</div></div>
+    <div class="qr-info">
+      <div class="qr-info-row"><span class="qr-info-key">Folder ID</span><span>${esc(f.id)}</span></div>
+      <div class="qr-info-row"><span class="qr-info-key">Name</span><span style="font-size:11px">${esc(f.name)}</span></div>
+      <div class="qr-info-row"><span class="qr-info-key">Location</span><span>${esc(f.location)}</span></div>
+    </div>
+    <div class="print-note">Scan opens: yourdomain.com/scan?id=${esc(f.id)}</div>
+    <div class="modal-footer" style="justify-content:space-between">
+      <button class="btn-ghost" onclick="closeModal()">Close</button>
+      <button class="btn-print" onclick="window.print()">🖨 Print QR</button>
+    </div>
+  </div>
+</div>`;
+}
+
+// SVG ICONS
+const SVG={
+  edit:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>`,
+  borrow:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>`,
+  return:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>`,
+  trash:`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>`,
+  pdf:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/><polyline points="9 9 10 9"/></svg>`,
+  close:`<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+};
+
+// DETAIL MODAL
+function openDetail(fid){selectedFile=files.find(f=>f.id===fid);modal='detail';render()}
+function renderDetailModal(){
+  const f=selectedFile;
+  const statusColor=f.status==='available'?'var(--green)':f.status==='borrowed'?'var(--amber)':'var(--red)';
+  const statusBg=f.status==='available'?'rgba(34,197,94,.09)':f.status==='borrowed'?'rgba(245,158,11,.09)':'rgba(239,68,68,.09)';
+  const statusBorder=f.status==='available'?'rgba(34,197,94,.2)':f.status==='borrowed'?'rgba(245,158,11,.2)':'rgba(239,68,68,.2)';
+  const canBorrow=f.status==='available';
+  const canReturn=f.status==='borrowed';
+  const isMyBorrow=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email);
+  let actionBtn='';
+  if(canBorrow){
+    actionBtn=`<button onclick="closeModal();openScan('${esc(f.id)}')" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:13.5px;border:none;cursor:pointer;box-shadow:0 3px 12px var(--accent)44;transition:all .17s" onmouseover="this.style.background='#6b5ef0';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--accent)';this.style.transform='none'">${SVG.borrow} Borrow</button>`;
+  } else if(canReturn){
+    if(isMyBorrow){
+      actionBtn=`<button onclick="closeModal();openScan('${esc(f.id)}')" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:12px;background:var(--amber);color:#fff;font-weight:600;font-size:13.5px;border:none;cursor:pointer;box-shadow:0 3px 12px rgba(245,158,11,.35);transition:all .17s" onmouseover="this.style.opacity='.88';this.style.transform='translateY(-1px)'" onmouseout="this.style.opacity='1';this.style.transform='none'">${SVG.return} Return</button>`;
+    } else {
+      actionBtn=`<button disabled style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:12px;background:var(--surface2);color:var(--muted);font-weight:600;font-size:13.5px;border:1px solid var(--border);cursor:not-allowed;opacity:.4">${SVG.return} Return</button>`;
+    }
+  }
+  return`
+<div class="overlay overlay-detail" onclick="closeModal(event,this)">
+  <div class="modal detail-modal" style="max-width:1060px;width:96vw;padding:0;overflow-x:hidden;border-radius:22px;box-shadow:0 36px 80px rgba(0,0,0,.72),0 0 0 1px rgba(255,255,255,.05)">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:12px;padding:1rem 1.25rem;background:var(--surface);border-bottom:1px solid rgba(255,255,255,.05)">
+      <span class="status-dot-sm ${f.status}" style="width:9px;height:9px;flex-shrink:0"></span>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:14.5px;line-height:1.35;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div>
+        <div style="font-size:10.5px;color:var(--muted);margin-top:1px;font-family:monospace;letter-spacing:.4px">${esc(f.id)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+        ${renderCaseTag(f.id,f.caseType||'others')}
+        ${f.driveLink?`<button onclick="openDrivePreview('${esc(f.id)}')" style="display:inline-flex;align-items:center;gap:5px;padding:0 11px;height:28px;border-radius:8px;background:rgba(66,133,244,.15);border:1px solid rgba(66,133,244,.35);color:#6fa8f5;font-size:11.5px;font-weight:600;cursor:pointer;flex-shrink:0;transition:all .15s;letter-spacing:.2px" onmouseover="this.style.background='rgba(66,133,244,.28)'" onmouseout="this.style.background='rgba(66,133,244,.15)'">${SVG.pdf} View PDF</button>`:`<span style="display:inline-flex;align-items:center;gap:5px;padding:0 10px;height:28px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--muted);font-size:11px;font-weight:500;flex-shrink:0;letter-spacing:.2px;cursor:default">${SVG.pdf} No PDF inserted</span>`}
+        <button onclick="closeModal()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.12)';this.style.color='var(--red)';this.style.borderColor='rgba(239,68,68,.28)'" onmouseout="this.style.background='transparent';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">${SVG.close}</button>
+      </div>
+    </div>
+
+    <!-- 3-column body -->
+    <div class="detail-modal-body" style="display:flex;background:var(--bg);align-items:stretch;min-height:340px;max-height:72vh">
+
+      <!-- COL 1: QR -->
+      <div style="width:210px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 1.1rem;background:var(--surface);border-right:1px solid rgba(255,255,255,.05)">
+        <div style="background:#fff;border-radius:16px;padding:12px;box-shadow:0 4px 24px rgba(0,0,0,.35)">${makeQRImg(f.id,166)}</div>
+        <div style="font-family:monospace;font-size:11px;font-weight:700;color:var(--accent2);margin-top:12px;letter-spacing:.5px;text-align:center">${esc(f.id)}</div>
+        <div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center;word-break:break-all;line-height:1.5;opacity:.5;padding:0 .2rem">yourdomain.com/scan?id=${esc(f.id)}</div>
+      </div>
+
+      <!-- COL 2: Case Details — stretches to fill height -->
+      <div style="flex:1;min-width:0;padding:1rem;display:flex;flex-direction:column;gap:.6rem;border-right:1px solid rgba(255,255,255,.05)">
+        <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex:1;display:flex;flex-direction:column">
+          <div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0">
+            <span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Case Details</span>
+          </div>
+          <div style="padding:.25rem 0;flex:1;display:flex;flex-direction:column;justify-content:center">
+            <div class="detail-row" style="padding:8px 14px"><span class="detail-key">Case No.</span><span class="detail-val">${f.caseNo?esc(f.caseNo):'<span style="color:var(--muted)">—</span>'}</span></div>
+            ${f.caseNature?`<div class="detail-row" style="padding:8px 14px"><span class="detail-key">Nature</span><span class="detail-val" style="color:var(--muted);font-size:12px">${esc('(For: '+f.caseNature+')')}</span></div>`:''}
+            <div class="detail-row" style="padding:8px 14px"><span class="detail-key">Court</span><span class="detail-val">${f.court?esc(f.court):'<span style="color:var(--muted)">—</span>'}</span></div>
+            <div class="detail-row" style="padding:8px 14px"><span class="detail-key">Location</span><span class="detail-val">${esc(f.location)}</span></div>
+          </div>
+        </div>
+        ${f.notes?`<div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex-shrink:0"><div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Notes</span></div><div style="padding:9px 14px;font-size:12.5px;color:var(--text);line-height:1.6">${esc(f.notes)}</div></div>`:''}
+      </div>
+
+      <!-- COL 3: History + Status + Action -->
+      <div style="width:320px;flex-shrink:0;display:flex;flex-direction:column;padding:1rem;gap:.6rem">
+
+        <!-- Borrow History — grows to fill available space -->
+        ${(()=>{
+          const hist=[...(f.borrowHistory||[])].reverse();
+          const activeEntry=f.borrower?{borrower:f.borrower,borrowedOn:f.borrowDate,returnedOn:null,active:true}:null;
+          const allEntries=activeEntry?[activeEntry,...hist]:hist;
+          const count=allEntries.length;
+          return`<div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex:1;display:flex;flex-direction:column;min-height:0">
+          <div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+            <span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Borrow History</span>
+            ${count?`<span style="font-size:10px;color:var(--accent2);font-weight:600">${count} record${count!==1?'s':''}</span>`:''}
+          </div>
+          ${count?`
+          <div style="overflow-y:auto;flex:1">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr style="background:var(--bg);position:sticky;top:0;z-index:1">
+                  <th style="text-align:left;padding:6px 10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap">Borrowed By</th>
+                  <th style="text-align:left;padding:6px 10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap">On</th>
+                  <th style="text-align:left;padding:6px 10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap">Returned</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${allEntries.map((h,i,arr)=>`
+                <tr style="border-bottom:${i<arr.length-1?'1px solid rgba(255,255,255,.04)':'none'}${h.active?';background:rgba(245,158,11,.04)':''}">
+                  <td style="padding:7px 10px;font-size:11.5px;color:var(--text);font-weight:${h.active?'700':'500'};max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(h.borrower)}</td>
+                  <td style="padding:7px 10px;font-size:11px;color:var(--muted);white-space:nowrap">${formatDate(h.borrowedOn)}</td>
+                  <td style="padding:7px 10px;white-space:nowrap">${h.returnedOn
+                    ?`<span style="font-size:11px;color:var(--green)">${formatDate(h.returnedOn)}</span>`
+                    :`<span style="font-size:10.5px;font-weight:700;color:var(--amber);background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.3);padding:2px 8px;border-radius:20px;letter-spacing:.2px">Not yet</span>`
+                  }</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>
+          `:`<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:1.5rem;font-size:12px;color:var(--muted);font-style:italic;opacity:.7">No borrow history yet</div>`}
+        </div>`;
+        })()}
+
+        <!-- Status pill -->
+        <div style="background:${statusBg};border:1px solid ${statusBorder};border-radius:12px;padding:10px 14px;text-align:center;flex-shrink:0">
+          <div style="font-size:9.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">Status</div>
+          <div style="font-size:14px;font-weight:700;color:${statusColor};text-transform:capitalize">${f.status}</div>
+        </div>
+
+        <!-- Action button -->
+        ${actionBtn?`<div style="flex-shrink:0">${actionBtn}</div>`:''}
+
+      </div>
+    </div>
+  </div>
+</div>`;
+}
+
+// CONTEXT MENU (right-click)
+let ctxFileId = null;
+function openCtxMenu(e,fid){
+  e.preventDefault();e.stopPropagation();
+  closeCtxMenu();
+  ctxFileId=fid;
+  const f=files.find(f=>f.id===fid);
+  const canBorrow=f.status==='available';
+  const canReturn=f.status==='borrowed';
+  const isMyBorrow=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email);
+  const menu=document.createElement('div');
+  menu.className='ctx-menu';menu.id='ctx-menu';
+  menu.style.left=e.clientX+'px';menu.style.top=e.clientY+'px';
+  // Borrow or Return button — shown conditionally, return disabled if not the borrower
+  let borrowReturnBtn='';
+  if(canBorrow){
+    borrowReturnBtn=`<button class="ctx-item" onclick="openScan('${esc(fid)}')">${SVG.borrow} Borrow</button>`;
+  } else if(canReturn){
+    if(isMyBorrow){
+      borrowReturnBtn=`<button class="ctx-item" onclick="openScan('${esc(fid)}')">${SVG.return} Return</button>`;
+    } else {
+      borrowReturnBtn=`<button class="ctx-item" disabled style="opacity:.35;cursor:not-allowed">${SVG.return} Return</button>`;
+    }
+  }
+  menu.innerHTML=`
+    <button class="ctx-item" onclick="openEditModal('${esc(fid)}')">${SVG.edit} Edit</button>
+    ${borrowReturnBtn}
+    <div style="border-top:1px solid var(--border);margin:4px 0"></div>
+    <button class="ctx-item danger" onclick="openDelete('${esc(fid)}')">${SVG.trash} Delete</button>`;
+  document.body.appendChild(menu);
+  const rect=menu.getBoundingClientRect();
+  if(rect.right>window.innerWidth)menu.style.left=(e.clientX-rect.width)+'px';
+  if(rect.bottom>window.innerHeight)menu.style.top=(e.clientY-rect.height)+'px';
+}
+function closeCtxMenu(){const m=document.getElementById('ctx-menu');if(m)m.remove();ctxFileId=null;}
+document.addEventListener('click',()=>closeCtxMenu());
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeCtxMenu()});
+
+// EDIT MODAL
+function openEditModal(fid){
+  selectedFile=files.find(f=>f.id===fid);closeCtxMenu();modal='edit';render();
+  const setVal=(id,val)=>{const el=document.getElementById(id);if(el)el.value=val||'';};
+  setVal('e-loc',selectedFile.location);
+  setVal('e-caseno',selectedFile.caseNo);
+  setVal('e-court',selectedFile.court);
+  setVal('e-nature',selectedFile.caseNature);
+}
+function renderEditModal(){
+  const f=selectedFile;
+  return`
+<div class="overlay" onclick="closeModal(event,this)">
+  <div class="modal" style="border-radius:24px;max-width:720px;width:96vw;padding:1.75rem 2rem 1.5rem">
+    <div style="margin-bottom:1.25rem">
+      <div class="modal-title">Edit Folder</div>
+      <div class="modal-sub" style="margin-bottom:0">Editing <code style="color:var(--accent2);font-size:12px">${esc(f.id)}</code></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
+      <div class="field" style="margin:0;grid-column:span 3"><label>Folder Name</label><input id="e-name" value="${esc(f.name)}"/></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
+      <div class="field" style="margin:0">${renderSmartInput('e-loc','Location','e.g. Cabinet A - Row 1','location')}</div>
+      <div class="field" style="margin:0"><label>Case Type</label>${renderCaseTypePicker('e-type',f.caseType||'others')}</div>
+      <div class="field" style="margin:0">${renderSmartInput('e-caseno','Case No.','e.g. Administrative Case No.','caseno')}</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
+      <div class="field" style="margin:0">${renderSmartInput('e-court','Court / Agency','e.g. PRC, Manila','court')}</div>
+      <div class="field" style="margin:0">${renderSmartInput('e-nature','Nature of Case','e.g. Unprofessional Conduct','nature')}</div>
+    </div>
+
+    <div class="field" style="margin-bottom:.65rem"><label>Notes <span style="color:var(--muted);font-weight:400;text-transform:none;font-size:10px">(optional)</span></label><textarea id="e-notes" rows="2" style="resize:none">${esc(f.notes||'')}</textarea></div>
+
+    <div class="field" style="margin-bottom:.65rem"><label>Drive Link <span style="color:var(--muted);font-weight:400;text-transform:none;font-size:10px">(optional — Google Drive PDF link)</span></label><input id="e-drive" value="${esc(f.driveLink||'')}" placeholder="https://drive.google.com/file/d/…" style="font-size:12px"/></div>
+
+    <div id="e-err" class="err" style="min-height:1.1rem;margin-bottom:.4rem"></div>
+    <div style="display:flex;justify-content:flex-end;gap:.65rem">
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn-sm" onclick="doEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>`;
+}
+function doEdit(){
+  const name=document.getElementById('e-name').value.trim();
+  const loc=document.getElementById('e-loc').value.trim();
+  const caseNo=document.getElementById('e-caseno').value.trim();
+  const court=document.getElementById('e-court').value.trim();
+  const caseNature=document.getElementById('e-nature').value.trim();
+  const caseType=document.getElementById('e-type').value||'others';
+  const notes=document.getElementById('e-notes').value.trim();
+  const err=document.getElementById('e-err');
+  if(!name){err.textContent='Folder Name is required.';return}
+  if(!loc){err.textContent='Location is required.';return}
+  if(!caseNo){err.textContent='Case No. is required.';return}
+  if(!court){err.textContent='Court / Agency is required.';return}
+  if(!caseNature){err.textContent='Nature of Case is required.';return}
+  err.textContent='';
+  const drive=document.getElementById('e-drive').value.trim();
+  Object.assign(selectedFile,{name,location:loc,caseNo,court,caseNature,caseType,notes,driveLink:drive});
+  modal=null;selectedFile=null;render();
+}
+
+// ACTIONS
+function openModal(m){addStep='form';modal=m;render();}
+function openQR(fid){selectedFile=files.find(f=>f.id===fid);modal='qr';render()}
+function openDelete(fid){selectedFile=files.find(f=>f.id===fid);modal='delete';render()}
+function closeModal(e,el){if(e&&el&&e.target!==el)return;modal=null;selectedFile=null;addStep='form';render()}
+function doAdd(){
+  const folderId=document.getElementById('a-id').value.trim();
+  const name=document.getElementById('a-name').value.trim();
+  const loc=document.getElementById('a-loc').value.trim();
+  const caseNo=document.getElementById('a-caseno').value.trim();
+  const court=document.getElementById('a-court').value.trim();
+  const caseNature=document.getElementById('a-nature').value.trim();
+  const caseType=document.getElementById('a-type').value||'others';
+  const notes=document.getElementById('a-notes').value.trim();
+  const err=document.getElementById('a-err');
+  if(!folderId){err.textContent='Folder ID is required.';return}
+  if(files.find(f=>f.id===folderId)){err.textContent='A folder with that ID already exists.';return}
+  if(!name){err.textContent='Folder Name is required.';return}
+  if(!loc){err.textContent='Location is required.';return}
+  if(!caseNo){err.textContent='Case No. is required.';return}
+  if(!court){err.textContent='Court / Agency is required.';return}
+  if(!caseNature){err.textContent='Nature of Case is required.';return}
+  err.textContent='';
+  const drive=document.getElementById('a-drive').value.trim();
+  const newFolder={id:folderId,name,category:'',location:loc,status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes,caseType,caseNo,court,caseNature,driveLink:drive,borrowHistory:[]};
+  files.unshift(newFolder);
+  selectedFile=newFolder;
+  addStep='confirm';
+  render();
+}
+function doDelete(){files=files.filter(f=>f.id!==selectedFile.id);modal=null;selectedFile=null;render()}
+function goPage(p){currentPage=p;modal=null;stopCameraScanner();render()}
+function logout(){stopCameraScanner();currentUser=null;modal=null;filterSearch='';filterStatus='all';filterCategory='all';searchModalOpen=false;clearColSearch();render()}
+function attachApp(){
+  const li=document.getElementById('lu-input');
+  if(li)li.addEventListener('keydown',e=>{if(e.key==='Enter')doLookup()});
+  const gs=document.getElementById('gs-input');
+  if(gs&&!document.activeElement.id)gs.focus();
+  // Re-observe registry header after each render
+  attachScrollTop();
+}
+
+// Floating scroll-to-top — injected once, observed after every render
+(function initScrollTop(){
+  if(document.getElementById('scroll-top-btn'))return;
+  const btn=document.createElement('button');
+  btn.id='scroll-top-btn';
+  btn.title='Back to top';
+  btn.innerHTML=`<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M12 19V5"/>
+    <polyline points="5 12 12 5 19 12"/>
+    <line x1="5" y1="21" x2="19" y2="21" stroke-width="1.5" opacity="0.45"/>
+  </svg>`;
+  btn.style.cssText=`
+    position:fixed;bottom:28px;right:28px;z-index:9999;
+    width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+    background:var(--accent);color:#fff;
+    display:flex;align-items:center;justify-content:center;
+    box-shadow:0 4px 18px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.08);
+    opacity:0;pointer-events:none;
+    transition:opacity .22s ease,transform .22s ease;
+    transform:translateY(8px);
+  `;
+  btn.onclick=()=>{
+    const main=document.querySelector('.main');
+    if(main)main.scrollTo({top:0,behavior:'smooth'});
+    else window.scrollTo({top:0,behavior:'smooth'});
+  };
+  btn.onmouseover=()=>{btn.style.background='#6b5ef0';btn.style.transform='translateY(-2px)'};
+  btn.onmouseout=()=>{btn.style.background='var(--accent)';btn.style.transform=btn._visible?'translateY(0)':'translateY(8px)'};
+  document.body.appendChild(btn);
+})();
+
+let _scrollObserver=null;
+function attachScrollTop(){
+  const header=document.getElementById('registry-header');
+  const btn=document.getElementById('scroll-top-btn');
+  if(!btn)return;
+  if(_scrollObserver)_scrollObserver.disconnect();
+  if(!header){
+    // Not on dashboard — hide button
+    btn.style.opacity='0';btn.style.pointerEvents='none';btn._visible=false;
+    return;
+  }
+  const main=document.querySelector('.main');
+  _scrollObserver=new IntersectionObserver(([entry])=>{
+    const visible=!entry.isIntersecting;
+    btn._visible=visible;
+    btn.style.opacity=visible?'1':'0';
+    btn.style.pointerEvents=visible?'auto':'none';
+    btn.style.transform=visible?'translateY(0)':'translateY(8px)';
+  },{root:main||null,threshold:0});
+  _scrollObserver.observe(header);
+}
+
+
+// ── Smart Autocomplete ─────────────────────────────────────────────
+function getFolderIdSuggestions(typed) {
+  if (!typed) return [];
+  const t = typed.toLowerCase();
+  // Collect only real prefixes (everything except the final unique number segment)
+  const prefixes = new Set();
+  files.forEach(f => {
+    const segs = f.id.split('-');
+    let built = '';
+    for (let i = 0; i < segs.length - 1; i++) {
+      built = i === 0 ? segs[i] : built + '-' + segs[i];
+      prefixes.add(built);
+    }
+  });
+  return [...prefixes]
+    .filter(s => s.toLowerCase().startsWith(t) && s.toLowerCase() !== t)
+    .sort()
+    .slice(0, 8);
+}
+
+function getLocationSuggestions(typed) {
+  if (!typed) return [];
+  const t = typed.toLowerCase();
+  const all = [...new Set(files.map(f => f.location).filter(Boolean))];
+  // Only return exact presaved locations that start with what was typed
+  return all
+    .filter(s => s.toLowerCase().startsWith(t) && s.toLowerCase() !== t)
+    .sort()
+    .slice(0, 8);
+}
+
+function getCaseNoSuggestions(typed) {
+  if (!typed) return [];
+  const t = typed.toLowerCase();
+  // Only the prefix part (strip trailing unique number) of each presaved caseNo
+  const prefixes = new Set();
+  files.forEach(f => {
+    if (!f.caseNo) return;
+    const match = f.caseNo.match(/^(.*?(?:No\.|#)\s*)\d+/i);
+    if (match) prefixes.add(match[1].trimEnd());
+  });
+  return [...prefixes]
+    .filter(s => s.toLowerCase().startsWith(t) && s.toLowerCase() !== t)
+    .sort()
+    .slice(0, 8);
+}
+
+function getCourtSuggestions(typed) {
+  if (!typed) return [];
+  const t = typed.toLowerCase();
+  const all = [...new Set(files.map(f => f.court).filter(Boolean))];
+  // Return exact presaved court strings that contain the typed text anywhere
+  return all
+    .filter(s => s.toLowerCase().startsWith(t) && s.toLowerCase() !== t)
+    .sort((a, b) => a.localeCompare(b))
+    .slice(0, 8);
+}
+
+function getCaseNatureSuggestions(typed) {
+  if (!typed) return [];
+  const t = typed.toLowerCase();
+  const all = [...new Set(files.map(f => f.caseNature).filter(Boolean))];
+  // Return exact presaved nature strings that contain the typed text anywhere
+  return all
+    .filter(s => s.toLowerCase().startsWith(t) && s.toLowerCase() !== t)
+    .sort((a, b) => a.localeCompare(b))
+    .slice(0, 8);
+}
+
+// Render just the dropdown list — never touches the input itself
+function acRenderDropdown(id, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const val = el.value;
+  const suggestions = type === 'folderid' ? getFolderIdSuggestions(val)
+    : type === 'location' ? getLocationSuggestions(val)
+    : type === 'caseno' ? getCaseNoSuggestions(val)
+    : type === 'court' ? getCourtSuggestions(val)
+    : type === 'nature' ? getCaseNatureSuggestions(val)
+    : [];
+  
+  // Remove existing dropdown
+  const old = document.getElementById('aclist-' + id);
+  if (old) old.remove();
+  
+  if (!suggestions.length) return;
+  
+  const list = document.createElement('div');
+  list.className = 'ac-list';
+  list.id = 'aclist-' + id;
+
+  // Position using fixed coords so it floats above the form
+  const rect = el.getBoundingClientRect();
+  const viewportWidth = window.innerWidth;
+  const PADDING = 12; // min gap from screen edge
+  // Start at input left, expand right; clamp so it doesn't overflow
+  const naturalLeft = rect.left;
+  // We'll set width after measuring — start with min-width = input width
+  list.style.top = (rect.bottom + 4) + 'px';
+  list.style.left = naturalLeft + 'px';
+  list.style.minWidth = rect.width + 'px';
+  list.style.maxWidth = (viewportWidth - naturalLeft - PADDING) + 'px';
+
+  let activeIdx = parseInt(el.dataset.acIdx || '0');
+  
+  suggestions.forEach((s, i) => {
+    const item = document.createElement('div');
+    item.className = 'ac-item' + (i === activeIdx ? ' active' : '');
+    // Bold the typed portion
+    const lo = val.toLowerCase();
+    if (s.toLowerCase().startsWith(lo)) {
+      item.innerHTML = '<em>' + s.slice(0, val.length) + '</em>' + s.slice(val.length);
+    } else {
+      item.textContent = s;
+    }
+    item.addEventListener('mousedown', e => {
+      e.preventDefault(); // prevent blur
+      acPick(id, type, s);
+    });
+    list.appendChild(item);
+  });
+  
+  document.body.appendChild(list);
+}
+
+function acHideDropdown(id) {
+  const old = document.getElementById('aclist-' + id);
+  if (old) old.remove();
+}
+
+function acRepositionAll() {
+  document.querySelectorAll('.ac-list').forEach(list => {
+    const id = list.id.replace('aclist-', '');
+    const el = document.getElementById(id);
+    if (!el) { list.remove(); return; }
+    const rect = el.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    list.style.top = (rect.bottom + 4) + 'px';
+    list.style.left = rect.left + 'px';
+    list.style.minWidth = rect.width + 'px';
+    list.style.maxWidth = (viewportWidth - rect.left - 12) + 'px';
+  });
+}
+window.addEventListener('scroll', acRepositionAll, true);
+window.addEventListener('resize', acRepositionAll);
+
+function acPick(id, type, val) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.value = val;
+    el.dataset.acIdx = '0';
+    el.focus();
+  }
+  acHideDropdown(id);
+}
+
+function acOnInput(id, type) {
+  const el = document.getElementById(id);
+  if (el) el.dataset.acIdx = '0';
+  acRenderDropdown(id, type);
+}
+
+function acOnKey(e, id, type) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const list = document.getElementById('aclist-' + id);
+  if (!list) return;
+  const items = list.querySelectorAll('.ac-item');
+  let idx = parseInt(el.dataset.acIdx || '0');
+  
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    idx = Math.min(idx + 1, items.length - 1);
+    el.dataset.acIdx = idx;
+    items.forEach((it, i) => it.classList.toggle('active', i === idx));
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    idx = Math.max(idx - 1, 0);
+    el.dataset.acIdx = idx;
+    items.forEach((it, i) => it.classList.toggle('active', i === idx));
+  } else if (e.key === 'Enter' || e.key === 'Tab') {
+    const val = items[idx] ? items[idx].textContent : null;
+    if (val) { e.preventDefault(); acPick(id, type, val); }
+  } else if (e.key === 'Escape') {
+    acHideDropdown(id);
+  }
+}
+
+function renderSmartInput(id, label, placeholder, type) {
+  return `<label style="display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px">${label}</label>
+    <div style="position:relative">
+      <input id="${id}" placeholder="${placeholder}"
+        oninput="acOnInput('${id}','${type}')"
+        onkeydown="acOnKey(event,'${id}','${type}')"
+        onfocus="acOnInput('${id}','${type}')"
+        onblur="setTimeout(()=>acHideDropdown('${id}'),150)"
+        autocomplete="off"
+      />
+    </div>`;
+}
+
+// No global mousedown listener needed — onblur handles closing
+
+// ── PDF Drive Preview ──────────────────────────────────────────────
+function getDrivePreviewUrl(link) {
+  // Convert any Drive share/view link to the /preview embed URL
+  const m = link.match(/\/file\/d\/([^\/\?]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/preview`;
+  // Already a preview link
+  if (link.includes('/preview')) return link;
+  return link;
+}
+
+function openDrivePreview(fid) {
+  const f = files.find(x => x.id === fid);
+  if (!f || !f.driveLink) return;
+  const previewUrl = getDrivePreviewUrl(f.driveLink);
+
+  // Remove any existing overlay
+  const existing = document.getElementById('pdf-overlay');
+  if (existing) existing.remove();
+
+  const overlay = document.createElement('div');
+  overlay.id = 'pdf-overlay';
+  overlay.innerHTML = `
+    <div class="pdf-modal">
+      <div class="pdf-header">
+        <span class="pdf-title">${f.name}</span>
+        <div class="pdf-actions">
+          <a href="${f.driveLink}" target="_blank" rel="noopener"
+            style="display:inline-flex;align-items:center;gap:5px;padding:0 11px;height:28px;border-radius:8px;background:rgba(66,133,244,.15);border:1px solid rgba(66,133,244,.35);color:#6fa8f5;font-size:11.5px;font-weight:600;text-decoration:none;transition:background .15s"
+            onmouseover="this.style.background='rgba(66,133,244,.28)'" onmouseout="this.style.background='rgba(66,133,244,.15)'">
+            Open in Drive ↗
+          </a>
+          <button onclick="document.getElementById('pdf-overlay').remove()"
+            style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s"
+            onmouseover="this.style.background='rgba(239,68,68,.12)';this.style.color='var(--red)';this.style.borderColor='rgba(239,68,68,.28)'"
+            onmouseout="this.style.background='transparent';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+      <iframe id="pdf-iframe" src="${previewUrl}" allow="autoplay" loading="lazy"
+        onload="(function(f){try{var d=f.contentDocument||f.contentWindow&&f.contentWindow.document;if(!d||!d.body||d.body.innerHTML==='')throw 0;}catch(e){}})(this)"
+      ></iframe>
+      <div class="pdf-login-msg" id="pdf-fallback" style="display:none">
+        <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <div style="font-size:15px;font-weight:600;color:var(--text)">Preview unavailable</div>
+        <div style="font-size:13px;color:var(--muted);max-width:320px;line-height:1.55">Google Drive blocked the embed (403). The file may be private or not shared publicly. Open it directly in Drive to view.</div>
+        <a href="${f.driveLink}" target="_blank" rel="noopener"
+          style="margin-top:4px;display:inline-flex;align-items:center;gap:6px;padding:0 18px;height:36px;border-radius:10px;background:rgba(66,133,244,.18);border:1px solid rgba(66,133,244,.4);color:#6fa8f5;font-size:13px;font-weight:600;text-decoration:none;transition:background .15s"
+          onmouseover="this.style.background='rgba(66,133,244,.32)'" onmouseout="this.style.background='rgba(66,133,244,.18)'">
+          Open in Drive ↗
+        </a>
+      </div>
+    </div>`;
+
+  // Close on backdrop click
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+  // Close on Escape
+  const onKey = e => { if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', onKey); } };
+  document.addEventListener('keydown', onKey);
+
+  document.body.appendChild(overlay);
+
+  // Detect if Google blocks the iframe (403 / cross-origin refusal)
+  const iframe = document.getElementById('pdf-iframe');
+  const fallback = document.getElementById('pdf-fallback');
+  if (iframe && fallback) {
+    const showFallback = () => {
+      iframe.style.display = 'none';
+      fallback.style.display = 'flex';
+    };
+    iframe.addEventListener('load', () => {
+      setTimeout(() => {
+        try {
+          const doc = iframe.contentDocument;
+          if (!doc || !doc.body || doc.body.innerHTML.trim() === '') showFallback();
+        } catch (e) {
+          // Cross-origin and loaded — leave iframe visible; user will see error if 403.
+        }
+      }, 800);
+    });
+    // If iframe never fires load within 12 s, show fallback
+    const timeout = setTimeout(() => { if (fallback.style.display === 'none') showFallback(); }, 12000);
+    iframe.addEventListener('load', () => clearTimeout(timeout), { once: true });
+  }
+}
+
+
+render();
+</script>
+</body>
+</html>
