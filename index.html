@@ -706,6 +706,50 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     .desktop-only { display: none !important; }
   }
 
+  /* ── ACCOUNT PAGE ── */
+  .account-page { max-width: 480px; }
+  .account-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .account-section-header {
+    padding: .6rem 1.1rem;
+    background: rgba(255,255,255,.03);
+    border-bottom: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .7px;
+  }
+  .account-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .85rem 1.1rem;
+    border-bottom: 1px solid var(--border)33;
+    font-size: 13px;
+    gap: .75rem;
+  }
+  .account-row:last-child { border-bottom: none; }
+  .account-row-key { color: var(--muted); font-size: 11.5px; font-weight: 600; flex-shrink: 0; min-width: 80px; }
+  .account-row-val { color: var(--text); font-weight: 500; text-align: right; word-break: break-all; }
+  .account-borrow-card {
+    padding: .75rem 1.1rem;
+    border-bottom: 1px solid var(--border)33;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    cursor: pointer;
+    transition: background .12s;
+  }
+  .account-borrow-card:last-child { border-bottom: none; }
+  .account-borrow-card:active { background: var(--surface2); }
+
   @media print{
     body *{visibility:hidden}
     .qr-print-area,.qr-print-area *{visibility:visible}
@@ -737,6 +781,7 @@ let files = [
 let nextFileId = 10;
 let currentUser = null;
 let currentPage = 'dashboard';
+let accountTab = 'profile'; // 'profile' | 'password' | 'borrows'
 let modal = null;
 let selectedFile = null;
 let filterSearch = '';
@@ -1084,7 +1129,7 @@ function renderApp(){
 <div class="app">
   ${renderSidebar()}
   <div class="main">
-    ${currentPage==='dashboard'?renderDashboard():renderLookupPage()}
+    ${currentPage==='dashboard'?renderDashboard():currentPage==='account'?renderAccountPage():renderLookupPage()}
     ${modal?renderModal():''}
   </div>
   ${renderMobileNav()}
@@ -1104,34 +1149,10 @@ function renderMobileNav(){
   <button class="mobile-nav-item${currentPage==='lookup'?' active':''}" onclick="goPage('lookup')">
     ${iScan}<span>Lookup</span>
   </button>
-  <button class="mobile-nav-item" onclick="showMobileUser()">
+  <button class="mobile-nav-item${currentPage==='account'?' active':''}" onclick="goPage('account')">
     ${iUser}<span>${currentUser?currentUser.name.split(' ')[0]:'Account'}</span>
   </button>
 </nav>`;
-}
-
-function showMobileUser(){
-  // Show a simple bottom sheet with user info + logout
-  const existing = document.getElementById('mobile-user-sheet');
-  if(existing){existing.remove();return;}
-  const sheet = document.createElement('div');
-  sheet.id = 'mobile-user-sheet';
-  sheet.style.cssText='position:fixed;inset:0;z-index:600;background:rgba(6,8,18,.7);display:flex;align-items:flex-end;padding:0';
-  sheet.innerHTML=`
-  <div style="width:100%;background:var(--surface);border-radius:24px 24px 0 0;padding:1.5rem 1.25rem;border-top:1px solid var(--border);animation:modalIn .2s ease">
-    <div style="width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 1.25rem"></div>
-    <div style="display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem">
-      <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;color:#fff">${initials(currentUser.name)}</div>
-      <div>
-        <div style="font-weight:700;font-size:15px">${esc(currentUser.name)}</div>
-        <div style="font-size:12px;color:var(--muted)">${esc(currentUser.email)} · <span style="color:var(--accent2)">${currentUser.role}</span></div>
-      </div>
-    </div>
-    <button onclick="logout();document.getElementById('mobile-user-sheet').remove()" style="width:100%;padding:13px;border-radius:12px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);font-weight:600;font-size:14px;cursor:pointer">Sign Out</button>
-    <div style="height:env(safe-area-inset-bottom,0px)"></div>
-  </div>`;
-  sheet.addEventListener('click',e=>{if(e.target===sheet)sheet.remove();});
-  document.body.appendChild(sheet);
 }
 
 let sidebarCollapsed = false;
@@ -2002,8 +2023,8 @@ function doAdd(){
   render();
 }
 function doDelete(){files=files.filter(f=>f.id!==selectedFile.id);modal=null;selectedFile=null;render()}
-function goPage(p){currentPage=p;modal=null;stopCameraScanner();render()}
-function logout(){stopCameraScanner();currentUser=null;modal=null;filterSearch='';filterStatus='all';filterCategory='all';searchModalOpen=false;clearColSearch();render()}
+function goPage(p){currentPage=p;modal=null;if(p!=='account')accountTab='profile';stopCameraScanner();render()}
+function logout(){stopCameraScanner();currentUser=null;modal=null;filterSearch='';filterStatus='all';filterCategory='all';searchModalOpen=false;accountTab='profile';clearColSearch();render()}
 function attachApp(){
   const li=document.getElementById('lu-input');
   if(li)li.addEventListener('keydown',e=>{if(e.key==='Enter')doLookup()});
@@ -2354,6 +2375,183 @@ function openDrivePreview(fid) {
     const timeout = setTimeout(() => { if (fallback.style.display === 'none') showFallback(); }, 12000);
     iframe.addEventListener('load', () => clearTimeout(timeout), { once: true });
   }
+}
+
+
+// ══════════════════════════════════════════════════════════════════════
+// ACCOUNT PAGE
+// ══════════════════════════════════════════════════════════════════════
+function renderAccountPage(){
+  const u = currentUser;
+  const myBorrows = files.filter(f => f.status === 'borrowed' && f.borrowerEmail === u.email);
+  const myHistory = files.flatMap(f =>
+    (f.borrowHistory||[])
+      .filter(h => h.borrower === u.name)
+      .map(h => ({...h, fileId: f.id, fileName: f.name}))
+  ).sort((a,b) => (b.borrowedOn||'').localeCompare(a.borrowedOn||''));
+
+  const iTab = (id, lbl) => `<button onclick="accountTab='${id}';render()" style="flex:1;padding:8px 0;font-size:12px;font-weight:600;border:none;border-radius:8px;cursor:pointer;transition:all .15s;background:${accountTab===id?'var(--accent)':'transparent'};color:${accountTab===id?'#fff':'var(--muted)'}">${lbl}</button>`;
+
+  return `
+<div class="account-page">
+  <div class="page-title">Account</div>
+  <div class="page-sub">Manage your profile and activity</div>
+
+  <!-- Avatar card -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow-sm)">
+    <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;flex-shrink:0;box-shadow:0 4px 14px rgba(109,40,217,.35)">${initials(u.name)}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:17px;font-weight:700;line-height:1.2">${esc(u.name)}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(u.email)}</div>
+      <div style="margin-top:5px;display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;font-size:10.5px;font-weight:700;background:${u.role==='admin'?'rgba(124,110,255,.18)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(124,110,255,.3)':'var(--border)'}">${u.role==='admin'?'⚡ Admin':'👤 User'}</div>
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Active borrows</div>
+      <div style="font-size:24px;font-weight:700;color:${myBorrows.length>0?'var(--amber)':'var(--green)'}">${myBorrows.length}</div>
+    </div>
+  </div>
+
+  <!-- Tab switcher -->
+  <div style="display:flex;gap:4px;padding:4px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;margin-bottom:1rem">
+    ${iTab('profile','Profile')}
+    ${iTab('password','Password')}
+    ${iTab('borrows','My Borrows')}
+  </div>
+
+  ${accountTab === 'profile'  ? renderAccountProfile(u)  : ''}
+  ${accountTab === 'password' ? renderAccountPassword()  : ''}
+  ${accountTab === 'borrows'  ? renderAccountBorrows(u, myBorrows, myHistory) : ''}
+
+  <!-- Sign out -->
+  <button onclick="logout()" style="width:100%;padding:13px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);font-weight:600;font-size:14px;cursor:pointer;margin-top:.5rem;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.15)'" onmouseout="this.style.background='rgba(239,68,68,.08)'">Sign Out</button>
+  <div style="height:env(safe-area-inset-bottom,8px)"></div>
+</div>`;
+}
+
+function renderAccountProfile(u){
+  return `
+<div class="account-section">
+  <div class="account-section-header">Profile Information</div>
+  <div class="account-row">
+    <span class="account-row-key">Full Name</span>
+    <span class="account-row-val">${esc(u.name)}</span>
+  </div>
+  <div class="account-row">
+    <span class="account-row-key">Email</span>
+    <span class="account-row-val" style="font-size:12px">${esc(u.email)}</span>
+  </div>
+  <div class="account-row">
+    <span class="account-row-key">Role</span>
+    <span class="account-row-val" style="color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};text-transform:capitalize">${u.role}</span>
+  </div>
+  <div class="account-row">
+    <span class="account-row-key">Account ID</span>
+    <span class="account-row-val" style="font-size:11px;color:var(--muted);font-family:monospace">#${u.id}</span>
+  </div>
+</div>
+
+<div class="account-section">
+  <div class="account-section-header">Edit Name</div>
+  <div style="padding:.85rem 1.1rem">
+    <div class="field" style="margin-bottom:.65rem"><label>Full Name</label><input id="ap-name" value="${esc(u.name)}" placeholder="Your full name"/></div>
+    <div id="ap-msg" style="min-height:1.1rem;font-size:12px;margin-bottom:.35rem"></div>
+    <button onclick="doSaveName()" style="width:100%;padding:10px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer">Save Name</button>
+  </div>
+</div>`;
+}
+
+function renderAccountPassword(){
+  return `
+<div class="account-section">
+  <div class="account-section-header">Change Password</div>
+  <div style="padding:.85rem 1.1rem">
+    <div class="field" style="margin-bottom:.65rem"><label>Current Password</label><input id="pw-cur" type="password" placeholder="••••••••"/></div>
+    <div class="field" style="margin-bottom:.65rem"><label>New Password</label><input id="pw-new" type="password" placeholder="Min 6 characters"/></div>
+    <div class="field" style="margin-bottom:.65rem"><label>Confirm New Password</label><input id="pw-conf" type="password" placeholder="Repeat new password"/></div>
+    <div id="pw-msg" style="min-height:1.1rem;font-size:12px;margin-bottom:.35rem"></div>
+    <button onclick="doChangePassword()" style="width:100%;padding:10px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer">Update Password</button>
+  </div>
+</div>`;
+}
+
+function renderAccountBorrows(u, myBorrows, myHistory){
+  const chevron = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"/></svg>`;
+  return `
+${myBorrows.length > 0 ? `
+<div class="account-section">
+  <div class="account-section-header">Currently Borrowed (${myBorrows.length})</div>
+  ${myBorrows.map(f=>`
+  <div class="account-borrow-card" onclick="openDetail('${esc(f.id)}')">
+    <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber)88;flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:9.5px;font-weight:700;color:var(--accent2);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 7px;display:inline-block;margin-bottom:2px">${esc(f.id)}</div>
+      <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:1px">Due: <span style="color:${f.dueDate&&f.dueDate<todayStr()?'var(--red)':'var(--text)'};font-weight:600">${formatDate(f.dueDate)}</span> · <span style="color:var(--muted)">${esc(f.location)}</span></div>
+    </div>
+    <div style="color:var(--border);flex-shrink:0">${chevron}</div>
+  </div>`).join('')}
+</div>` : `
+<div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;text-align:center;margin-bottom:1rem">
+  <div style="font-size:32px;margin-bottom:.5rem">📂</div>
+  <div style="font-size:13px;color:var(--muted)">No active borrows</div>
+</div>`}
+
+<div class="account-section">
+  <div class="account-section-header">Borrow History (${myHistory.length})</div>
+  ${myHistory.length === 0
+    ? `<div style="padding:1.5rem;text-align:center;font-size:13px;color:var(--muted);font-style:italic">No history yet</div>`
+    : myHistory.map((h,i)=>`
+  <div style="padding:.7rem 1.1rem;border-bottom:${i<myHistory.length-1?'1px solid var(--border)22':'none'};display:flex;align-items:flex-start;gap:.75rem">
+    <div style="width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;background:${h.returnedOn?'var(--green)':'var(--amber)'};box-shadow:0 0 5px ${h.returnedOn?'var(--green)':'var(--amber)'}88"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:9.5px;font-weight:700;color:var(--accent2);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 7px;display:inline-block;margin-bottom:2px">${esc(h.fileId)}</div>
+      <div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(h.fileName)}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:1px">
+        Borrowed ${formatDate(h.borrowedOn)} · ${h.returnedOn
+          ? `Returned <span style="color:var(--green)">${formatDate(h.returnedOn)}</span>`
+          : `<span style="color:var(--amber);font-weight:600">Not returned yet</span>`}
+      </div>
+    </div>
+  </div>`).join('')}
+</div>`;
+}
+
+function doSaveName(){
+  const nameEl = document.getElementById('ap-name');
+  const msgEl  = document.getElementById('ap-msg');
+  if(!nameEl || !msgEl) return;
+  const name = nameEl.value.trim();
+  if(!name){ msgEl.style.color='var(--red)'; msgEl.textContent='Name is required.'; return; }
+  currentUser.name = name;
+  const u = users.find(u => u.id === currentUser.id);
+  if(u) u.name = name;
+  msgEl.style.color='var(--green)';
+  msgEl.textContent='Name updated!';
+  setTimeout(()=>render(), 900); // re-render to refresh avatar initials
+}
+
+function doChangePassword(){
+  const cur = (document.getElementById('pw-cur')?.value || '');
+  const nw  = (document.getElementById('pw-new')?.value || '');
+  const cf  = (document.getElementById('pw-conf')?.value || '');
+  const msgEl = document.getElementById('pw-msg');
+  if(!msgEl) return;
+  msgEl.textContent = '';
+  if(cur !== currentUser.password){
+    msgEl.style.color='var(--red)'; msgEl.textContent='Current password is incorrect.'; return;
+  }
+  if(nw.length < 6){
+    msgEl.style.color='var(--red)'; msgEl.textContent='New password must be at least 6 characters.'; return;
+  }
+  if(nw !== cf){
+    msgEl.style.color='var(--red)'; msgEl.textContent='Passwords do not match.'; return;
+  }
+  currentUser.password = nw;
+  const u = users.find(u => u.id === currentUser.id);
+  if(u) u.password = nw;
+  msgEl.style.color='var(--green)';
+  msgEl.textContent='Password updated successfully!';
+  ['pw-cur','pw-new','pw-conf'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
 }
 
 
