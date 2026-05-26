@@ -750,6 +750,74 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .account-borrow-card:last-child { border-bottom: none; }
   .account-borrow-card:active { background: var(--surface2); }
 
+  /* ── IMAGE CROPPER OVERLAY ── */
+  #crop-overlay {
+    position: fixed; inset: 0; z-index: 2000;
+    background: rgba(0,0,0,.92);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    animation: ctFadeIn .18s ease;
+  }
+  #crop-overlay .crop-header {
+    width: 100%; max-width: 480px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: .75rem 1rem .5rem;
+    flex-shrink: 0;
+  }
+  #crop-overlay .crop-title { font-size: 14px; font-weight: 700; color: #fff; }
+  #crop-overlay .crop-hint  { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
+  #crop-wrap {
+    position: relative;
+    width: 100%; max-width: 480px;
+    flex: 1;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+  }
+  #crop-wrap:active { cursor: grabbing; }
+  #crop-canvas {
+    position: absolute; top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: block;
+  }
+  #crop-overlay .crop-footer {
+    width: 100%; max-width: 480px;
+    display: flex; gap: .6rem; padding: .75rem 1rem;
+    padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
+    flex-shrink: 0;
+  }
+  #crop-overlay .crop-btn-cancel {
+    flex: 1; padding: 11px 0; border-radius: 12px;
+    background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.15);
+    color: #fff; font-weight: 600; font-size: 14px; cursor: pointer;
+    transition: background .15s;
+  }
+  #crop-overlay .crop-btn-cancel:active { background: rgba(255,255,255,.14); }
+  #crop-overlay .crop-btn-apply {
+    flex: 2; padding: 11px 0; border-radius: 12px;
+    background: var(--accent); border: none;
+    color: #fff; font-weight: 700; font-size: 14px; cursor: pointer;
+    box-shadow: 0 3px 14px var(--accent)55;
+    transition: background .15s;
+  }
+  #crop-overlay .crop-btn-apply:active { background: #6b5ef0; }
+  /* Zoom slider */
+  #crop-zoom {
+    -webkit-appearance: none; appearance: none;
+    width: 100%; height: 3px; border-radius: 2px;
+    background: rgba(255,255,255,.18); outline: none; cursor: pointer;
+    margin: 0; padding: 0;
+  }
+  #crop-zoom::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 18px; height: 18px;
+    border-radius: 50%; background: #fff;
+    box-shadow: 0 1px 6px rgba(0,0,0,.4); cursor: pointer;
+  }
+  #crop-zoom::-moz-range-thumb {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: #fff; border: none; cursor: pointer;
+  }
+
   @media print{
     body *{visibility:hidden}
     .qr-print-area,.qr-print-area *{visibility:visible}
@@ -1198,7 +1266,7 @@ function renderSidebar(){
     ${nav('lookup','Lookup Folder',iScan)}
     <div class="sidebar-bottom">
       <div class="user-pill" title="${esc(currentUser.name)}">
-        <div class="avatar">${initials(currentUser.name)}</div>
+        <div class="avatar">${currentUser.avatarImg?`<img src="${currentUser.avatarImg}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;display:block"/>`:initials(currentUser.name)}</div>
         <div class="user-pill-info">
           <div class="user-name">${esc(currentUser.name)}</div>
           <div class="user-role">${currentUser.role}</div>
@@ -2397,17 +2465,37 @@ function renderAccountPage(){
   <div class="page-title">Account</div>
   <div class="page-sub">Manage your profile and activity</div>
 
-  <!-- Avatar card -->
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;box-shadow:var(--shadow-sm)">
-    <div style="width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;flex-shrink:0;box-shadow:0 4px 14px rgba(109,40,217,.35)">${initials(u.name)}</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:17px;font-weight:700;line-height:1.2">${esc(u.name)}</div>
-      <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(u.email)}</div>
-      <div style="margin-top:5px;display:inline-flex;align-items:center;gap:4px;padding:2px 10px;border-radius:20px;font-size:10.5px;font-weight:700;background:${u.role==='admin'?'rgba(124,110,255,.18)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(124,110,255,.3)':'var(--border)'}">${u.role==='admin'?'⚡ Admin':'👤 User'}</div>
+  <!-- Header + Avatar card -->
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:1rem;box-shadow:var(--shadow-sm)">
+    <!-- Header banner -->
+    <div style="position:relative;width:100%;height:88px;background:${u.headerImg?'transparent':'linear-gradient(135deg,#312e81 0%,#4c1d95 50%,#1e1b4b 100%)'};overflow:hidden">
+      ${u.headerImg?`<img src="${u.headerImg}" style="width:100%;height:100%;object-fit:cover;display:block" draggable="false"/>`:''}
+      <button onclick="triggerCrop('header')" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.52);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s" onmouseover="this.style.background='rgba(0,0,0,.72)'" onmouseout="this.style.background='rgba(0,0,0,.52)'">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Edit Header
+      </button>
     </div>
-    <div style="text-align:right;flex-shrink:0">
-      <div style="font-size:11px;color:var(--muted);margin-bottom:2px">Active borrows</div>
-      <div style="font-size:24px;font-weight:700;color:${myBorrows.length>0?'var(--amber)':'var(--green)'}">${myBorrows.length}</div>
+    <!-- Avatar row -->
+    <div style="padding:.85rem 1.1rem .9rem;display:flex;align-items:flex-end;gap:.85rem;margin-top:-28px;position:relative">
+      <!-- Avatar -->
+      <div style="position:relative;flex-shrink:0">
+        <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:3px solid var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.4);background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff">
+          ${u.avatarImg?`<img src="${u.avatarImg}" style="width:100%;height:100%;object-fit:cover;display:block" draggable="false"/>`:`<span>${initials(u.name)}</span>`}
+        </div>
+        <button onclick="triggerCrop('avatar')" style="position:absolute;bottom:-4px;right:-4px;width:20px;height:20px;border-radius:6px;background:var(--accent);border:2px solid var(--surface);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" title="Change photo">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </button>
+      </div>
+      <!-- Name + meta -->
+      <div style="flex:1;min-width:0;padding-top:28px">
+        <div style="font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.name)}</div>
+        <div style="font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.email)}</div>
+      </div>
+      <!-- Role + borrow count -->
+      <div style="text-align:right;flex-shrink:0;padding-top:28px">
+        <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${u.role==='admin'?'rgba(124,110,255,.18)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(124,110,255,.3)':'var(--border)'};margin-bottom:4px">${u.role==='admin'?'⚡ Admin':'👤 User'}</div>
+        <div style="font-size:10px;color:var(--muted)">Borrows: <span style="color:${myBorrows.length>0?'var(--amber)':'var(--green)'};font-weight:700">${myBorrows.length}</span></div>
+      </div>
     </div>
   </div>
 
@@ -2424,6 +2512,8 @@ function renderAccountPage(){
 
   <!-- Sign out -->
   <button onclick="logout()" style="width:100%;padding:13px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);font-weight:600;font-size:14px;cursor:pointer;margin-top:.5rem;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.15)'" onmouseout="this.style.background='rgba(239,68,68,.08)'">Sign Out</button>
+  <!-- Hidden file input for image picking -->
+  <input type="file" id="crop-file-input" accept="image/*" style="display:none" onchange="onCropFileChosen(event)"/>
   <div style="height:env(safe-area-inset-bottom,8px)"></div>
 </div>`;
 }
@@ -2552,6 +2642,286 @@ function doChangePassword(){
   msgEl.style.color='var(--green)';
   msgEl.textContent='Password updated successfully!';
   ['pw-cur','pw-new','pw-conf'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+}
+
+// ══════════════════════════════════════════════════════════════════════
+// IMAGE CROPPER
+// ══════════════════════════════════════════════════════════════════════
+let _cropTarget = null;   // 'avatar' | 'header'
+let _cropImg    = null;   // HTMLImageElement (full source)
+let _cx = 0, _cy = 0;    // image centre in canvas CSS pixels
+let _scale = 1, _minScale = 1;
+let _drag = false, _lastX = 0, _lastY = 0;
+let _pinchDist = 0, _activeTouches = [];
+
+function _cropWindow(canvas, target){
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if(target === 'avatar'){
+    const s = Math.round(Math.min(w, h) * 0.62);
+    return { x:(w-s)/2, y:(h-s)/2, w:s, h:s, round:true };
+  } else {
+    const cw = Math.round(w * 0.88);
+    const ch = Math.round(cw / 3);
+    return { x:(w-cw)/2, y:(h-ch)/2, w:cw, h:ch, round:false };
+  }
+}
+
+function triggerCrop(target){
+  _cropTarget = target;
+  const inp = document.getElementById('crop-file-input');
+  if(inp){ inp.value=''; inp.click(); }
+}
+
+function onCropFileChosen(e){
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => { _cropImg = img; _openCropOverlay(); };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function _openCropOverlay(){
+  _closeCropOverlay();
+  const isAvatar = _cropTarget === 'avatar';
+  const overlay = document.createElement('div');
+  overlay.id = 'crop-overlay';
+  overlay.innerHTML = `
+    <div class="crop-header">
+      <div>
+        <div class="crop-title">${isAvatar ? 'Crop Profile Photo' : 'Crop Header Image'}</div>
+        <div class="crop-hint">Drag · Pinch to zoom · Slider below</div>
+      </div>
+    </div>
+    <div id="crop-wrap"><canvas id="crop-canvas"></canvas></div>
+    <div style="padding:.5rem 1rem 0;max-width:480px;width:100%;box-sizing:border-box">
+      <input type="range" id="crop-zoom" min="0" max="100" value="0" style="width:100%"/>
+    </div>
+    <div class="crop-footer">
+      <button class="crop-btn-cancel" onclick="_closeCropOverlay()">Cancel</button>
+      <button class="crop-btn-apply" onclick="_applyCrop()">Use This ${isAvatar?'Photo':'Image'}</button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  const wrap   = document.getElementById('crop-wrap');
+  const canvas = document.getElementById('crop-canvas');
+
+  function sizeCanvas(){
+    const r = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width  = Math.round(r.width  * dpr);
+    canvas.height = Math.round(r.height * dpr);
+    canvas.style.width  = r.width  + 'px';
+    canvas.style.height = r.height + 'px';
+    _initCropPos();
+    _drawCrop();
+  }
+  setTimeout(sizeCanvas, 40);
+  window.addEventListener('resize', sizeCanvas);
+  overlay._cleanupResize = () => window.removeEventListener('resize', sizeCanvas);
+
+  document.getElementById('crop-zoom').addEventListener('input', e => {
+    const t = e.target.value / 100;
+    const maxS = _minScale * 4;
+    _scale = _minScale * Math.pow(maxS / _minScale, t);
+    _clampCropPos(); _drawCrop();
+  });
+
+  wrap.addEventListener('mousedown',  _cpDown);
+  wrap.addEventListener('mousemove',  _cpMove);
+  wrap.addEventListener('mouseup',    _cpUp);
+  wrap.addEventListener('mouseleave', _cpUp);
+  wrap.addEventListener('wheel',      _cpWheel, {passive:false});
+  wrap.addEventListener('touchstart',  _cpTouchStart, {passive:false});
+  wrap.addEventListener('touchmove',   _cpTouchMove,  {passive:false});
+  wrap.addEventListener('touchend',    _cpTouchEnd);
+  wrap.addEventListener('touchcancel', _cpTouchEnd);
+}
+
+function _closeCropOverlay(){
+  const el = document.getElementById('crop-overlay');
+  if(el){ if(el._cleanupResize) el._cleanupResize(); el.remove(); }
+}
+
+function _initCropPos(){
+  const canvas = document.getElementById('crop-canvas');
+  if(!canvas || !_cropImg) return;
+  const cw = canvas.clientWidth, ch = canvas.clientHeight;
+  const win = _cropWindow(canvas, _cropTarget);
+  const sx = win.w / _cropImg.width;
+  const sy = win.h / _cropImg.height;
+  _minScale = Math.max(sx, sy);
+  _scale    = _minScale;
+  _cx = win.x + win.w / 2;
+  _cy = win.y + win.h / 2;
+  const slider = document.getElementById('crop-zoom');
+  if(slider) slider.value = 0;
+}
+
+function _clampCropPos(){
+  const canvas = document.getElementById('crop-canvas');
+  if(!canvas || !_cropImg) return;
+  const win = _cropWindow(canvas, _cropTarget);
+  const hw = (_cropImg.width  * _scale) / 2;
+  const hh = (_cropImg.height * _scale) / 2;
+  _cx = Math.max(win.x + win.w - hw, Math.min(win.x + hw, _cx));
+  _cy = Math.max(win.y + win.h - hh, Math.min(win.y + hh, _cy));
+}
+
+function _drawCrop(){
+  const canvas = document.getElementById('crop-canvas');
+  if(!canvas || !_cropImg) return;
+  const dpr = window.devicePixelRatio || 1;
+  const ctx  = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cw = canvas.clientWidth, ch = canvas.clientHeight;
+  const win = _cropWindow(canvas, _cropTarget);
+  ctx.clearRect(0, 0, W, H);
+  ctx.save(); ctx.scale(dpr, dpr);
+
+  const iw = _cropImg.width  * _scale;
+  const ih = _cropImg.height * _scale;
+  const ix = _cx - iw / 2;
+  const iy = _cy - ih / 2;
+
+  // 1. Full image dimmed
+  ctx.globalAlpha = 1;
+  ctx.drawImage(_cropImg, ix, iy, iw, ih);
+  ctx.fillStyle = 'rgba(0,0,0,0.62)';
+  ctx.fillRect(0, 0, cw, ch);
+
+  // 2. Bright crop window
+  ctx.save();
+  _clipCropShape(ctx, win);
+  ctx.drawImage(_cropImg, ix, iy, iw, ih);
+  ctx.restore();
+
+  // 3. Border
+  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath(); _cropShapePath(ctx, win); ctx.stroke();
+
+  // 4. Rule-of-thirds grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 0.7;
+  ctx.save(); _clipCropShape(ctx, win);
+  for(let i=1;i<3;i++){
+    ctx.beginPath();
+    ctx.moveTo(win.x + win.w*i/3, win.y); ctx.lineTo(win.x + win.w*i/3, win.y + win.h); ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(win.x, win.y + win.h*i/3); ctx.lineTo(win.x + win.w, win.y + win.h*i/3); ctx.stroke();
+  }
+  ctx.restore();
+
+  // 5. Corner handles (header only)
+  if(!win.round){
+    const hs = 14;
+    ctx.strokeStyle = 'rgba(255,255,255,0.92)';
+    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
+    [[win.x,win.y,1,1],[win.x+win.w,win.y,-1,1],[win.x,win.y+win.h,1,-1],[win.x+win.w,win.y+win.h,-1,-1]]
+      .forEach(([ox,oy,dx,dy])=>{
+        ctx.beginPath(); ctx.moveTo(ox+dx*hs,oy); ctx.lineTo(ox,oy); ctx.lineTo(ox,oy+dy*hs); ctx.stroke();
+      });
+  }
+
+  ctx.restore();
+}
+
+function _cropShapePath(ctx, win){
+  if(win.round){
+    ctx.arc(win.x + win.w/2, win.y + win.h/2, win.w/2, 0, Math.PI*2);
+  } else {
+    const r = 10;
+    ctx.moveTo(win.x+r, win.y);
+    ctx.lineTo(win.x+win.w-r, win.y); ctx.arcTo(win.x+win.w, win.y, win.x+win.w, win.y+r, r);
+    ctx.lineTo(win.x+win.w, win.y+win.h-r); ctx.arcTo(win.x+win.w, win.y+win.h, win.x+win.w-r, win.y+win.h, r);
+    ctx.lineTo(win.x+r, win.y+win.h); ctx.arcTo(win.x, win.y+win.h, win.x, win.y+win.h-r, r);
+    ctx.lineTo(win.x, win.y+r); ctx.arcTo(win.x, win.y, win.x+r, win.y, r);
+    ctx.closePath();
+  }
+}
+
+function _clipCropShape(ctx, win){
+  ctx.beginPath(); _cropShapePath(ctx, win); ctx.clip();
+}
+
+function _applyCrop(){
+  const canvas = document.getElementById('crop-canvas');
+  if(!canvas || !_cropImg) return;
+  const win = _cropWindow(canvas, _cropTarget);
+  const isAvatar = _cropTarget === 'avatar';
+  const outW = isAvatar ? 320 : 900;
+  const outH = isAvatar ? 320 : 300;
+  const out  = document.createElement('canvas');
+  out.width  = outW; out.height = outH;
+  const octx = out.getContext('2d');
+
+  const iw = _cropImg.width  * _scale;
+  const ih = _cropImg.height * _scale;
+  const ix = _cx - iw / 2;
+  const iy = _cy - ih / 2;
+  const srcX = (win.x - ix) / _scale;
+  const srcY = (win.y - iy) / _scale;
+  const srcW = win.w / _scale;
+  const srcH = win.h / _scale;
+
+  if(isAvatar){
+    octx.beginPath();
+    octx.arc(outW/2, outH/2, outW/2, 0, Math.PI*2);
+    octx.clip();
+  }
+  octx.drawImage(_cropImg, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
+
+  const dataURL = out.toDataURL('image/jpeg', 0.88);
+  if(isAvatar) currentUser.avatarImg = dataURL; else currentUser.headerImg = dataURL;
+  const u = users.find(u => u.id === currentUser.id);
+  if(u){ if(isAvatar) u.avatarImg = dataURL; else u.headerImg = dataURL; }
+  _closeCropOverlay();
+  render();
+}
+
+// Mouse handlers
+function _cpDown(e){ _drag=true; _lastX=e.clientX; _lastY=e.clientY; }
+function _cpMove(e){
+  if(!_drag) return;
+  _cx += e.clientX-_lastX; _cy += e.clientY-_lastY;
+  _lastX=e.clientX; _lastY=e.clientY; _clampCropPos(); _drawCrop();
+}
+function _cpUp(){ _drag=false; }
+function _cpWheel(e){
+  e.preventDefault();
+  _scale = Math.max(_minScale, _scale * (e.deltaY>0 ? 0.92 : 1.09));
+  const sl=document.getElementById('crop-zoom');
+  if(sl){ const t=Math.log(_scale/_minScale)/Math.log(4); sl.value=Math.round(Math.min(1,Math.max(0,t))*100); }
+  _clampCropPos(); _drawCrop();
+}
+// Touch handlers
+function _ptDist(t1,t2){ const dx=t1.clientX-t2.clientX,dy=t1.clientY-t2.clientY; return Math.sqrt(dx*dx+dy*dy); }
+function _cpTouchStart(e){
+  e.preventDefault(); _activeTouches=Array.from(e.touches);
+  if(_activeTouches.length===1){ _drag=true; _lastX=_activeTouches[0].clientX; _lastY=_activeTouches[0].clientY; }
+  else if(_activeTouches.length===2){ _drag=false; _pinchDist=_ptDist(_activeTouches[0],_activeTouches[1]); }
+}
+function _cpTouchMove(e){
+  e.preventDefault(); _activeTouches=Array.from(e.touches);
+  if(_activeTouches.length===1&&_drag){
+    _cx+=_activeTouches[0].clientX-_lastX; _cy+=_activeTouches[0].clientY-_lastY;
+    _lastX=_activeTouches[0].clientX; _lastY=_activeTouches[0].clientY; _clampCropPos(); _drawCrop();
+  } else if(_activeTouches.length===2&&_pinchDist>0){
+    const d=_ptDist(_activeTouches[0],_activeTouches[1]);
+    _scale=Math.max(_minScale, _scale*(d/_pinchDist));
+    const sl=document.getElementById('crop-zoom');
+    if(sl){ const t=Math.log(_scale/_minScale)/Math.log(4); sl.value=Math.round(Math.min(1,Math.max(0,t||0))*100); }
+    _pinchDist=d; _clampCropPos(); _drawCrop();
+  }
+}
+function _cpTouchEnd(e){
+  _activeTouches=Array.from(e.touches);
+  if(!_activeTouches.length){ _drag=false; _pinchDist=0; }
+  else if(_activeTouches.length===1){ _drag=true; _lastX=_activeTouches[0].clientX; _lastY=_activeTouches[0].clientY; _pinchDist=0; }
 }
 
 
