@@ -315,9 +315,9 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   /* Edit modal */
   .edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
   .empty-icon{font-size:40px;margin-bottom:.75rem}
-  ::-webkit-scrollbar{width:6px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+  /* Hide all scrollbars globally */
+  *{scrollbar-width:none;-ms-overflow-style:none}
+  *::-webkit-scrollbar{display:none}
 
   /* Custom case-type picker */
   .ct-wrap{position:relative}
@@ -352,6 +352,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   /* ══════════════════════════════════════════════════════════════════
      MOBILE RESPONSIVE STYLES
      ══════════════════════════════════════════════════════════════════ */
+  .detail-drag-handle { display: none; }
   @media (max-width: 768px) {
     /* Force single-column on modal form grids */
     div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
@@ -563,26 +564,28 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     }
     .qr-modal::before { display: none; }
 
-    /* ── Detail modal: centered card, NOT a bottom sheet ── */
+    /* ── Detail modal: bottom sheet on mobile ── */
     .overlay-detail {
-      padding: 12px;
-      align-items: center !important;
-      justify-content: center;
+      padding: 0 !important;
+      align-items: flex-end !important;
     }
     .detail-modal {
-      border-radius: 20px !important;
+      border-radius: 24px 24px 0 0 !important;
       max-width: 100% !important;
       width: 100% !important;
-      max-height: calc(100vh - 24px) !important;
-      max-height: calc(100dvh - 24px) !important;
+      height: 92vh !important;
+      height: 92dvh !important;
+      max-height: 92vh !important;
+      max-height: 92dvh !important;
       min-height: unset !important;
-      overflow-x: hidden !important;
-      overflow-y: auto !important;
+      overflow: hidden !important;
       padding: 0 !important;
       display: flex !important;
       flex-direction: column !important;
+      box-shadow: 0 -8px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06) !important;
     }
-    .detail-modal::before { display: none; }
+    .detail-modal::before { display: none !important; }
+    .detail-drag-handle { display: block; width: 36px; height: 4px; background: rgba(255,255,255,.2); border-radius: 2px; margin: 10px auto 0; flex-shrink: 0; }
 
     /* Add folder modal: single column grid */
     .edit-grid { grid-template-columns: 1fr !important; }
@@ -603,6 +606,56 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     /* ── Lookup page ── */
     .main > div[style*="max-width:480px"] { max-width: 100% !important; }
 
+    /* ── Add modal: bottom sheet with drag ── */
+    .overlay-add {
+      padding: 0 !important;
+      align-items: flex-end !important;
+    }
+    .add-modal {
+      border-radius: 22px 22px 0 0 !important;
+      max-width: 100% !important;
+      max-height: 90vh;
+      max-height: 90dvh;
+      width: 100% !important;
+      padding: 0 !important;
+      overflow: hidden !important;
+      display: flex;
+      flex-direction: column;
+    }
+    /* drag handle bar inside add modal */
+    .add-modal::before { display: none !important; }
+    .add-drag-handle {
+      display: block;
+      width: 36px; height: 4px;
+      background: rgba(255,255,255,.2);
+      border-radius: 2px;
+      margin: 10px auto 0;
+      flex-shrink: 0;
+    }
+    /* sticky header with bottom fade */
+    .add-modal-header {
+      position: relative;
+      flex-shrink: 0;
+      padding: 0.75rem 1.1rem 0;
+      z-index: 2;
+    }
+    .add-modal-header::after {
+      content: '';
+      position: absolute;
+      bottom: -28px; left: 0; right: 0;
+      height: 28px;
+      background: linear-gradient(to bottom, var(--surface) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 3;
+    }
+    /* scrollable body */
+    .add-modal-body {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 1.25rem 1.1rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+    }
+
     /* ── Context menu: full width bottom sheet on mobile ── */
     .ctx-menu {
       position: fixed !important;
@@ -616,45 +669,79 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     }
     .ctx-item { padding: 13px 16px; font-size: 14px; }
 
-    /* ── Detail modal: stack 3 cols into single scrollable column ── */
+    /* ── Detail modal: fixed height, swipe panels scroll internally ── */
+    .detail-modal {
+      display: flex !important;
+      flex-direction: column !important;
+    }
     .detail-modal-body {
       flex-direction: column !important;
-      max-height: none !important;
-      min-height: unset !important;
-      overflow-y: auto !important;
+      overflow: hidden !important;
       flex: 1 !important;
-      -webkit-overflow-scrolling: touch;
+      min-height: 0 !important;
+      max-height: none !important;
+      display: flex !important;
     }
-    /* QR column: full width, row layout */
+    #detail-swipe-root {
+      flex: 1 !important;
+      min-height: 0 !important;
+      overflow: hidden !important;
+    }
+    #detail-swipe-track {
+      height: 100% !important;
+    }
+    #detail-swipe-track > div {
+      height: 100% !important;
+    }
+    /* Show the meta col on mobile (hidden on desktop) */
+    .qr-meta-col { display: flex !important; }
+    /* Desktop QR col hides the centre text items (now in meta col) */
+    .detail-modal-body > div:first-child > div:not(.qr-code-box):not(.qr-meta-col) { display: none !important; }
+
+    /* ── QR column: compact horizontal strip on mobile ── */
     .detail-modal-body > div:first-child {
       width: 100% !important;
       flex-direction: row !important;
+      flex-shrink: 0 !important;
+      align-items: center !important;
       justify-content: flex-start !important;
-      padding: .85rem 1rem !important;
+      padding: .6rem .9rem !important;
       border-right: none !important;
-      border-bottom: 1px solid rgba(255,255,255,.05) !important;
-      gap: 1rem;
+      border-bottom: 1px solid rgba(255,255,255,.07) !important;
+      gap: .75rem !important;
+      background: var(--surface) !important;
     }
-    /* Make QR image smaller on mobile */
-    .detail-modal-body > div:first-child img {
-      width: 90px !important;
-      height: 90px !important;
+    /* Shrink QR image on mobile */
+    .detail-modal-body > div:first-child > .qr-code-box {
+      padding: 6px !important;
     }
-    /* Middle and right columns full width */
-    .detail-modal-body > div:nth-child(2),
-    .detail-modal-body > div:nth-child(3) {
-      width: 100% !important;
-      border-right: none !important;
-      border-bottom: 1px solid rgba(255,255,255,.05) !important;
-      min-height: unset !important;
+    .detail-modal-body > div:first-child > .qr-code-box img {
+      display: block !important;
+      width: 64px !important;
+      height: 64px !important;
     }
-    .detail-modal-body > div:nth-child(3) {
-      border-bottom: none !important;
-    }
-    /* Detail rows: keep horizontal layout but smaller */
-    .detail-row { gap: .5rem; }
+
+    /* Detail rows tighter */
+    .detail-row { gap: .4rem; padding: 6px 11px !important; }
     .detail-val { text-align: right; font-size: 12.5px !important; }
-    .detail-key { min-width: 70px; font-size: 10.5px !important; }
+    .detail-key { min-width: 68px; font-size: 10.5px !important; }
+
+    /* Borrow history: table renders at natural height, modal body scrolls */
+    /* Status + action: side by side row */
+    .detail-modal-status-row {
+      display: flex !important;
+      gap: .6rem !important;
+      align-items: stretch !important;
+    }
+    .detail-modal-status-row > * {
+      flex: 1 !important;
+    }
+
+    /* ── Hide nav + FAB when detail card or add form is open ── */
+    body.detail-open .mobile-nav,
+    body.detail-open .mobile-fab,
+    body.add-open .mobile-nav,
+    body.add-open .mobile-fab { display: none !important; }
 
     /* ── PDF overlay: full screen ── */
     #pdf-overlay { padding: 0; }
@@ -699,9 +786,8 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     .mobile-cards { display: none !important; }
     .mobile-fab { display: none !important; }
     .mobile-filters { display: none !important; }
+    .mobile-only { display: none !important; }
   }
-
-  /* ── Mobile: hide desktop-only elements ── */
   @media (max-width: 768px) {
     .desktop-only { display: none !important; }
   }
@@ -756,10 +842,12 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     background: rgba(0,0,0,.92);
     display: flex; flex-direction: column;
     align-items: center; justify-content: center;
+    gap: .5rem;
+    overflow-y: auto;
     animation: ctFadeIn .18s ease;
   }
   #crop-overlay .crop-header {
-    width: 100%; max-width: 480px;
+    width: 100%; max-width: 560px;
     display: flex; align-items: center; justify-content: space-between;
     padding: .75rem 1rem .5rem;
     flex-shrink: 0;
@@ -768,20 +856,18 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   #crop-overlay .crop-hint  { font-size: 11px; color: rgba(255,255,255,.45); margin-top: 2px; }
   #crop-wrap {
     position: relative;
-    width: 100%; max-width: 480px;
-    flex: 1;
+    width: 100%; max-width: 560px;
+    flex-shrink: 0;
     overflow: hidden;
     touch-action: none;
     cursor: grab;
   }
   #crop-wrap:active { cursor: grabbing; }
   #crop-canvas {
-    position: absolute; top: 0; left: 0;
-    width: 100%; height: 100%;
     display: block;
   }
   #crop-overlay .crop-footer {
-    width: 100%; max-width: 480px;
+    width: 100%; max-width: 560px;
     display: flex; gap: .6rem; padding: .75rem 1rem;
     padding-bottom: calc(.75rem + env(safe-area-inset-bottom, 0px));
     flex-shrink: 0;
@@ -832,9 +918,10 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
 <script>
 // ── Data ───────────────────────────────────────────────────────────────
 let users = [
-  {id:1,name:'Admin User',email:'admin@filetrace.com',password:'admin123',role:'admin'},
-  {id:2,name:'Maria Santos',email:'maria@filetrace.com',password:'pass123',role:'user'},
-  {id:3,name:'James Lee',email:'james@filetrace.com',password:'pass123',role:'user'},
+  {id:1,name:'Admin User',email:'admin@filetrace.com',password:'admin123',role:'admin',title:'Administrator',avatar:null},
+  {id:2,name:'Maria Santos',email:'maria@filetrace.com',password:'pass123',role:'user',title:'Lawyer',avatar:null},
+  {id:3,name:'James Lee',email:'james@filetrace.com',password:'pass123',role:'user',title:'Lawyer',avatar:null},
+  {id:4,name:'Alex Reyes',email:'staff@filetrace.com',password:'staff123',role:'user',title:'Staff',avatar:null},
 ];
 
 let files = [
@@ -850,6 +937,8 @@ let nextFileId = 10;
 let currentUser = null;
 let currentPage = 'dashboard';
 let accountTab = 'profile'; // 'profile' | 'password' | 'borrows'
+let adminEditUserId = null; // which user admin is editing (null = none)
+let _abbrevManuallyEdited = false;
 let modal = null;
 let selectedFile = null;
 let filterSearch = '';
@@ -863,6 +952,9 @@ let colSearch = {id:'',caseType:'',name:'',caseNo:'',court:'',borrower:''};
 // Scan page state
 let scanFileId = null;
 let scanAction = null; // 'borrow' | 'return' | null
+// Staff borrow-for
+let staffBorrowModal = null;
+let staffBorrowForEmail = '';
 let scanMsg = null;    // {type:'err'|'ok', text}
 let scanDone = false;
 let scanDoneAction = null;
@@ -1010,7 +1102,7 @@ function renderAuth(){
       <div id="l-err" class="err"></div>
       <button class="btn-primary" onclick="doLogin()">Sign In</button>
       <div style="font-size:12px;color:var(--muted);margin-top:1rem;text-align:center">
-        Demo accounts:<br>admin@filetrace.com / admin123<br>maria@filetrace.com / pass123<br>james@filetrace.com / pass123
+        Demo accounts:<br>admin@filetrace.com / admin123<br>maria@filetrace.com / pass123<br>james@filetrace.com / pass123<br>staff@filetrace.com / staff123
       </div>
     </div>
     <div id="auth-register" style="display:none">
@@ -1055,11 +1147,74 @@ function attachAuth(){
 // QR SCAN LANDING PAGE
 // ══════════════════════════════════════════════════════════════════════
 function openScan(fid){
-  scanFileId=fid;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;
+  const f=files.find(f=>f.id===fid);
+  if(currentUser && currentUser.title==='Staff' && f && f.status==='available'){
+    staffBorrowModal={fileId:fid};
+    staffBorrowForEmail='';
+    showStaffBorrowModalDOM();
+    return;
+  }
+  scanFileId=fid;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;staffBorrowModal=null;
   render();
 }
 function closeScan(){
-  scanFileId=null;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;
+  scanFileId=null;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;staffBorrowForEmail='';
+  render();
+}
+
+function showStaffBorrowModalDOM(){
+  removeStaffBorrowModalDOM();
+  const div=document.createElement('div');
+  div.id='staff-borrow-overlay';
+  div.style.cssText='position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)';
+  div.innerHTML=renderStaffBorrowModal();
+  document.body.appendChild(div);
+}
+function removeStaffBorrowModalDOM(){
+  const el=document.getElementById('staff-borrow-overlay');
+  if(el) el.remove();
+}
+function renderStaffBorrowModal(){
+  const fid=staffBorrowModal.fileId;
+  const f=files.find(f=>f.id===fid);
+  const lawyers=users.filter(u=>u.title==='Lawyer');
+  return`
+  <div style="background:var(--surface);border-radius:24px 24px 0 0;width:100%;max-width:480px;padding:1.25rem 1.1rem calc(1.5rem + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 40px rgba(0,0,0,.5)">
+    <div style="width:36px;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:0 auto .9rem"></div>
+    <div style="font-size:15px;font-weight:700;color:var(--text);margin-bottom:.3rem">Borrow on Behalf Of</div>
+    <div style="font-size:12.5px;color:var(--muted);margin-bottom:1rem;line-height:1.5">You are borrowing <strong style="color:var(--text)">${esc(f?f.name:fid)}</strong>.<br>Select the lawyer who instructed you.</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:.75rem">
+      ${lawyers.length===0
+        ?`<div style="font-size:13px;color:var(--muted);padding:.75rem;background:var(--surface2);border-radius:10px;text-align:center">No lawyer accounts found</div>`
+        :lawyers.map(l=>`
+      <div onclick="staffBorrowForEmail='${esc(l.email)}';showStaffBorrowModalDOM()" style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:12px;border:1px solid ${staffBorrowForEmail===l.email?'var(--accent)':'var(--border)'};background:${staffBorrowForEmail===l.email?'rgba(124,110,255,.10)':'var(--bg)'};cursor:pointer;transition:all .13s;-webkit-tap-highlight-color:transparent">
+        <div style="width:32px;height:32px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${initials(l.name)}</div>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(l.name)}</div>
+          <div style="font-size:11px;color:var(--accent);font-weight:600">${esc(lawyerAbbrev(l.name))}</div>
+        </div>
+        <div style="width:18px;height:18px;border-radius:50%;border:2px solid ${staffBorrowForEmail===l.email?'var(--accent)':'var(--border)'};flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .13s">
+          ${staffBorrowForEmail===l.email?`<div style="width:9px;height:9px;border-radius:50%;background:var(--accent)"></div>`:''}
+        </div>
+      </div>`).join('')}
+    </div>
+    <div id="sbm-err" style="min-height:1rem;font-size:12px;color:var(--red);margin-bottom:.5rem"></div>
+    <div style="display:flex;gap:.6rem">
+      <button onclick="staffBorrowModal=null;removeStaffBorrowModalDOM()" style="flex:1;padding:11px;border-radius:12px;background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:13px;font-weight:600;cursor:pointer">Cancel</button>
+      <button onclick="confirmStaffBorrowModal()" style="flex:2;padding:11px;border-radius:12px;background:var(--accent);border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer">Continue</button>
+    </div>
+  </div>`;
+}
+function confirmStaffBorrowModal(){
+  if(!staffBorrowForEmail){
+    const el=document.getElementById('sbm-err');
+    if(el) el.textContent='Please select a lawyer to continue.';
+    return;
+  }
+  const fid=staffBorrowModal.fileId;
+  staffBorrowModal=null;
+  removeStaffBorrowModalDOM();
+  scanFileId=fid;scanAction=null;scanMsg=null;scanDone=false;scanDoneAction=null;
   render();
 }
 
@@ -1086,7 +1241,7 @@ function renderScanPage(){
       </div>
       <div class="info-row"><span class="info-key">Location</span><span>${esc(f.location)}</span></div>
       ${f.borrower?`<div class="info-row"><span class="info-key">Borrowed by</span><span>${esc(f.borrower)}</span></div>`:''}
-      ${f.dueDate?`<div class="info-row"><span class="info-key">Due date</span><span>${formatDate(f.dueDate)}</span></div>`:''}
+
       ${f.notes?`<div class="info-row"><span class="info-key">Notes</span><span style="font-size:12px">${esc(f.notes)}</span></div>`:''}
     </div>
 
@@ -1115,7 +1270,7 @@ function renderScanSuccess(f){
 <div class="scan-success">
   <div class="scan-success-icon">✅</div>
   <div class="scan-success-msg">${isBorrow?'Folder Borrowed':'Folder Returned'}</div>
-  <div class="scan-success-sub">${isBorrow?`Return by ${formatDate(f.dueDate)}`:`${esc(f.name)} is now available`}</div>
+  <div class="scan-success-sub">${isBorrow?`${esc(f.name)} is now borrowed`:`${esc(f.name)} is now available`}</div>
 </div>`;
 }
 
@@ -1124,15 +1279,19 @@ function renderPwPanel(f){
   const today=todayStr();
   return`
 <div class="pw-panel">
-  <div class="pw-title">${isBorrow?'Sign in to Borrow':'Sign in to Return'}</div>
-  <div class="pw-sub">${isBorrow?'Sign in with <strong>your own account</strong> to record this borrowing under your name.':'Sign in with <strong>your own account</strong> to confirm you are returning this folder.'}</div>
-  <div class="field" style="margin-bottom:.75rem">
-    <input id="pw-email" type="email" placeholder="Your email address"/>
+  <div class="pw-title">${isBorrow?'Confirm Borrow':'Confirm Return'}</div>
+  <div class="pw-sub">Enter your password to confirm.</div>
+  <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);margin-bottom:.75rem">
+    <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${currentUser.avatar?`<img src="${currentUser.avatar}" style="width:100%;height:100%;object-fit:cover;display:block"/>`:initials(currentUser.name)}</div>
+    <div style="min-width:0">
+      <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(currentUser.name)}</div>
+      <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(currentUser.email)}</div>
+    </div>
   </div>
-  <div class="field" style="margin-bottom:${isBorrow?'.75rem':'0'}">
+  <div class="field" style="margin-bottom:.75rem">
     <input id="pw-pass" type="password" placeholder="Your password"/>
   </div>
-  ${isBorrow?`<div class="field" style="margin-bottom:0"><label>Due Date <span style="color:var(--muted);font-weight:400;text-transform:none">(optional — defaults to 7 days)</span></label><input id="pw-due" type="date" min="${today}"/></div>`:''}
+
   ${scanMsg?`<div class="${scanMsg.type==='err'?'err':'ok-msg'}" style="margin-top:.5rem">${esc(scanMsg.text)}</div>`:''}
   <div class="pw-actions">
     <button class="btn-ghost" onclick="setScanAction(null)">Cancel</button>
@@ -1142,44 +1301,53 @@ function renderPwPanel(f){
 }
 
 function setScanAction(a){
+  _confirmingScan=false;
   scanAction=a;scanMsg=null;
   document.getElementById('root').innerHTML=renderScanPage();
   attachScan();
 }
 
+let _confirmingScan = false;
 function confirmScan(){
-  const email=(document.getElementById('pw-email').value||'').trim();
+  if(_confirmingScan) return; _confirmingScan=true;
   const pass=document.getElementById('pw-pass').value||'';
-  const due=scanAction==='borrow'&&document.getElementById('pw-due')?document.getElementById('pw-due').value:'';
 
-  const u=users.find(u=>u.email===email&&u.password===pass);
-  if(!u){scanMsg={type:'err',text:'Incorrect email or password. Try again.'};setScanAction(scanAction);return}
+  if(pass!==currentUser.password){scanMsg={type:'err',text:'Incorrect password. Try again.'};_confirmingScan=false;setScanAction(scanAction);return}
+  const u=currentUser;
 
   const f=files.find(f=>f.id===scanFileId);
 
   if(scanAction==='borrow'){
-    if(f.status!=='available'){scanMsg={type:'err',text:'This folder is no longer available.'};setScanAction(scanAction);return}
-    const dueVal=document.getElementById('pw-due')?document.getElementById('pw-due').value:'';
-    const defaultDue=new Date();defaultDue.setDate(defaultDue.getDate()+7);
-    const finalDue=dueVal||defaultDue.toISOString().split('T')[0];
-    f.status='borrowed';f.borrower=u.name;f.borrowerEmail=u.email;f.borrowDate=todayStr();f.dueDate=finalDue;
+    if(f.status!=='available'){scanMsg={type:'err',text:'This folder is no longer available.'};_confirmingScan=false;setScanAction(scanAction);return}
+    f.status='borrowed';f.borrower=u.name;f.borrowerEmail=u.email;f.borrowDate=todayStr();f.dueDate=null;
     if(!f.borrowHistory)f.borrowHistory=[];
-    f.borrowHistory.push({borrower:u.name,borrowedOn:todayStr(),returnedOn:null});
+    // Guard: only push if there is no open (unreturned) entry already
+    const _lastH=f.borrowHistory[f.borrowHistory.length-1];
+    if(!_lastH||_lastH.returnedOn!==null){
+      const _bfe=staffBorrowForEmail;staffBorrowForEmail='';
+      const borrowForUser=_bfe?users.find(u2=>u2.email===_bfe):null;
+      f.borrowHistory.push({borrower:u.name,borrowerEmail:u.email,borrowedOn:todayStr(),returnedOn:null,borrowFor:borrowForUser?borrowForUser.name:null,borrowForEmail:_bfe||null});
+    }
   } else {
-    if(f.status==='available'){scanMsg={type:'err',text:'This folder is already available.'};setScanAction(scanAction);return}
+    if(f.status==='available'){scanMsg={type:'err',text:'This folder is already available.'};_confirmingScan=false;setScanAction(scanAction);return}
     if(u.role!=='admin'&&f.borrowerEmail&&u.email!==f.borrowerEmail){
       scanMsg={type:'err',text:'Only '+f.borrower+' (who borrowed it) or an admin can return this folder.'};
-      setScanAction(scanAction);return;
+      _confirmingScan=false;setScanAction(scanAction);return;
     }
     if(!f.borrowHistory)f.borrowHistory=[];
     const lastEntry=f.borrowHistory[f.borrowHistory.length-1];
-    if(lastEntry&&lastEntry.returnedOn===null)lastEntry.returnedOn=todayStr();
+    if(lastEntry&&lastEntry.returnedOn===null){
+      lastEntry.returnedOn=todayStr();
+    } else {
+      f.borrowHistory.push({borrower:f.borrower,borrowerEmail:f.borrowerEmail,borrowedOn:f.borrowDate||todayStr(),returnedOn:todayStr()});
+    }
     f.status='available';f.borrower=null;f.borrowerEmail=null;f.borrowDate=null;f.dueDate=null;
   }
 
   scanDoneAction=scanAction;
   scanDone=true;
   scanAction=null;
+  _confirmingScan=false;
   document.getElementById('root').innerHTML=renderScanPage();
   attachScan();
 }
@@ -1208,7 +1376,10 @@ function renderApp(){
 function renderMobileNav(){
   const iDash=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>`;
   const iScan=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V5a1 1 0 0 1 1-1h2M4 17v2a1 1 0 0 0 1 1h2M20 7V5a1 1 0 0 0-1-1h-2M20 17v2a1 1 0 0 1-1 1h-2"/><line x1="4" y1="12" x2="20" y2="12" stroke-width="2.5"/></svg>`;
-  const iUser=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
+  const isAcct = currentPage === 'account';
+  const iUser = currentUser && currentUser.avatar
+    ? `<div style="width:22px;height:22px;border-radius:6px;overflow:hidden;border:1.5px solid ${isAcct?'var(--accent2)':'rgba(255,255,255,.3)'};flex-shrink:0;transition:border-color .15s"><img src="${currentUser.avatar}" style="width:100%;height:100%;object-fit:cover;display:block"/></div>`
+    : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
   return`
 <nav class="mobile-nav">
   <button class="mobile-nav-item${currentPage==='dashboard'?' active':''}" onclick="goPage('dashboard')">
@@ -1217,7 +1388,7 @@ function renderMobileNav(){
   <button class="mobile-nav-item${currentPage==='lookup'?' active':''}" onclick="goPage('lookup')">
     ${iScan}<span>Lookup</span>
   </button>
-  <button class="mobile-nav-item${currentPage==='account'?' active':''}" onclick="goPage('account')">
+  <button class="mobile-nav-item${isAcct?' active':''}" onclick="goPage('account')">
     ${iUser}<span>${currentUser?currentUser.name.split(' ')[0]:'Account'}</span>
   </button>
 </nav>`;
@@ -1266,12 +1437,12 @@ function renderSidebar(){
     ${nav('lookup','Lookup Folder',iScan)}
     <div class="sidebar-bottom">
       <div class="user-pill" title="${esc(currentUser.name)}">
-        <div class="avatar">${currentUser.avatarImg?`<img src="${currentUser.avatarImg}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;display:block"/>`:initials(currentUser.name)}</div>
+        <div class="avatar">${currentUser.avatar?`<img src="${currentUser.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:10px;display:block"/>`:initials(currentUser.name)}</div>
         <div class="user-pill-info">
           <div class="user-name">${esc(currentUser.name)}</div>
           <div class="user-role">${currentUser.role}</div>
         </div>
-        <button class="logout-btn" onclick="logout()" title="Sign out">
+        <button class="logout-btn" onclick="confirmLogout()" title="Sign out">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         </button>
       </div>
@@ -1403,8 +1574,10 @@ function renderDashboard(){
       </thead>
       <tbody>${fs.map(f=>{
         const activeBorrow=f.borrower;
+        const _lhT=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;
+        const borrowForLine=_lhT&&_lhT.borrowFor&&!_lhT.returnedOn?`<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:1px">For: ${esc(lawyerAbbrev(_lhT.borrowFor))}</div>`:'';
         const borrowerCell=activeBorrow
-          ?`<td style="font-size:12.5px;color:var(--text);font-weight:500">${esc(f.borrower)}</td>
+          ?`<td style="font-size:12.5px;color:var(--text);font-weight:500">${esc(f.borrower)}${borrowForLine}</td>
              <td style="font-size:12px;color:var(--text)">${f.borrowDate?formatDate(f.borrowDate):'—'}</td>
              <td style="font-size:12px;color:var(--amber);font-weight:600">Active</td>`
           :`<td colspan="3" style="text-align:center"><span style="font-size:11.5px;font-weight:600;color:var(--green);background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);padding:3px 14px;border-radius:20px;letter-spacing:.3px">Available</span></td>`;
@@ -1445,7 +1618,7 @@ function renderMobileCards(fs, hasCS){
       </div>
       <div class="mobile-card-right">
         <span class="mobile-card-badge ${f.status}">${f.status.charAt(0).toUpperCase()+f.status.slice(1)}</span>
-        ${f.borrower?`<div class="mobile-card-borrower">${esc(f.borrower)}</div>`:''}
+        ${f.borrower?`<div class="mobile-card-borrower">${esc(f.borrower)}${(()=>{const _lh=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;return _lh&&_lh.borrowFor&&!_lh.returnedOn?`<div style="font-size:10px;color:var(--accent2);font-weight:600;margin-top:1px">For: ${esc(lawyerAbbrev(_lh.borrowFor))}</div>`:''})()}</div>`:''}
         ${chevron}
       </div>
     </div>`).join('')}
@@ -1711,14 +1884,20 @@ function renderModal(){
 }
 function renderAddModal(){
   if(addStep==='confirm')return renderAddConfirm();
+  const isMobile = window.innerWidth < 769;
+  const overlayClass = isMobile ? 'overlay overlay-add' : 'overlay';
+  const modalStyle = isMobile
+    ? ''
+    : 'border-radius:24px;max-width:720px;width:96vw;padding:1.75rem 2rem 1.5rem';
   return`
-<div class="overlay" onclick="closeModal(event,this)">
-  <div class="modal" style="border-radius:24px;max-width:720px;width:96vw;padding:1.75rem 2rem 1.5rem">
-    <div style="margin-bottom:1.25rem">
-      <div class="modal-title">Add New Folder</div>
+<div class="${overlayClass}" onclick="closeModal(event,this)">
+  <div class="modal${isMobile?' add-modal':''}" style="${modalStyle}">
+    ${isMobile?'<div class="add-drag-handle"></div>':''}
+    <div class="${isMobile?'add-modal-header':''}">
+      <div class="modal-title" style="margin-top:${isMobile?'.5rem':'0'}">Add New Folder</div>
       <div class="modal-sub" style="margin-bottom:0">Register a physical folder into the system</div>
     </div>
-
+    <div class="${isMobile?'add-modal-body':''}">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
       <div class="field" style="margin:0">${renderSmartInput('a-id','Folder ID','e.g. 2016-PRC-001','folderid')}</div>
       <div class="field" style="margin:0;grid-column:span 2"><label>Folder Name</label><input id="a-name" placeholder="e.g. RUBY GANIPAN vs. ENGR. MICHAEL MAGNO"/></div>
@@ -1744,6 +1923,7 @@ function renderAddModal(){
       <button class="btn-ghost" onclick="closeModal()">Cancel</button>
       <button class="btn-sm" onclick="doAdd()">Add Folder</button>
     </div>
+    ${isMobile?'</div>':''}
   </div>
 </div>`;
 }
@@ -1837,7 +2017,7 @@ const SVG={
 };
 
 // DETAIL MODAL
-function openDetail(fid){selectedFile=files.find(f=>f.id===fid);modal='detail';render()}
+function openDetail(fid){selectedFile=files.find(f=>f.id===fid);modal='detail';document.body.classList.add('detail-open');render()}
 function renderDetailModal(){
   const f=selectedFile;
   const statusColor=f.status==='available'?'var(--green)':f.status==='borrowed'?'var(--amber)':'var(--red)';
@@ -1859,33 +2039,62 @@ function renderDetailModal(){
   return`
 <div class="overlay overlay-detail" onclick="closeModal(event,this)">
   <div class="modal detail-modal" style="max-width:1060px;width:96vw;padding:0;overflow-x:hidden;border-radius:22px;box-shadow:0 36px 80px rgba(0,0,0,.72),0 0 0 1px rgba(255,255,255,.05)">
+    <div class="detail-drag-handle"></div>
 
-    <!-- Header -->
-    <div style="display:flex;align-items:center;gap:12px;padding:1rem 1.25rem;background:var(--surface);border-bottom:1px solid rgba(255,255,255,.05)">
-      <span class="status-dot-sm ${f.status}" style="width:9px;height:9px;flex-shrink:0"></span>
+    <!-- Header: minimal strip, name + status + close -->
+    <div style="display:flex;align-items:center;gap:10px;padding:.7rem 1.1rem;background:var(--surface);border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0">
+      <span class="status-dot-sm ${f.status}" style="width:8px;height:8px;flex-shrink:0"></span>
       <div style="flex:1;min-width:0">
-        <div style="font-weight:700;font-size:14.5px;line-height:1.35;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div>
-        <div style="font-size:10.5px;color:var(--muted);margin-top:1px;font-family:monospace;letter-spacing:.4px">${esc(f.id)}</div>
+        <div style="font-weight:700;font-size:14px;line-height:1.3;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div>
       </div>
-      <div style="display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
         ${renderCaseTag(f.id,f.caseType||'others')}
-        ${f.driveLink?`<button onclick="openDrivePreview('${esc(f.id)}')" style="display:inline-flex;align-items:center;gap:5px;padding:0 11px;height:28px;border-radius:8px;background:rgba(66,133,244,.15);border:1px solid rgba(66,133,244,.35);color:#6fa8f5;font-size:11.5px;font-weight:600;cursor:pointer;flex-shrink:0;transition:all .15s;letter-spacing:.2px" onmouseover="this.style.background='rgba(66,133,244,.28)'" onmouseout="this.style.background='rgba(66,133,244,.15)'">${SVG.pdf} View PDF</button>`:`<span style="display:inline-flex;align-items:center;gap:5px;padding:0 10px;height:28px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);color:var(--muted);font-size:11px;font-weight:500;flex-shrink:0;letter-spacing:.2px;cursor:default">${SVG.pdf} No PDF inserted</span>`}
-        <button onclick="closeModal()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:28px;height:28px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.12)';this.style.color='var(--red)';this.style.borderColor='rgba(239,68,68,.28)'" onmouseout="this.style.background='transparent';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">${SVG.close}</button>
+        <button onclick="closeModal()" style="background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:8px;width:26px;height:26px;padding:0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.12)';this.style.color='var(--red)';this.style.borderColor='rgba(239,68,68,.28)'" onmouseout="this.style.background='transparent';this.style.color='var(--muted)';this.style.borderColor='var(--border)'">${SVG.close}</button>
       </div>
     </div>
 
-    <!-- 3-column body -->
+    <!-- 3-column body (desktop) / scrollable single col (mobile) -->
     <div class="detail-modal-body" style="display:flex;background:var(--bg);align-items:stretch;min-height:340px;max-height:72vh">
 
-      <!-- COL 1: QR -->
-      <div style="width:210px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.5rem 1.1rem;background:var(--surface);border-right:1px solid rgba(255,255,255,.05)">
-        <div style="background:#fff;border-radius:16px;padding:12px;box-shadow:0 4px 24px rgba(0,0,0,.35)">${makeQRImg(f.id,166)}</div>
-        <div style="font-family:monospace;font-size:11px;font-weight:700;color:var(--accent2);margin-top:12px;letter-spacing:.5px;text-align:center">${esc(f.id)}</div>
-        <div style="font-size:9px;color:var(--muted);margin-top:4px;text-align:center;word-break:break-all;line-height:1.5;opacity:.5;padding:0 .2rem">yourdomain.com/scan?id=${esc(f.id)}</div>
+      <!-- COL 1: QR — centered panel desktop, horizontal row mobile -->
+      <div style="width:210px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1.25rem 1rem;background:var(--surface);border-right:1px solid rgba(255,255,255,.05);gap:.5rem">
+        <div class="qr-code-box" onclick="openQRLightbox('${esc(f.id)}')" style="background:#fff;border-radius:14px;padding:10px;box-shadow:0 4px 20px rgba(0,0,0,.3);flex-shrink:0;cursor:pointer;transition:transform .15s,box-shadow .15s" onmousedown="this.style.transform='scale(.96)'" onmouseup="this.style.transform='scale(1)'" ontouchstart="this.style.transform='scale(.96)';this.style.boxShadow='0 2px 10px rgba(0,0,0,.3)'" ontouchend="this.style.transform='scale(1)';this.style.boxShadow='0 4px 20px rgba(0,0,0,.3)'">${makeQRImg(f.id,160)}</div>
+        <div class="qr-meta-col" style="display:flex;flex-direction:column;gap:3px;min-width:0;flex:1">
+          <div style="font-family:monospace;font-size:10.5px;font-weight:700;color:var(--accent2);letter-spacing:.5px">${esc(f.id)}</div>
+          <div style="font-size:8.5px;color:var(--muted);word-break:break-all;line-height:1.4;opacity:.5">yourdomain.com/scan?id=${esc(f.id)}</div>
+          <div style="margin-top:4px">
+            ${f.driveLink?`<button onclick="openDrivePreview('${esc(f.id)}')" style="display:inline-flex;align-items:center;gap:5px;padding:0 10px;height:26px;border-radius:7px;background:rgba(66,133,244,.15);border:1px solid rgba(66,133,244,.35);color:#6fa8f5;font-size:11px;font-weight:600;cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(66,133,244,.28)'" onmouseout="this.style.background='rgba(66,133,244,.15)'">${SVG.pdf} View PDF</button>`:`<span style="display:inline-flex;align-items:center;gap:4px;padding:0 9px;height:24px;border-radius:7px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);color:var(--muted);font-size:10px;font-weight:500;opacity:.7">${SVG.pdf} No PDF</span>`}
+          </div>
+        </div>
       </div>
 
-      <!-- COL 2: Case Details — stretches to fill height -->
-      <div style="flex:1;min-width:0;padding:1rem;display:flex;flex-direction:column;gap:.6rem;border-right:1px solid rgba(255,255,255,.05)">
+      <!-- SWIPE PANELS (mobile) / Col 2+3 (desktop) -->
+      ${(()=>{
+        const hist=[...(f.borrowHistory||[])].reverse();
+        const _lastOpen=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;
+        const _hasOpenHistoryEntry=_lastOpen&&_lastOpen.returnedOn===null;
+        const activeEntry=f.borrower&&!_hasOpenHistoryEntry?{borrower:f.borrower,borrowedOn:f.borrowDate,returnedOn:null,active:true}:null;
+        const allEntries=activeEntry?[activeEntry,...hist]:hist.map((h,i)=>i===0&&h.returnedOn===null?{...h,active:true}:h);
+        const count=allEntries.length;
+
+        const historyTable = count ?
+          allEntries.map((h,i,arr)=>`
+            <div style="padding:10px 12px;${i<arr.length-1?'border-bottom:1px solid rgba(255,255,255,.07)':''}">
+              <div style="font-size:12.5px;font-weight:${h.active?'700':'500'};color:var(--text);margin-bottom:5px">${esc(borrowerDisplay(h.borrower, h.borrowerEmail||f.borrowerEmail))}${h.borrowFor?`<span style="font-size:10px;color:var(--accent2);font-weight:600;margin-left:6px;background:rgba(124,110,255,.13);border:1px solid rgba(124,110,255,.3);padding:1px 7px;border-radius:20px">For: ${esc(lawyerAbbrev(h.borrowFor))}</span>`:''}</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                <div style="font-size:10.5px;color:var(--muted)">Borrowed: <span style="color:rgba(255,255,255,.55)">${formatDate(h.borrowedOn)}</span></div>
+                <div style="flex-shrink:0">${h.returnedOn
+                  ?'<span style="font-size:10.5px;font-weight:600;color:var(--green)">'+formatDate(h.returnedOn)+'</span>'
+                  :'<span style="font-size:10px;font-weight:700;color:var(--amber);background:rgba(245,158,11,.12);padding:2px 7px;border-radius:20px">Not yet</span>'
+                }</div>
+              </div>
+            </div>`).join('') :
+          '<div style="padding:2rem;text-align:center;font-size:12px;color:var(--muted);font-style:italic;opacity:.7">No borrow history yet</div>';
+
+
+        return `
+      <!-- Desktop: Col 2 Case Details -->
+      <div class="desktop-only" style="flex:1;min-width:0;padding:1rem;display:flex;flex-direction:column;gap:.6rem;border-right:1px solid rgba(255,255,255,.05)">
         <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex:1;display:flex;flex-direction:column">
           <div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05);flex-shrink:0">
             <span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Case Details</span>
@@ -1899,61 +2108,136 @@ function renderDetailModal(){
         </div>
         ${f.notes?`<div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex-shrink:0"><div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Notes</span></div><div style="padding:9px 14px;font-size:12.5px;color:var(--text);line-height:1.6">${esc(f.notes)}</div></div>`:''}
       </div>
-
-      <!-- COL 3: History + Status + Action -->
-      <div style="width:320px;flex-shrink:0;display:flex;flex-direction:column;padding:1rem;gap:.6rem">
-
-        <!-- Borrow History — grows to fill available space -->
-        ${(()=>{
-          const hist=[...(f.borrowHistory||[])].reverse();
-          const activeEntry=f.borrower?{borrower:f.borrower,borrowedOn:f.borrowDate,returnedOn:null,active:true}:null;
-          const allEntries=activeEntry?[activeEntry,...hist]:hist;
-          const count=allEntries.length;
-          return`<div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex:1;display:flex;flex-direction:column;min-height:0">
+      <!-- Desktop: Col 3 History + Status + Action -->
+      <div class="detail-col3 desktop-only" style="width:320px;flex-shrink:0;display:flex;flex-direction:column;padding:1rem;gap:.6rem">
+        <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface);flex:1;display:flex;flex-direction:column;min-height:0">
           <div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
             <span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Borrow History</span>
             ${count?`<span style="font-size:10px;color:var(--accent2);font-weight:600">${count} record${count!==1?'s':''}</span>`:''}
           </div>
-          ${count?`
-          <div style="overflow-y:auto;flex:1">
-            <table style="width:100%;border-collapse:collapse">
-              <thead>
-                <tr style="background:var(--bg);position:sticky;top:0;z-index:1">
-                  <th style="text-align:left;padding:6px 10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap">Borrowed By</th>
-                  <th style="text-align:left;padding:6px 10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap">On</th>
-                  <th style="text-align:left;padding:6px 10px;font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;font-weight:700;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap">Returned</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${allEntries.map((h,i,arr)=>`
-                <tr style="border-bottom:${i<arr.length-1?'1px solid rgba(255,255,255,.04)':'none'}${h.active?';background:rgba(245,158,11,.04)':''}">
-                  <td style="padding:7px 10px;font-size:11.5px;color:var(--text);font-weight:${h.active?'700':'500'};max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(h.borrower)}</td>
-                  <td style="padding:7px 10px;font-size:11px;color:var(--muted);white-space:nowrap">${formatDate(h.borrowedOn)}</td>
-                  <td style="padding:7px 10px;white-space:nowrap">${h.returnedOn
-                    ?`<span style="font-size:11px;color:var(--green)">${formatDate(h.returnedOn)}</span>`
-                    :`<span style="font-size:10.5px;font-weight:700;color:var(--amber);background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.3);padding:2px 8px;border-radius:20px;letter-spacing:.2px">Not yet</span>`
-                  }</td>
-                </tr>`).join('')}
-              </tbody>
-            </table>
-          </div>
-          `:`<div style="flex:1;display:flex;align-items:center;justify-content:center;padding:1.5rem;font-size:12px;color:var(--muted);font-style:italic;opacity:.7">No borrow history yet</div>`}
-        </div>`;
-        })()}
-
-        <!-- Status pill -->
+          <div style="overflow-y:auto;flex:1">${historyTable}</div>
+        </div>
         <div style="background:${statusBg};border:1px solid ${statusBorder};border-radius:12px;padding:10px 14px;text-align:center;flex-shrink:0">
           <div style="font-size:9.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">Status</div>
           <div style="font-size:14px;font-weight:700;color:${statusColor};text-transform:capitalize">${f.status}</div>
         </div>
-
-        <!-- Action button -->
         ${actionBtn?`<div style="flex-shrink:0">${actionBtn}</div>`:''}
-
       </div>
+
+      <!-- Mobile: swipeable panels -->
+      <div class="mobile-only" id="detail-swipe-root" style="flex:1;min-width:0;overflow:hidden;position:relative">
+        <!-- dot indicators -->
+        <div style="position:absolute;top:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:10;pointer-events:none">
+          <div id="dot-0" style="width:6px;height:6px;border-radius:50%;background:var(--accent);transition:background .2s"></div>
+          <div id="dot-1" style="width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.2);transition:background .2s"></div>
+        </div>
+        <!-- swipe track -->
+        <div id="detail-swipe-track" style="display:flex;width:200%;height:100%;transition:transform .3s cubic-bezier(.4,0,.2,1)">
+
+          <!-- Panel 0: Case Details + Status + Action -->
+          <div style="width:50%;height:100%;flex-shrink:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:.75rem .85rem;display:flex;flex-direction:column;gap:.6rem;box-sizing:border-box;padding-top:1.6rem">
+            <div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface)">
+              <div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05)">
+                <span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Case Details</span>
+              </div>
+              <div style="padding:.25rem 0">
+                <div class="detail-row" style="padding:8px 14px"><span class="detail-key">Case No.</span><span class="detail-val">${f.caseNo?esc(f.caseNo):'<span style="color:var(--muted)">—</span>'}</span></div>
+                ${f.caseNature?`<div class="detail-row" style="padding:8px 14px"><span class="detail-key">Nature</span><span class="detail-val" style="color:var(--muted);font-size:12px">${esc('(For: '+f.caseNature+')')}</span></div>`:''}
+                <div class="detail-row" style="padding:8px 14px"><span class="detail-key">Court</span><span class="detail-val">${f.court?esc(f.court):'<span style="color:var(--muted)">—</span>'}</span></div>
+                <div class="detail-row" style="padding:8px 14px"><span class="detail-key">Location</span><span class="detail-val">${esc(f.location)}</span></div>
+              </div>
+            </div>
+            ${f.notes?`<div style="border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.06);background:var(--surface)"><div style="padding:.5rem .9rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.05)"><span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Notes</span></div><div style="padding:9px 14px;font-size:12.5px;color:var(--text);line-height:1.6">${esc(f.notes)}</div></div>`:''}
+            <div class="detail-modal-status-row" style="flex-shrink:0">
+              <div style="background:${statusBg};border:1px solid ${statusBorder};border-radius:12px;padding:9px 12px;text-align:center;display:flex;flex-direction:column;justify-content:center">
+                <div style="font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.7px;margin-bottom:2px">Status</div>
+                <div style="font-size:13.5px;font-weight:700;color:${statusColor};text-transform:capitalize">${f.status}</div>
+              </div>
+              ${actionBtn?`<div style="flex:1">${actionBtn.replace('padding:10px 0','padding:9px 0')}</div>`:''}
+            </div>
+          </div>
+
+          <!-- Panel 1: Borrow History -->
+          <div style="width:50%;height:100%;flex-shrink:0;overflow:hidden;display:flex;flex-direction:column;box-sizing:border-box;padding-top:1.6rem">
+            <div style="padding:.4rem .85rem .5rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+              <span style="font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--muted)">Borrow History</span>
+              ${count?`<span style="font-size:10px;color:var(--accent2);font-weight:600">${count} record${count!==1?'s':''}</span>`:''}
+            </div>
+            <div style="margin:0 .85rem .85rem;border-radius:14px;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;border:1px solid rgba(255,255,255,.1);background:var(--surface);flex:1;min-height:0">
+              ${historyTable}
+            </div>
+          </div>
+
+        </div>
+      </div>`;
+      })()}
     </div>
   </div>
 </div>`;
+}
+
+// ── QR Lightbox (mobile tap to enlarge) ───────────────────────────────
+function openQRLightbox(fid){
+  const f = files.find(f=>f.id===fid);
+  if(!f) return;
+  const existing = document.getElementById('qr-lightbox');
+  if(existing) existing.remove();
+  const el = document.createElement('div');
+  el.id = 'qr-lightbox';
+  el.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1.5rem;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);animation:qrlb-in .18s ease';
+  el.innerHTML = `
+    <style>@keyframes qrlb-in{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}</style>
+    <div style="background:#fff;border-radius:20px;padding:18px;box-shadow:0 8px 40px rgba(0,0,0,.6)">
+      ${makeQRImg(f.id, 260)}
+    </div>
+    <div style="font-family:monospace;font-size:13px;font-weight:700;color:#fff;letter-spacing:.5px">${esc(f.id)}</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.45)">yourdomain.com/scan?id=${esc(f.id)}</div>
+    <button onclick="document.getElementById('qr-lightbox').remove()" style="margin-top:.25rem;padding:10px 32px;border-radius:30px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.3px">Close</button>
+  `;
+  el.addEventListener('click', e=>{ if(e.target===el) el.remove(); });
+  document.body.appendChild(el);
+}
+
+// ── Detail swipe (mobile) ──────────────────────────────────────────────
+let _swipePanel = 0;
+function _initDetailSwipe(){
+  const track = document.getElementById('detail-swipe-track');
+  if(!track) return;
+  let startX=0, startY=0, dragging=false, moved=false;
+  function goTo(idx){
+    _swipePanel = idx;
+    track.style.transition = 'transform .3s cubic-bezier(.4,0,.2,1)';
+    track.style.transform = idx===0 ? 'translateX(0)' : 'translateX(-50%)';
+    const d0=document.getElementById('dot-0'), d1=document.getElementById('dot-1');
+    if(d0) d0.style.background = idx===0 ? 'var(--accent)' : 'rgba(255,255,255,.2)';
+    if(d1) d1.style.background = idx===1 ? 'var(--accent)' : 'rgba(255,255,255,.2)';
+  }
+  track.addEventListener('touchstart', e=>{
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    dragging = true; moved = false;
+    track.style.transition = 'none';
+  },{passive:true});
+  track.addEventListener('touchmove', e=>{
+    if(!dragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const dy = e.touches[0].clientY - startY;
+    if(!moved && Math.abs(dy) > Math.abs(dx)) { dragging=false; return; }
+    moved = true;
+    const base = _swipePanel===0 ? 0 : -50;
+    const pct = (dx / track.parentElement.offsetWidth) * 100;
+    const clamped = Math.max(-50, Math.min(0, base + pct));
+    track.style.transform = `translateX(${clamped}%)`;
+  },{passive:true});
+  track.addEventListener('touchend', e=>{
+    if(!dragging) return;
+    dragging = false;
+    const dx = e.changedTouches[0].clientX - startX;
+    if(dx < -40 && _swipePanel===0) goTo(1);
+    else if(dx > 40 && _swipePanel===1) goTo(0);
+    else goTo(_swipePanel);
+  },{passive:true});
+  goTo(0);
 }
 
 // CONTEXT MENU (right-click)
@@ -2061,10 +2345,10 @@ function doEdit(){
 }
 
 // ACTIONS
-function openModal(m){addStep='form';modal=m;render();}
+function openModal(m){addStep='form';modal=m;if(m==='add')document.body.classList.add('add-open');render();}
 function openQR(fid){selectedFile=files.find(f=>f.id===fid);modal='qr';render()}
 function openDelete(fid){selectedFile=files.find(f=>f.id===fid);modal='delete';render()}
-function closeModal(e,el){if(e&&el&&e.target!==el)return;modal=null;selectedFile=null;addStep='form';render()}
+function closeModal(e,el){if(e&&el&&e.target!==el)return;modal=null;selectedFile=null;addStep='form';document.body.classList.remove('detail-open');document.body.classList.remove('add-open');render()}
 function doAdd(){
   const folderId=document.getElementById('a-id').value.trim();
   const name=document.getElementById('a-name').value.trim();
@@ -2092,7 +2376,29 @@ function doAdd(){
 }
 function doDelete(){files=files.filter(f=>f.id!==selectedFile.id);modal=null;selectedFile=null;render()}
 function goPage(p){currentPage=p;modal=null;if(p!=='account')accountTab='profile';stopCameraScanner();render()}
-function logout(){stopCameraScanner();currentUser=null;modal=null;filterSearch='';filterStatus='all';filterCategory='all';searchModalOpen=false;accountTab='profile';clearColSearch();render()}
+function doLogout(){stopCameraScanner();currentUser=null;modal=null;filterSearch='';filterStatus='all';filterCategory='all';searchModalOpen=false;accountTab='profile';clearColSearch();removeLogoutConfirmDOM();render()}
+function confirmLogout(){
+  if(document.getElementById('logout-confirm-overlay')) return;
+  const overlay=document.createElement('div');
+  overlay.id='logout-confirm-overlay';
+  overlay.style.cssText='position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)';
+  overlay.innerHTML=`
+    <div style="background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:24px 24px 0 0;padding:1.5rem 1.5rem calc(1.5rem + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;box-shadow:0 -16px 48px rgba(0,0,0,.6);display:flex;flex-direction:column;align-items:center;gap:.75rem;text-align:center">
+      <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.18);margin-bottom:.25rem"></div>
+      <div style="width:48px;height:48px;border-radius:50%;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.25);display:flex;align-items:center;justify-content:center;margin-bottom:.1rem">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      </div>
+      <div style="font-size:17px;font-weight:700;color:var(--text)">Sign Out?</div>
+      <div style="font-size:13px;color:var(--muted);line-height:1.55;max-width:280px">You are about to sign out of your account.</div>
+      <div style="display:flex;flex-direction:column;gap:.5rem;width:100%;margin-top:.25rem">
+        <button onclick="doLogout()" style="width:100%;padding:13px 0;border-radius:13px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.28);color:var(--red);font-weight:700;font-size:14px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.2)'" onmouseout="this.style.background='rgba(239,68,68,.1)'">Sign Out</button>
+        <button onclick="removeLogoutConfirmDOM()" style="width:100%;padding:13px 0;border-radius:13px;background:transparent;border:1px solid var(--border);color:var(--text);font-weight:600;font-size:14px;cursor:pointer;transition:all .15s" onmouseover="this.style.background='rgba(255,255,255,.05)'" onmouseout="this.style.background='transparent'">Cancel</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e=>{ if(e.target===overlay) removeLogoutConfirmDOM(); });
+}
+function removeLogoutConfirmDOM(){const el=document.getElementById('logout-confirm-overlay');if(el)el.remove();}
 function attachApp(){
   const li=document.getElementById('lu-input');
   if(li)li.addEventListener('keydown',e=>{if(e.key==='Enter')doLookup()});
@@ -2100,6 +2406,14 @@ function attachApp(){
   if(gs&&!document.activeElement.id)gs.focus();
   // Re-observe registry header after each render
   attachScrollTop();
+  // Wire long-press on avatar + banner zones (only present on account page)
+  attachImgLongPress();
+  // Wire drag-to-dismiss on detail sheet if open
+  attachDetailDrag();
+  // Wire swipe panels on mobile detail sheet
+  _swipePanel = 0;
+  _initDetailSwipe();
+  attachAddDrag();
 }
 
 // Floating scroll-to-top — injected once, observed after every render
@@ -2449,16 +2763,42 @@ function openDrivePreview(fid) {
 // ══════════════════════════════════════════════════════════════════════
 // ACCOUNT PAGE
 // ══════════════════════════════════════════════════════════════════════
+
+// Compute lawyer abbreviation: each word → first letter + "."
+function lawyerAbbrev(name){
+  if(!name) return '';
+  return name.trim().split(/\s+/).map(w=>w[0].toUpperCase()+'.').join(' ');
+}
+// Display name used in borrow/return boxes
+function displayName(u){
+  if(!u) return '';
+  if(u.abbrev) return u.abbrev;
+  if(u.role!=='admin' && u.title==='Lawyer') return lawyerAbbrev(u.name);
+  return u.name;
+}
+// Get display name from a borrower name string (looks up user by email then name, falls back to stored name)
+function borrowerDisplay(nameStr, emailStr){
+  if(!nameStr) return '';
+  const u = (emailStr && users.find(u => u.email === emailStr))
+          || users.find(u => u.name === nameStr);
+  if(u) return displayName(u);
+  return nameStr;
+}
+
 function renderAccountPage(){
   const u = currentUser;
+  const isAdmin = u.role === 'admin';
+  const abbrev = u.abbrev || (u.title==='Lawyer' ? lawyerAbbrev(u.name) : '');
   const myBorrows = files.filter(f => f.status === 'borrowed' && f.borrowerEmail === u.email);
   const myHistory = files.flatMap(f =>
     (f.borrowHistory||[])
-      .filter(h => h.borrower === u.name)
+      .filter(h => h.borrowerEmail === u.email && h.returnedOn)
       .map(h => ({...h, fileId: f.id, fileName: f.name}))
   ).sort((a,b) => (b.borrowedOn||'').localeCompare(a.borrowedOn||''));
 
   const iTab = (id, lbl) => `<button onclick="accountTab='${id}';render()" style="flex:1;padding:8px 0;font-size:12px;font-weight:600;border:none;border-radius:8px;cursor:pointer;transition:all .15s;background:${accountTab===id?'var(--accent)':'transparent'};color:${accountTab===id?'#fff':'var(--muted)'}">${lbl}</button>`;
+
+  const roleLabel = u.role==='admin' ? 'Admin' : u.title==='Lawyer' ? 'Lawyer' : u.title==='Staff' ? 'Staff' : 'User';
 
   return `
 <div class="account-page">
@@ -2467,33 +2807,28 @@ function renderAccountPage(){
 
   <!-- Header + Avatar card -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:1rem;box-shadow:var(--shadow-sm)">
-    <!-- Header banner -->
-    <div style="position:relative;width:100%;height:88px;background:${u.headerImg?'transparent':'linear-gradient(135deg,#312e81 0%,#4c1d95 50%,#1e1b4b 100%)'};overflow:hidden">
-      ${u.headerImg?`<img src="${u.headerImg}" style="width:100%;height:100%;object-fit:cover;display:block" draggable="false"/>`:''}
-      <button onclick="triggerCrop('header')" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.52);backdrop-filter:blur(4px);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;transition:background .15s" onmouseover="this.style.background='rgba(0,0,0,.72)'" onmouseout="this.style.background='rgba(0,0,0,.52)'">
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Edit Header
-      </button>
+    <!-- Header banner — tap = view photo (if set), hold = action sheet -->
+    <div id="acct-banner-zone"
+      style="position:relative;width:100%;height:0;padding-top:calc(100% * 88 / 480);background:${u.banner?'transparent':'linear-gradient(135deg,#312e81 0%,#4c1d95 50%,#1e1b4b 100%)'};overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;transition:filter .15s">
+      ${u.banner?`<img src="${u.banner}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" draggable="false"/>`:''}
     </div>
     <!-- Avatar row -->
     <div style="padding:.85rem 1.1rem .9rem;display:flex;align-items:flex-end;gap:.85rem;margin-top:-28px;position:relative">
-      <!-- Avatar -->
+      <!-- Avatar — tap = view photo (if set), hold = action sheet -->
       <div style="position:relative;flex-shrink:0">
-        <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:3px solid var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.4);background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff">
-          ${u.avatarImg?`<img src="${u.avatarImg}" style="width:100%;height:100%;object-fit:cover;display:block" draggable="false"/>`:`<span>${initials(u.name)}</span>`}
+        <div id="acct-avatar-zone"
+          style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:3px solid var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.4);background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;-webkit-tap-highlight-color:transparent;user-select:none;transition:transform .15s,box-shadow .15s">
+          ${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" draggable="false"/>`:`<span style="pointer-events:none">${initials(u.name)}</span>`}
         </div>
-        <button onclick="triggerCrop('avatar')" style="position:absolute;bottom:-4px;right:-4px;width:20px;height:20px;border-radius:6px;background:var(--accent);border:2px solid var(--surface);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0" title="Change photo">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        </button>
       </div>
       <!-- Name + meta -->
       <div style="flex:1;min-width:0;padding-top:28px">
-        <div style="font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.name)}</div>
+        <div style="font-size:16px;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.name)}${abbrev?` <span style="color:var(--accent);font-size:11px;font-weight:500">(${esc(abbrev)})</span>`:''}</div>
         <div style="font-size:11.5px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.email)}</div>
       </div>
       <!-- Role + borrow count -->
       <div style="text-align:right;flex-shrink:0;padding-top:28px">
-        <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${u.role==='admin'?'rgba(124,110,255,.18)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(124,110,255,.3)':'var(--border)'};margin-bottom:4px">${u.role==='admin'?'⚡ Admin':'👤 User'}</div>
+        <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${u.role==='admin'?'rgba(124,110,255,.18)':u.title==='Lawyer'?'rgba(99,102,241,.12)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':u.title==='Lawyer'?'var(--accent)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(124,110,255,.3)':u.title==='Lawyer'?'rgba(99,102,241,.3)':'var(--border)'};margin-bottom:4px">${roleLabel}</div>
         <div style="font-size:10px;color:var(--muted)">Borrows: <span style="color:${myBorrows.length>0?'var(--amber)':'var(--green)'};font-weight:700">${myBorrows.length}</span></div>
       </div>
     </div>
@@ -2504,27 +2839,31 @@ function renderAccountPage(){
     ${iTab('profile','Profile')}
     ${iTab('password','Password')}
     ${iTab('borrows','My Borrows')}
+    ${isAdmin ? iTab('users','All Users') : ''}
   </div>
 
-  ${accountTab === 'profile'  ? renderAccountProfile(u)  : ''}
+  ${accountTab === 'profile'  ? renderAccountProfile(u, abbrev, isAdmin)  : ''}
   ${accountTab === 'password' ? renderAccountPassword()  : ''}
   ${accountTab === 'borrows'  ? renderAccountBorrows(u, myBorrows, myHistory) : ''}
+  ${accountTab === 'users' && isAdmin ? renderAdminUsers(u) : ''}
 
   <!-- Sign out -->
-  <button onclick="logout()" style="width:100%;padding:13px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);font-weight:600;font-size:14px;cursor:pointer;margin-top:.5rem;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.15)'" onmouseout="this.style.background='rgba(239,68,68,.08)'">Sign Out</button>
+  <button onclick="confirmLogout()" style="width:100%;padding:13px;border-radius:14px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);font-weight:600;font-size:14px;cursor:pointer;margin-top:.5rem;transition:all .15s" onmouseover="this.style.background='rgba(239,68,68,.15)'" onmouseout="this.style.background='rgba(239,68,68,.08)'">Sign Out</button>
   <!-- Hidden file input for image picking -->
   <input type="file" id="crop-file-input" accept="image/*" style="display:none" onchange="onCropFileChosen(event)"/>
   <div style="height:env(safe-area-inset-bottom,8px)"></div>
 </div>`;
 }
 
-function renderAccountProfile(u){
+function renderAccountProfile(u, abbrev, isAdmin){
+  // Reset manual abbrev flag when profile tab renders
+  requestAnimationFrame(()=>{ _abbrevManuallyEdited = false; });
   return `
 <div class="account-section">
   <div class="account-section-header">Profile Information</div>
   <div class="account-row">
     <span class="account-row-key">Full Name</span>
-    <span class="account-row-val">${esc(u.name)}</span>
+    <span class="account-row-val">${esc(u.name)}${(u.title==='Lawyer'&&abbrev)?` <span style="color:var(--accent);font-size:11px">(${esc(abbrev)})</span>`:''}</span>
   </div>
   <div class="account-row">
     <span class="account-row-key">Email</span>
@@ -2532,7 +2871,7 @@ function renderAccountProfile(u){
   </div>
   <div class="account-row">
     <span class="account-row-key">Role</span>
-    <span class="account-row-val" style="color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};text-transform:capitalize">${u.role}</span>
+    <span class="account-row-val" style="color:${u.role==='admin'?'var(--accent2)':'var(--muted)'};text-transform:capitalize">${u.role==='admin'?'Admin':u.title||u.role}</span>
   </div>
   <div class="account-row">
     <span class="account-row-key">Account ID</span>
@@ -2543,8 +2882,15 @@ function renderAccountProfile(u){
 <div class="account-section">
   <div class="account-section-header">Edit Name</div>
   <div style="padding:.85rem 1.1rem">
-    <div class="field" style="margin-bottom:.65rem"><label>Full Name</label><input id="ap-name" value="${esc(u.name)}" placeholder="Your full name"/></div>
-    <div id="ap-msg" style="min-height:1.1rem;font-size:12px;margin-bottom:.35rem"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.55rem;margin-bottom:${u.title==='Lawyer'?'.65rem':'.3rem'}">
+      <div class="field" style="margin:0"><label>First Name</label><input id="ap-firstname" value="${esc(u.name.split(' ')[0]||'')}" placeholder="First name" oninput="onNameFieldChange()"/></div>
+      <div class="field" style="margin:0"><label>Last Name</label><input id="ap-lastname" value="${esc(u.name.split(' ').slice(1).join(' ')||'')}" placeholder="Last name" oninput="onNameFieldChange()"/></div>
+    </div>
+    ${u.title==='Lawyer'?`<div class="field" style="margin-bottom:.65rem">
+      <label>Abbreviated Name <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(e.g. J. C., K. L.)</span></label>
+      <input id="ap-abbrev" value="${esc(abbrev)}" placeholder="Auto-generated if left unchanged" oninput="onAbbrevManualEdit()"/>
+    </div>`:'<input id="ap-abbrev" type="hidden" value=""/>'}
+    <div id="ap-msg" style="min-height:.8rem;font-size:12px;margin-bottom:.25rem"></div>
     <button onclick="doSaveName()" style="width:100%;padding:10px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;border:none;cursor:pointer">Save Name</button>
   </div>
 </div>`;
@@ -2570,16 +2916,19 @@ function renderAccountBorrows(u, myBorrows, myHistory){
 ${myBorrows.length > 0 ? `
 <div class="account-section">
   <div class="account-section-header">Currently Borrowed (${myBorrows.length})</div>
-  ${myBorrows.map(f=>`
+  ${myBorrows.map(f=>{
+    const _lh = f.borrowHistory && f.borrowHistory.length ? f.borrowHistory[f.borrowHistory.length-1] : null;
+    return `
   <div class="account-borrow-card" onclick="openDetail('${esc(f.id)}')">
     <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber)88;flex-shrink:0"></div>
     <div style="flex:1;min-width:0">
       <div style="font-size:9.5px;font-weight:700;color:var(--accent2);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 7px;display:inline-block;margin-bottom:2px">${esc(f.id)}</div>
       <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div>
-      <div style="font-size:11px;color:var(--muted);margin-top:1px">Due: <span style="color:${f.dueDate&&f.dueDate<todayStr()?'var(--red)':'var(--text)'};font-weight:600">${formatDate(f.dueDate)}</span> · <span style="color:var(--muted)">${esc(f.location)}</span></div>
+      <div style="font-size:11px;color:var(--muted);margin-top:1px">Borrowed: <span style="color:var(--text);font-weight:600">${formatDate(f.borrowDate)}</span> · <span style="color:var(--muted)">${esc(f.location)}</span></div>
+      ${_lh&&_lh.borrowFor&&!_lh.returnedOn?`<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">For: ${esc(lawyerAbbrev(_lh.borrowFor))}</div>`:''}
     </div>
     <div style="color:var(--border);flex-shrink:0">${chevron}</div>
-  </div>`).join('')}
+  </div>`;}).join('')}
 </div>` : `
 <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem;text-align:center;margin-bottom:1rem">
   <div style="font-size:32px;margin-bottom:.5rem">📂</div>
@@ -2590,9 +2939,15 @@ ${myBorrows.length > 0 ? `
   <div class="account-section-header">Borrow History (${myHistory.length})</div>
   ${myHistory.length === 0
     ? `<div style="padding:1.5rem;text-align:center;font-size:13px;color:var(--muted);font-style:italic">No history yet</div>`
-    : myHistory.map((h,i)=>`
-  <div style="padding:.7rem 1.1rem;border-bottom:${i<myHistory.length-1?'1px solid var(--border)22':'none'};display:flex;align-items:flex-start;gap:.75rem">
-    <div style="width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;background:${h.returnedOn?'var(--green)':'var(--amber)'};box-shadow:0 0 5px ${h.returnedOn?'var(--green)':'var(--amber)'}88"></div>
+    : myHistory.map((h,i)=>{
+        const fileObj = files.find(f=>f.id===h.fileId);
+        const currentlyBorrowedBySomeone = fileObj && fileObj.status === 'borrowed';
+        const borrowedByOther = currentlyBorrowedBySomeone && fileObj.borrower !== u.name;
+        const dotColor = (h.returnedOn && !borrowedByOther) ? 'var(--green)' : 'var(--amber)';
+        const otherBorrowerDisplay = borrowedByOther ? borrowerDisplay(fileObj.borrower, fileObj.borrowerEmail) : '';
+        return `
+  <div style="padding:.7rem 1.1rem;border-bottom:${i<myHistory.length-1?'1px solid var(--border)22':'none'};display:flex;align-items:flex-start;gap:.75rem;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:background .12s;border-radius:${i===0?'0':'0'}" onclick="openDetail('${esc(h.fileId)}')">
+    <div style="width:7px;height:7px;border-radius:50%;margin-top:5px;flex-shrink:0;background:${dotColor};box-shadow:0 0 5px ${dotColor}88"></div>
     <div style="flex:1;min-width:0">
       <div style="font-size:9.5px;font-weight:700;color:var(--accent2);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 7px;display:inline-block;margin-bottom:2px">${esc(h.fileId)}</div>
       <div style="font-size:12.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(h.fileName)}</div>
@@ -2600,24 +2955,58 @@ ${myBorrows.length > 0 ? `
         Borrowed ${formatDate(h.borrowedOn)} · ${h.returnedOn
           ? `Returned <span style="color:var(--green)">${formatDate(h.returnedOn)}</span>`
           : `<span style="color:var(--amber);font-weight:600">Not returned yet</span>`}
+        ${borrowedByOther ? `· <span style="color:var(--amber)">Now with: ${esc(otherBorrowerDisplay)}</span>` : ''}
+        ${h.borrowFor ? `<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">For: ${esc(lawyerAbbrev(h.borrowFor))}</div>` : ''}
       </div>
     </div>
-  </div>`).join('')}
+    <div style="color:var(--border);flex-shrink:0;margin-top:2px">${chevron}</div>
+  </div>`;}).join('')}
 </div>`;
 }
 
+function updateAbbrevPreview(){
+  if(_abbrevManuallyEdited) return;
+  const first = (document.getElementById('ap-firstname')?.value || '').trim();
+  const last  = (document.getElementById('ap-lastname')?.value  || '').trim();
+  const abbrevEl = document.getElementById('ap-abbrev');
+  if(!abbrevEl) return;
+  const fullName = [first, last].filter(Boolean).join(' ');
+  abbrevEl.value = fullName ? lawyerAbbrev(fullName) : '';
+}
+function onAbbrevManualEdit(){ _abbrevManuallyEdited = true; }
+function onNameFieldChange(){ _abbrevManuallyEdited = false; updateAbbrevPreview(); }
+
 function doSaveName(){
-  const nameEl = document.getElementById('ap-name');
-  const msgEl  = document.getElementById('ap-msg');
-  if(!nameEl || !msgEl) return;
-  const name = nameEl.value.trim();
-  if(!name){ msgEl.style.color='var(--red)'; msgEl.textContent='Name is required.'; return; }
-  currentUser.name = name;
+  const firstEl  = document.getElementById('ap-firstname');
+  const lastEl   = document.getElementById('ap-lastname');
+  const abbrevEl = document.getElementById('ap-abbrev');
+  const msgEl    = document.getElementById('ap-msg');
+  if(!firstEl || !msgEl) return;
+  const first = firstEl.value.trim();
+  const last  = lastEl ? lastEl.value.trim() : '';
+  if(!first){ msgEl.style.color='var(--red)'; msgEl.textContent='First name is required.'; return; }
+  const name = [first, last].filter(Boolean).join(' ');
+  const isLawyer = currentUser.title === 'Lawyer';
+  const rawAbbrev = abbrevEl ? abbrevEl.value.trim() : '';
+  const abbrev = isLawyer ? (rawAbbrev || lawyerAbbrev(name)) : '';
+  const oldName = currentUser.name;
+  currentUser.name   = name;
+  currentUser.abbrev = abbrev;
   const u = users.find(u => u.id === currentUser.id);
-  if(u) u.name = name;
+  if(u){ u.name = name; u.abbrev = abbrev; }
+  // Update stored borrower name in all history entries
+  files.forEach(f => {
+    if(f.borrower && (f.borrowerEmail === currentUser.email || f.borrower === oldName)) f.borrower = name;
+    (f.borrowHistory||[]).forEach(h => {
+      if(h.borrowerEmail === currentUser.email || h.borrower === oldName) {
+        h.borrower = name;
+        if(!h.borrowerEmail) h.borrowerEmail = currentUser.email;
+      }
+    });
+  });
   msgEl.style.color='var(--green)';
-  msgEl.textContent='Name updated!';
-  setTimeout(()=>render(), 900); // re-render to refresh avatar initials
+  msgEl.textContent=isLawyer?`Name saved as "${name}" · Abbrev: ${abbrev}`:`Name saved as "${name}"`;
+  setTimeout(()=>render(), 1200);
 }
 
 function doChangePassword(){
@@ -2644,27 +3033,288 @@ function doChangePassword(){
   ['pw-cur','pw-new','pw-conf'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
 }
 
+// ── Admin: All Accounts panel ─────────────────────────────────────────
+function renderAdminUsers(currentU){
+  const rolePill = (r, usr_) => {
+    const label = r==='admin' ? 'ADMIN' : (usr_&&usr_.title==='Lawyer'?'LAWYER':'STAFF');
+    const bg = r==='admin'?'rgba(109,40,217,.15)':label==='LAWYER'?'rgba(99,102,241,.12)':'rgba(99,162,241,.1)';
+    const color = r==='admin'?'var(--accent2)':label==='LAWYER'?'var(--accent)':'#7ab4f5';
+    return `<span style="padding:2px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;background:${bg};color:${color}">${label}</span>`;
+  };
+  return `
+<div class="account-section" style="margin-bottom:0">
+  <div class="account-section-header" style="display:flex;align-items:center;gap:.5rem">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    All Accounts
+    <span style="margin-left:auto;font-size:11px;color:var(--muted);font-weight:500;text-transform:none;letter-spacing:0">${users.length} users</span>
+  </div>
+  ${users.map(usr => {
+    const isEditingThis = adminEditUserId === usr.id;
+    const uAbbrev = usr.abbrev||(usr.title==='Lawyer'?lawyerAbbrev(usr.name):'');
+    return `
+  <div style="padding:.9rem 1.1rem;border-bottom:1px solid var(--border)33;display:flex;flex-direction:column;gap:.5rem">
+    <div style="display:flex;align-items:center;gap:.75rem">
+      <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">
+        ${usr.avatar?`<img src="${usr.avatar}" style="width:100%;height:100%;object-fit:cover"/>`:initials(usr.name)}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(usr.name)}${uAbbrev?` <span style="color:var(--accent);font-size:11px">(${esc(uAbbrev)})</span>`:''}</div>
+        <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(usr.email)}</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:.4rem;flex-shrink:0">
+        ${rolePill(usr.role, usr)}
+        ${usr.id!==currentU.id
+          ?`<button onclick="adminEditUserId=${isEditingThis?'null':usr.id};render()" style="padding:5px 10px;border-radius:7px;background:${isEditingThis?'var(--accent)':'var(--surface2)'};border:1px solid var(--border);color:${isEditingThis?'#fff':'var(--text)'};font-size:11px;font-weight:600;cursor:pointer">${isEditingThis?'Cancel':'Edit'}</button>`
+          :'<span style="font-size:10px;color:var(--muted);padding:4px 6px">You</span>'}
+      </div>
+    </div>
+    ${isEditingThis?`
+    <div style="background:var(--surface2);border-radius:10px;padding:.75rem;display:flex;flex-direction:column;gap:.6rem;margin-top:.25rem">
+      <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px">Edit ${esc(usr.name)}</div>
+      <div>
+        <label style="font-size:11px;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.3px">Role</label>
+        <div class="role-picker" style="display:flex;gap:.4rem">
+          <button type="button"
+            class="role-opt ${(usr.role==='lawyer'||usr.title==='Lawyer')?'role-opt-active':''}"
+            onclick="admSetRole('${usr.id}','lawyer',this)">Lawyer</button>
+          <button type="button"
+            class="role-opt ${(usr.role!=='lawyer'&&usr.title!=='Lawyer')?'role-opt-active':''}"
+            onclick="admSetRole('${usr.id}','staff',this)">Staff</button>
+        </div>
+        <input type="hidden" id="adm-edit-role-${usr.id}" value="${(usr.role==='lawyer'||usr.title==='Lawyer')?'lawyer':'staff'}"/>
+      </div>
+      <button onclick="saveAdminUserEdit(${usr.id})" style="padding:9px;border-radius:9px;background:var(--accent);color:#fff;font-weight:700;font-size:13px;border:none;cursor:pointer">Save</button>
+    </div>`:''}
+  </div>`;}).join('')}
+</div>
+
+<style>
+.role-picker{display:flex;gap:.4rem}
+.role-opt{
+  flex:1;padding:9px 0;border-radius:9px;
+  border:1.5px solid var(--border);
+  background:var(--bg);color:var(--muted);
+  font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .15s ease;letter-spacing:.2px;
+}
+.role-opt-active{
+  background:rgba(124,110,255,.18)!important;
+  border-color:var(--accent)!important;
+  color:var(--accent2)!important;
+  box-shadow:0 0 0 2px rgba(124,110,255,.15);
+}
+</style>`;
+}
+
+function saveAdminUserEdit(uid){
+  const roleEl = document.getElementById('adm-edit-role-'+uid);
+  const u = users.find(u=>u.id===uid);
+  if(!u) return;
+  if(roleEl){
+    const rv = roleEl.value; // 'lawyer' or 'staff'
+    u.role = 'user';
+    u.title = rv==='lawyer' ? 'Lawyer' : 'Staff';
+    if(rv==='lawyer') u.abbrev = u.abbrev || lawyerAbbrev(u.name);
+    else u.abbrev = '';
+  }
+  adminEditUserId = null;
+  render();
+}
+
+function admSetRole(uid, role, btn){
+  document.getElementById('adm-edit-role-'+uid).value = role;
+  btn.closest('.role-picker').querySelectorAll('.role-opt').forEach(b=>b.classList.remove('role-opt-active'));
+  btn.classList.add('role-opt-active');
+}
+
+// ── Image lightbox (tap-to-view — replaces desktop left-click) ────────
+function showImgLightbox(target){
+  const u = currentUser;
+  const src = target === 'avatar' ? u.avatar : u.banner;
+  if(!src) return; // nothing to show if no image uploaded yet
+  const existing = document.getElementById('img-lightbox');
+  if(existing) existing.remove();
+
+  const lb = document.createElement('div');
+  lb.id = 'img-lightbox';
+  lb.style.cssText = 'position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.88);backdrop-filter:blur(14px);display:flex;align-items:center;justify-content:center;animation:overlayIn .18s ease;-webkit-tap-highlight-color:transparent';
+
+  const isAvatar = target === 'avatar';
+  lb.innerHTML = `
+    <div style="position:relative;display:inline-flex;align-items:center;justify-content:center;padding:1rem" onclick="event.stopPropagation()">
+      <img src="${src}" style="display:block;${isAvatar
+        ? 'width:min(300px,80vw);height:min(300px,80vw);border-radius:18px;object-fit:cover'
+        : 'max-width:min(700px,92vw);width:100%;border-radius:14px;object-fit:cover'};box-shadow:0 24px 80px rgba(0,0,0,.7)" draggable="false"/>
+      <button onclick="document.getElementById('img-lightbox').remove()"
+        style="position:absolute;top:0;right:0;width:34px;height:34px;border-radius:50%;background:rgba(30,30,50,.9);border:1px solid rgba(255,255,255,.2);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">✕</button>
+    </div>`;
+  lb.addEventListener('click', () => lb.remove());
+  document.body.appendChild(lb);
+}
+
+// ── Long-press handler for avatar + banner ────────────────────────────
+// Called after every render of the account page to wire up the gestures.
+function attachImgLongPress(){
+  _attachZone('acct-avatar-zone', 'avatar');
+  _attachZone('acct-banner-zone', 'banner');
+}
+
+function _attachZone(elId, target){
+  const el = document.getElementById(elId);
+  if(!el) return;
+
+  let _timer = null;
+  let _fired = false;      // did the long-press fire this touch?
+  let _moved = false;      // did the finger move too much?
+  let _startX = 0, _startY = 0;
+  const HOLD_MS   = 500;   // ms before long-press fires
+  const MOVE_PX   = 8;     // px movement threshold — cancel if exceeded
+
+  function _cancel(){
+    clearTimeout(_timer);
+    _timer = null;
+    // Remove press feedback
+    if(target === 'avatar'){
+      el.style.transform = '';
+      el.style.boxShadow = '0 4px 14px rgba(0,0,0,.4)';
+    } else {
+      el.style.filter = '';
+    }
+  }
+
+  function _start(x, y){
+    _fired = false; _moved = false;
+    _startX = x; _startY = y;
+    // Subtle press-in feedback
+    if(target === 'avatar'){
+      el.style.transform = 'scale(.95)';
+      el.style.boxShadow = '0 2px 8px rgba(0,0,0,.3)';
+    } else {
+      el.style.filter = 'brightness(.85)';
+    }
+    _timer = setTimeout(()=>{
+      if(_moved) return;
+      _fired = true;
+      _cancel();
+      // Haptic feedback if available
+      if(navigator.vibrate) navigator.vibrate(30);
+      showImgActionSheet(target);
+    }, HOLD_MS);
+  }
+
+  function _move(x, y){
+    if(Math.abs(x - _startX) > MOVE_PX || Math.abs(y - _startY) > MOVE_PX){
+      _moved = true;
+      _cancel();
+    }
+  }
+
+  function _end(){
+    const wasFired = _fired;
+    _cancel();
+    // If long-press didn't fire, treat as a short tap → view lightbox (only if image exists)
+    if(!wasFired && !_moved){
+      const hasImg = target === 'avatar' ? !!currentUser.avatar : !!currentUser.banner;
+      if(hasImg) showImgLightbox(target);
+    }
+  }
+
+  // Touch events (mobile)
+  el.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    _start(t.clientX, t.clientY);
+  }, {passive: true});
+  el.addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    _move(t.clientX, t.clientY);
+  }, {passive: true});
+  el.addEventListener('touchend',    _end);
+  el.addEventListener('touchcancel', _cancel);
+
+  // Mouse events (desktop fallback — right-click still works via contextmenu)
+  el.addEventListener('mousedown', e => { if(e.button === 0) _start(e.clientX, e.clientY); });
+  el.addEventListener('mousemove', e => _move(e.clientX, e.clientY));
+  el.addEventListener('mouseup',   _end);
+  el.addEventListener('mouseleave', _cancel);
+  el.addEventListener('contextmenu', e => { e.preventDefault(); showImgActionSheet(target); });
+}
+
+// ── Image action sheet (long-press — replaces desktop right-click) ──
+function showImgActionSheet(target){
+  const existing = document.getElementById('img-action-sheet-overlay');
+  if(existing) existing.remove();
+
+  const u = currentUser;
+  const hasImg = target === 'avatar' ? !!u.avatar : !!u.banner;
+  const label  = target === 'avatar' ? 'Profile Photo' : 'Header Image';
+
+  const overlay = document.createElement('div');
+  overlay.id = 'img-action-sheet-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:10001;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);animation:overlayIn .18s ease';
+
+  overlay.innerHTML = `
+    <div style="background:var(--surface);border:1px solid rgba(255,255,255,.08);border-radius:24px 24px 0 0;padding:1rem 1rem calc(1rem + env(safe-area-inset-bottom,0px));width:100%;max-width:480px;box-shadow:0 -16px 48px rgba(0,0,0,.6);display:flex;flex-direction:column;gap:.45rem" onclick="event.stopPropagation()">
+      <div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.18);margin:0 auto .5rem"></div>
+      <div style="font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;padding:0 .25rem .25rem">${label}</div>
+
+      <!-- View (only if image exists) -->
+      ${hasImg ? `
+      <button onclick="removeImgActionSheet();showImgLightbox('${target}')"
+        style="width:100%;display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:13px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        View ${label}
+      </button>` : ''}
+
+      <!-- Change -->
+      <button onclick="removeImgActionSheet();triggerCrop('${target}')"
+        style="width:100%;display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:13px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:14px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        ${hasImg ? 'Change' : 'Upload'} ${label}
+      </button>
+
+      <!-- Remove (only if image exists) -->
+      ${hasImg ? `
+      <button onclick="removeImgActionSheet();${target==='avatar'?'deleteAvatar()':'deleteBanner()'}"
+        style="width:100%;display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:13px;border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.07);color:var(--red);font-size:14px;font-weight:500;cursor:pointer;-webkit-tap-highlight-color:transparent">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        Remove ${label}
+      </button>` : ''}
+
+      <button onclick="removeImgActionSheet()"
+        style="width:100%;padding:.75rem;border-radius:13px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;margin-top:.15rem;-webkit-tap-highlight-color:transparent">Cancel</button>
+    </div>`;
+
+  overlay.addEventListener('click', e => { if(e.target === overlay) removeImgActionSheet(); });
+  document.body.appendChild(overlay);
+}
+
+function removeImgActionSheet(){
+  const el = document.getElementById('img-action-sheet-overlay');
+  if(el) el.remove();
+}
+
+function deleteAvatar(){
+  currentUser.avatar = null;
+  const u = users.find(u => u.id === currentUser.id);
+  if(u) u.avatar = null;
+  render();
+}
+function deleteBanner(){
+  currentUser.banner = null;
+  const u = users.find(u => u.id === currentUser.id);
+  if(u) u.banner = null;
+  render();
+}
+
 // ══════════════════════════════════════════════════════════════════════
 // IMAGE CROPPER
 // ══════════════════════════════════════════════════════════════════════
-let _cropTarget = null;   // 'avatar' | 'header'
+let _cropTarget = null;   // 'avatar' | 'banner'
 let _cropImg    = null;   // HTMLImageElement (full source)
 let _cx = 0, _cy = 0;    // image centre in canvas CSS pixels
 let _scale = 1, _minScale = 1;
 let _drag = false, _lastX = 0, _lastY = 0;
 let _pinchDist = 0, _activeTouches = [];
-
-function _cropWindow(canvas, target){
-  const w = canvas.clientWidth, h = canvas.clientHeight;
-  if(target === 'avatar'){
-    const s = Math.round(Math.min(w, h) * 0.62);
-    return { x:(w-s)/2, y:(h-s)/2, w:s, h:s, round:true };
-  } else {
-    const cw = Math.round(w * 0.88);
-    const ch = Math.round(cw / 3);
-    return { x:(w-cw)/2, y:(h-ch)/2, w:cw, h:ch, round:false };
-  }
-}
 
 function triggerCrop(target){
   _cropTarget = target;
@@ -2687,6 +3337,7 @@ function onCropFileChosen(e){
 function _openCropOverlay(){
   _closeCropOverlay();
   const isAvatar = _cropTarget === 'avatar';
+
   const overlay = document.createElement('div');
   overlay.id = 'crop-overlay';
   overlay.innerHTML = `
@@ -2696,9 +3347,9 @@ function _openCropOverlay(){
         <div class="crop-hint">Drag · Pinch to zoom · Slider below</div>
       </div>
     </div>
-    <div id="crop-wrap"><canvas id="crop-canvas"></canvas></div>
-    <div style="padding:.5rem 1rem 0;max-width:480px;width:100%;box-sizing:border-box">
-      <input type="range" id="crop-zoom" min="0" max="100" value="0" style="width:100%"/>
+    <div id="crop-wrap" style="flex-shrink:0"><canvas id="crop-canvas" style="display:block;touch-action:none;cursor:grab"></canvas></div>
+    <div style="padding:.5rem 1rem 0;max-width:560px;width:100%;box-sizing:border-box">
+      <input type="range" id="crop-zoom" min="100" max="400" value="100" style="width:100%"/>
     </div>
     <div class="crop-footer">
       <button class="crop-btn-cancel" onclick="_closeCropOverlay()">Cancel</button>
@@ -2706,35 +3357,45 @@ function _openCropOverlay(){
     </div>`;
   document.body.appendChild(overlay);
 
+  // Compute canvas size from the actual rendered wrap width (avoids off-center on mobile)
   const wrap   = document.getElementById('crop-wrap');
   const canvas = document.getElementById('crop-canvas');
+  const dpr    = window.devicePixelRatio || 1;
 
-  function sizeCanvas(){
-    const r = wrap.getBoundingClientRect();
-    const dpr = window.devicePixelRatio || 1;
-    canvas.width  = Math.round(r.width  * dpr);
-    canvas.height = Math.round(r.height * dpr);
-    canvas.style.width  = r.width  + 'px';
-    canvas.style.height = r.height + 'px';
-    _initCropPos();
-    _drawCrop();
-  }
-  setTimeout(sizeCanvas, 40);
-  window.addEventListener('resize', sizeCanvas);
-  overlay._cleanupResize = () => window.removeEventListener('resize', sizeCanvas);
+  // Use actual rendered wrap width; fall back to innerWidth - 32
+  const cw = Math.round(wrap.getBoundingClientRect().width || Math.min(window.innerWidth - 32, 560));
+  let ch;
+  if(isAvatar){ ch = cw; }
+  else { ch = Math.round(cw * (88/480)); ch = Math.max(ch, 80); ch = ch * 3; }
 
-  document.getElementById('crop-zoom').addEventListener('input', e => {
-    const t = e.target.value / 100;
-    const maxS = _minScale * 4;
-    _scale = _minScale * Math.pow(maxS / _minScale, t);
+  canvas.width  = Math.round(cw * dpr);
+  canvas.height = Math.round(ch * dpr);
+  canvas.style.width  = cw + 'px';
+  canvas.style.height = ch + 'px';
+
+  // Init scale/position — mirror desktop _cropSrc.onload
+  const cropW = cw;
+  const cropH = isAvatar ? ch : Math.round(ch / 3);
+  const scaleX = cropW / _cropImg.naturalWidth;
+  const scaleY = cropH / _cropImg.naturalHeight;
+  _minScale = Math.max(scaleX, scaleY);
+  _scale    = _minScale;
+  _cx = cw / 2;
+  _cy = ch / 2;
+  const slider = document.getElementById('crop-zoom');
+  if(slider){ slider.min=100; slider.max=400; slider.value=100; }
+  _drawCrop();
+
+  slider.addEventListener('input', e => {
+    _scale = _minScale * (e.target.value / 100);
     _clampCropPos(); _drawCrop();
   });
 
-  wrap.addEventListener('mousedown',  _cpDown);
-  wrap.addEventListener('mousemove',  _cpMove);
-  wrap.addEventListener('mouseup',    _cpUp);
-  wrap.addEventListener('mouseleave', _cpUp);
-  wrap.addEventListener('wheel',      _cpWheel, {passive:false});
+  wrap.addEventListener('mousedown',   _cpDown);
+  wrap.addEventListener('mousemove',   _cpMove);
+  wrap.addEventListener('mouseup',     _cpUp);
+  wrap.addEventListener('mouseleave',  _cpUp);
+  wrap.addEventListener('wheel',       _cpWheel, {passive:false});
   wrap.addEventListener('touchstart',  _cpTouchStart, {passive:false});
   wrap.addEventListener('touchmove',   _cpTouchMove,  {passive:false});
   wrap.addEventListener('touchend',    _cpTouchEnd);
@@ -2743,142 +3404,124 @@ function _openCropOverlay(){
 
 function _closeCropOverlay(){
   const el = document.getElementById('crop-overlay');
-  if(el){ if(el._cleanupResize) el._cleanupResize(); el.remove(); }
-}
-
-function _initCropPos(){
-  const canvas = document.getElementById('crop-canvas');
-  if(!canvas || !_cropImg) return;
-  const cw = canvas.clientWidth, ch = canvas.clientHeight;
-  const win = _cropWindow(canvas, _cropTarget);
-  const sx = win.w / _cropImg.width;
-  const sy = win.h / _cropImg.height;
-  _minScale = Math.max(sx, sy);
-  _scale    = _minScale;
-  _cx = win.x + win.w / 2;
-  _cy = win.y + win.h / 2;
-  const slider = document.getElementById('crop-zoom');
-  if(slider) slider.value = 0;
-}
-
-function _clampCropPos(){
-  const canvas = document.getElementById('crop-canvas');
-  if(!canvas || !_cropImg) return;
-  const win = _cropWindow(canvas, _cropTarget);
-  const hw = (_cropImg.width  * _scale) / 2;
-  const hh = (_cropImg.height * _scale) / 2;
-  _cx = Math.max(win.x + win.w - hw, Math.min(win.x + hw, _cx));
-  _cy = Math.max(win.y + win.h - hh, Math.min(win.y + hh, _cy));
+  if(el) el.remove();
 }
 
 function _drawCrop(){
   const canvas = document.getElementById('crop-canvas');
   if(!canvas || !_cropImg) return;
   const dpr = window.devicePixelRatio || 1;
-  const ctx  = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const cw = canvas.clientWidth, ch = canvas.clientHeight;
-  const win = _cropWindow(canvas, _cropTarget);
-  ctx.clearRect(0, 0, W, H);
-  ctx.save(); ctx.scale(dpr, dpr);
+  const cw = canvas.width / dpr, ch = canvas.height / dpr;
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-  const iw = _cropImg.width  * _scale;
-  const ih = _cropImg.height * _scale;
-  const ix = _cx - iw / 2;
-  const iy = _cy - ih / 2;
+  const isAvatar = _cropTarget === 'avatar';
 
-  // 1. Full image dimmed
-  ctx.globalAlpha = 1;
-  ctx.drawImage(_cropImg, ix, iy, iw, ih);
-  ctx.fillStyle = 'rgba(0,0,0,0.62)';
-  ctx.fillRect(0, 0, cw, ch);
-
-  // 2. Bright crop window
-  ctx.save();
-  _clipCropShape(ctx, win);
-  ctx.drawImage(_cropImg, ix, iy, iw, ih);
-  ctx.restore();
-
-  // 3. Border
-  ctx.strokeStyle = 'rgba(255,255,255,0.85)';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath(); _cropShapePath(ctx, win); ctx.stroke();
-
-  // 4. Rule-of-thirds grid
-  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
-  ctx.lineWidth = 0.7;
-  ctx.save(); _clipCropShape(ctx, win);
-  for(let i=1;i<3;i++){
+  const _rrect = (x, y, w, h, r) => {
     ctx.beginPath();
-    ctx.moveTo(win.x + win.w*i/3, win.y); ctx.lineTo(win.x + win.w*i/3, win.y + win.h); ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(win.x, win.y + win.h*i/3); ctx.lineTo(win.x + win.w, win.y + win.h*i/3); ctx.stroke();
-  }
-  ctx.restore();
-
-  // 5. Corner handles (header only)
-  if(!win.round){
-    const hs = 14;
-    ctx.strokeStyle = 'rgba(255,255,255,0.92)';
-    ctx.lineWidth = 2.5; ctx.lineCap = 'round';
-    [[win.x,win.y,1,1],[win.x+win.w,win.y,-1,1],[win.x,win.y+win.h,1,-1],[win.x+win.w,win.y+win.h,-1,-1]]
-      .forEach(([ox,oy,dx,dy])=>{
-        ctx.beginPath(); ctx.moveTo(ox+dx*hs,oy); ctx.lineTo(ox,oy); ctx.lineTo(ox,oy+dy*hs); ctx.stroke();
-      });
-  }
-
-  ctx.restore();
-}
-
-function _cropShapePath(ctx, win){
-  if(win.round){
-    ctx.arc(win.x + win.w/2, win.y + win.h/2, win.w/2, 0, Math.PI*2);
-  } else {
-    const r = 10;
-    ctx.moveTo(win.x+r, win.y);
-    ctx.lineTo(win.x+win.w-r, win.y); ctx.arcTo(win.x+win.w, win.y, win.x+win.w, win.y+r, r);
-    ctx.lineTo(win.x+win.w, win.y+win.h-r); ctx.arcTo(win.x+win.w, win.y+win.h, win.x+win.w-r, win.y+win.h, r);
-    ctx.lineTo(win.x+r, win.y+win.h); ctx.arcTo(win.x, win.y+win.h, win.x, win.y+win.h-r, r);
-    ctx.lineTo(win.x, win.y+r); ctx.arcTo(win.x, win.y, win.x+r, win.y, r);
+    ctx.moveTo(x+r, y);
+    ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+    ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+    ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+    ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
     ctx.closePath();
+  };
+
+  // Step 1: full image dimmed
+  ctx.save();
+  ctx.translate(_cx, _cy); ctx.scale(_scale, _scale);
+  ctx.drawImage(_cropImg, -_cropImg.naturalWidth/2, -_cropImg.naturalHeight/2);
+  ctx.restore();
+
+  // Step 2: dim overlay
+  ctx.globalAlpha = 0.62;
+  ctx.fillStyle = '#000';
+  ctx.fillRect(0, 0, cw, ch);
+  ctx.globalAlpha = 1;
+
+  // Step 3: bright crop zone clipped to rounded rect
+  const cropStripH = isAvatar ? ch : Math.round(ch / 3);
+  const cropStripY = isAvatar ? 0 : (ch - cropStripH) / 2;
+
+  ctx.save();
+  if(isAvatar){
+    const s = Math.min(cw, ch);
+    const x = (cw-s)/2, y = (ch-s)/2;
+    _rrect(x, y, s, s, s*0.25); ctx.clip();
+  } else {
+    const r = 20;
+    _rrect(0, cropStripY, cw, cropStripH, r); ctx.clip();
+  }
+  ctx.translate(_cx, _cy); ctx.scale(_scale, _scale);
+  ctx.drawImage(_cropImg, -_cropImg.naturalWidth/2, -_cropImg.naturalHeight/2);
+  ctx.restore();
+
+  // Step 4: border around crop zone
+  if(isAvatar){
+    const s = Math.min(cw, ch);
+    const x = (cw-s)/2, y = (ch-s)/2;
+    _rrect(x, y, s, s, s*0.25);
+    ctx.strokeStyle = 'rgba(255,255,255,.3)'; ctx.lineWidth = 2; ctx.stroke();
+  } else {
+    const r = 20;
+    _rrect(0.75, cropStripY+0.75, cw-1.5, cropStripH-1.5, r);
+    ctx.strokeStyle = 'rgba(255,255,255,.4)'; ctx.lineWidth = 1.5; ctx.stroke();
   }
 }
 
-function _clipCropShape(ctx, win){
-  ctx.beginPath(); _cropShapePath(ctx, win); ctx.clip();
+function _clampCropPos(){
+  const canvas = document.getElementById('crop-canvas');
+  if(!canvas || !_cropImg) return;
+  const dpr = window.devicePixelRatio || 1;
+  const cw = canvas.width/dpr, ch = canvas.height/dpr;
+  const isAvatar = _cropTarget === 'avatar';
+  const cropW = cw;
+  const cropH = isAvatar ? ch : Math.round(ch / 3);
+  const cropX = 0;
+  const cropY = isAvatar ? 0 : (ch - cropH) / 2;
+  const hw = (_cropImg.naturalWidth  * _scale) / 2;
+  const hh = (_cropImg.naturalHeight * _scale) / 2;
+  _cx = Math.min(Math.max(_cx, cropX + cropW - hw), cropX + hw);
+  _cy = Math.min(Math.max(_cy, cropY + cropH - hh), cropY + hh);
 }
 
 function _applyCrop(){
   const canvas = document.getElementById('crop-canvas');
   if(!canvas || !_cropImg) return;
-  const win = _cropWindow(canvas, _cropTarget);
+  const dpr = window.devicePixelRatio || 1;
+  const cw = canvas.width/dpr, ch = canvas.height/dpr;
   const isAvatar = _cropTarget === 'avatar';
-  const outW = isAvatar ? 320 : 900;
-  const outH = isAvatar ? 320 : 300;
+
+  const outW = isAvatar ? 400 : 960;
+  const outH = isAvatar ? 400 : Math.round(960 * (88/480));
   const out  = document.createElement('canvas');
   out.width  = outW; out.height = outH;
   const octx = out.getContext('2d');
 
-  const iw = _cropImg.width  * _scale;
-  const ih = _cropImg.height * _scale;
-  const ix = _cx - iw / 2;
-  const iy = _cy - ih / 2;
-  const srcX = (win.x - ix) / _scale;
-  const srcY = (win.y - iy) / _scale;
-  const srcW = win.w / _scale;
-  const srcH = win.h / _scale;
+  // For banner: offset _cy to export only the center strip (matching desktop)
+  const exportCy = isAvatar ? _cy : _cy - (ch - Math.round(ch/3)) / 2;
+  const scaleRatio = outW / cw;
 
+  octx.save();
   if(isAvatar){
+    const cr = outW * 0.25;
     octx.beginPath();
-    octx.arc(outW/2, outH/2, outW/2, 0, Math.PI*2);
-    octx.clip();
+    octx.moveTo(cr, 0);
+    octx.lineTo(outW-cr, 0); octx.quadraticCurveTo(outW, 0, outW, cr);
+    octx.lineTo(outW, outH-cr); octx.quadraticCurveTo(outW, outH, outW-cr, outH);
+    octx.lineTo(cr, outH); octx.quadraticCurveTo(0, outH, 0, outH-cr);
+    octx.lineTo(0, cr); octx.quadraticCurveTo(0, 0, cr, 0);
+    octx.closePath(); octx.clip();
   }
-  octx.drawImage(_cropImg, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
+  octx.translate(_cx * scaleRatio, exportCy * scaleRatio);
+  octx.scale(_scale * scaleRatio, _scale * scaleRatio);
+  octx.drawImage(_cropImg, -_cropImg.naturalWidth/2, -_cropImg.naturalHeight/2);
+  octx.restore();
 
-  const dataURL = out.toDataURL('image/jpeg', 0.88);
-  if(isAvatar) currentUser.avatarImg = dataURL; else currentUser.headerImg = dataURL;
+  const dataURL = out.toDataURL('image/jpeg', 0.92);
+  if(isAvatar) currentUser.avatar = dataURL; else currentUser.banner = dataURL;
   const u = users.find(u => u.id === currentUser.id);
-  if(u){ if(isAvatar) u.avatarImg = dataURL; else u.headerImg = dataURL; }
+  if(u){ if(isAvatar) u.avatar = dataURL; else u.banner = dataURL; }
   _closeCropOverlay();
   render();
 }
@@ -2895,10 +3538,9 @@ function _cpWheel(e){
   e.preventDefault();
   _scale = Math.max(_minScale, _scale * (e.deltaY>0 ? 0.92 : 1.09));
   const sl=document.getElementById('crop-zoom');
-  if(sl){ const t=Math.log(_scale/_minScale)/Math.log(4); sl.value=Math.round(Math.min(1,Math.max(0,t))*100); }
+  if(sl){ sl.value=Math.round(Math.min(400,Math.max(100,_scale/_minScale*100))); }
   _clampCropPos(); _drawCrop();
 }
-// Touch handlers
 function _ptDist(t1,t2){ const dx=t1.clientX-t2.clientX,dy=t1.clientY-t2.clientY; return Math.sqrt(dx*dx+dy*dy); }
 function _cpTouchStart(e){
   e.preventDefault(); _activeTouches=Array.from(e.touches);
@@ -2914,7 +3556,7 @@ function _cpTouchMove(e){
     const d=_ptDist(_activeTouches[0],_activeTouches[1]);
     _scale=Math.max(_minScale, _scale*(d/_pinchDist));
     const sl=document.getElementById('crop-zoom');
-    if(sl){ const t=Math.log(_scale/_minScale)/Math.log(4); sl.value=Math.round(Math.min(1,Math.max(0,t||0))*100); }
+    if(sl){ sl.value=Math.round(Math.min(400,Math.max(100,_scale/_minScale*100))); }
     _pinchDist=d; _clampCropPos(); _drawCrop();
   }
 }
@@ -2922,6 +3564,147 @@ function _cpTouchEnd(e){
   _activeTouches=Array.from(e.touches);
   if(!_activeTouches.length){ _drag=false; _pinchDist=0; }
   else if(_activeTouches.length===1){ _drag=true; _lastX=_activeTouches[0].clientX; _lastY=_activeTouches[0].clientY; _pinchDist=0; }
+}
+
+
+
+// ── Drag-to-dismiss for detail bottom sheet ──────────────────────────
+function attachDetailDrag(){
+  const sh = document.querySelector('.detail-modal');
+  const ov = document.querySelector('.overlay-detail');
+  if(!sh || !ov) return;
+
+  const THRESHOLD = 0.42; // fraction of sheet height to trigger close
+  const VELOCITY  = 0.5;  // px/ms — fast flick always closes
+  let startY = 0, currentY = 0, startTime = 0, dragging = false, sheetH = 0;
+
+  function dragStart(clientY){
+    sheetH   = sh.offsetHeight;
+    startY   = clientY;
+    currentY = 0;
+    startTime = Date.now();
+    dragging = true;
+    sh.style.transition = 'none';
+    ov.style.transition  = 'none';
+  }
+
+  function dragMove(clientY){
+    if(!dragging) return;
+    const dy = clientY - startY;
+    if(dy < 0){ sh.style.transform = ''; return; }
+    currentY = dy;
+    sh.style.transform = 'translateY('+dy+'px)';
+    const p = Math.min(dy / sheetH, 1);
+    ov.style.background = 'rgba(0,0,0,'+(0.6*(1-p*0.85))+')';
+  }
+
+  function dragEnd(){
+    if(!dragging) return;
+    dragging = false;
+    const elapsed  = Math.max(1, Date.now() - startTime);
+    const velocity = currentY / elapsed;
+    const dismiss  = currentY > sheetH * THRESHOLD || velocity > VELOCITY;
+    if(dismiss){
+      sh.style.transition = 'transform 0.26s cubic-bezier(0.4,0,1,1)';
+      ov.style.transition  = 'opacity 0.26s ease';
+      sh.style.transform   = 'translateY('+sheetH+'px)';
+      ov.style.opacity     = '0';
+      setTimeout(closeModal, 240);
+    } else {
+      sh.style.transition = 'transform 0.32s cubic-bezier(0.22,1,0.36,1)';
+      ov.style.transition  = 'background 0.32s ease';
+      sh.style.transform   = '';
+      ov.style.background  = '';
+    }
+  }
+
+  // Touch — attach to whole sheet, but only trigger from top zone or when not scrolled
+  function onTouchStart(e){
+    const body = sh.querySelector('.detail-modal-body');
+    if(body && body.scrollTop > 4) return; // let scroll handle it
+    const rect = sh.getBoundingClientRect();
+    const fromTop = e.touches[0].clientY - rect.top;
+    if(fromTop > 100) return; // only top 100px initiates drag
+    dragStart(e.touches[0].clientY);
+  }
+  function onTouchMove(e){
+    if(!dragging) return;
+    if(currentY > 8) e.preventDefault();
+    dragMove(e.touches[0].clientY);
+  }
+  function onTouchEnd(){ dragEnd(); }
+
+  sh.addEventListener('touchstart', onTouchStart, {passive:true});
+  sh.addEventListener('touchmove',  onTouchMove,  {passive:false});
+  sh.addEventListener('touchend',   onTouchEnd,   {passive:true});
+}
+
+// ── Drag-to-dismiss for add-folder bottom sheet ──────────────────────
+function attachAddDrag(){
+  const sh = document.querySelector('.add-modal');
+  const ov = document.querySelector('.overlay-add');
+  if(!sh || !ov) return;
+
+  const THRESHOLD = 0.42;
+  const VELOCITY  = 0.5;
+  let startY = 0, currentY = 0, startTime = 0, dragging = false, sheetH = 0;
+
+  function dragStart(clientY){
+    sheetH   = sh.offsetHeight;
+    startY   = clientY;
+    currentY = 0;
+    startTime = Date.now();
+    dragging = true;
+    sh.style.transition = 'none';
+    ov.style.transition  = 'none';
+  }
+  function dragMove(clientY){
+    if(!dragging) return;
+    const dy = clientY - startY;
+    if(dy < 0){ sh.style.transform = ''; return; }
+    currentY = dy;
+    sh.style.transform = 'translateY('+dy+'px)';
+    const p = Math.min(dy / sheetH, 1);
+    ov.style.background = 'rgba(0,0,0,'+(0.6*(1-p*0.85))+')';
+  }
+  function dragEnd(){
+    if(!dragging) return;
+    dragging = false;
+    const elapsed  = Math.max(1, Date.now() - startTime);
+    const velocity = currentY / elapsed;
+    const dismiss  = currentY > sheetH * THRESHOLD || velocity > VELOCITY;
+    if(dismiss){
+      sh.style.transition = 'transform 0.26s cubic-bezier(0.4,0,1,1)';
+      ov.style.transition  = 'opacity 0.26s ease';
+      sh.style.transform   = 'translateY('+sheetH+'px)';
+      ov.style.opacity     = '0';
+      setTimeout(closeModal, 240);
+    } else {
+      sh.style.transition = 'transform 0.32s cubic-bezier(0.22,1,0.36,1)';
+      ov.style.transition  = 'background 0.32s ease';
+      sh.style.transform   = '';
+      ov.style.background  = '';
+    }
+  }
+
+  function onTouchStart(e){
+    const body = sh.querySelector('.add-modal-body');
+    if(body && body.scrollTop > 4) return;
+    const rect = sh.getBoundingClientRect();
+    const fromTop = e.touches[0].clientY - rect.top;
+    if(fromTop > 80) return;
+    dragStart(e.touches[0].clientY);
+  }
+  function onTouchMove(e){
+    if(!dragging) return;
+    if(currentY > 8) e.preventDefault();
+    dragMove(e.touches[0].clientY);
+  }
+  function onTouchEnd(){ dragEnd(); }
+
+  sh.addEventListener('touchstart', onTouchStart, {passive:true});
+  sh.addEventListener('touchmove',  onTouchMove,  {passive:false});
+  sh.addEventListener('touchend',   onTouchEnd,   {passive:true});
 }
 
 
