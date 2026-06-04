@@ -3,20 +3,28 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>FileTrace — Borrow & Return Tracker</title>
+<title>STLAFTrace — Borrow & Return Tracker</title>
 <script>/*! qrcode-svg v1.1.0 | https://github.com/papnkukn/qrcode-svg | MIT license */
 function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedData=[];for(var e=0,r=this.data.length;e<r;e++){var o=[],n=this.data.charCodeAt(e);n>65536?(o[0]=240|(1835008&n)>>>18,o[1]=128|(258048&n)>>>12,o[2]=128|(4032&n)>>>6,o[3]=128|63&n):n>2048?(o[0]=224|(61440&n)>>>12,o[1]=128|(4032&n)>>>6,o[2]=128|63&n):n>128?(o[0]=192|(1984&n)>>>6,o[1]=128|63&n):o[0]=n,this.parsedData.push(o)}this.parsedData=Array.prototype.concat.apply([],this.parsedData),this.parsedData.length!=this.data.length&&(this.parsedData.unshift(191),this.parsedData.unshift(187),this.parsedData.unshift(239))}function QRCodeModel(t,e){this.typeNumber=t,this.errorCorrectLevel=e,this.modules=null,this.moduleCount=0,this.dataCache=null,this.dataList=[]}QR8bitByte.prototype={getLength:function(t){return this.parsedData.length},write:function(t){for(var e=0,r=this.parsedData.length;e<r;e++)t.put(this.parsedData[e],8)}},QRCodeModel.prototype={addData:function(t){var e=new QR8bitByte(t);this.dataList.push(e),this.dataCache=null},isDark:function(t,e){if(t<0||this.moduleCount<=t||e<0||this.moduleCount<=e)throw new Error(t+","+e);return this.modules[t][e]},getModuleCount:function(){return this.moduleCount},make:function(){this.makeImpl(!1,this.getBestMaskPattern())},makeImpl:function(t,e){this.moduleCount=4*this.typeNumber+17,this.modules=new Array(this.moduleCount);for(var r=0;r<this.moduleCount;r++){this.modules[r]=new Array(this.moduleCount);for(var o=0;o<this.moduleCount;o++)this.modules[r][o]=null}this.setupPositionProbePattern(0,0),this.setupPositionProbePattern(this.moduleCount-7,0),this.setupPositionProbePattern(0,this.moduleCount-7),this.setupPositionAdjustPattern(),this.setupTimingPattern(),this.setupTypeInfo(t,e),this.typeNumber>=7&&this.setupTypeNumber(t),null==this.dataCache&&(this.dataCache=QRCodeModel.createData(this.typeNumber,this.errorCorrectLevel,this.dataList)),this.mapData(this.dataCache,e)},setupPositionProbePattern:function(t,e){for(var r=-1;r<=7;r++)if(!(t+r<=-1||this.moduleCount<=t+r))for(var o=-1;o<=7;o++)e+o<=-1||this.moduleCount<=e+o||(this.modules[t+r][e+o]=0<=r&&r<=6&&(0==o||6==o)||0<=o&&o<=6&&(0==r||6==r)||2<=r&&r<=4&&2<=o&&o<=4)},getBestMaskPattern:function(){for(var t=0,e=0,r=0;r<8;r++){this.makeImpl(!0,r);var o=QRUtil.getLostPoint(this);(0==r||t>o)&&(t=o,e=r)}return e},createMovieClip:function(t,e,r){var o=t.createEmptyMovieClip(e,r);this.make();for(var n=0;n<this.modules.length;n++)for(var i=1*n,a=0;a<this.modules[n].length;a++){var s=1*a;this.modules[n][a]&&(o.beginFill(0,100),o.moveTo(s,i),o.lineTo(s+1,i),o.lineTo(s+1,i+1),o.lineTo(s,i+1),o.endFill())}return o},setupTimingPattern:function(){for(var t=8;t<this.moduleCount-8;t++)null==this.modules[t][6]&&(this.modules[t][6]=t%2==0);for(var e=8;e<this.moduleCount-8;e++)null==this.modules[6][e]&&(this.modules[6][e]=e%2==0)},setupPositionAdjustPattern:function(){for(var t=QRUtil.getPatternPosition(this.typeNumber),e=0;e<t.length;e++)for(var r=0;r<t.length;r++){var o=t[e],n=t[r];if(null==this.modules[o][n])for(var i=-2;i<=2;i++)for(var a=-2;a<=2;a++)this.modules[o+i][n+a]=-2==i||2==i||-2==a||2==a||0==i&&0==a}},setupTypeNumber:function(t){for(var e=QRUtil.getBCHTypeNumber(this.typeNumber),r=0;r<18;r++){var o=!t&&1==(e>>r&1);this.modules[Math.floor(r/3)][r%3+this.moduleCount-8-3]=o}for(r=0;r<18;r++){o=!t&&1==(e>>r&1);this.modules[r%3+this.moduleCount-8-3][Math.floor(r/3)]=o}},setupTypeInfo:function(t,e){for(var r=this.errorCorrectLevel<<3|e,o=QRUtil.getBCHTypeInfo(r),n=0;n<15;n++){var i=!t&&1==(o>>n&1);n<6?this.modules[n][8]=i:n<8?this.modules[n+1][8]=i:this.modules[this.moduleCount-15+n][8]=i}for(n=0;n<15;n++){i=!t&&1==(o>>n&1);n<8?this.modules[8][this.moduleCount-n-1]=i:n<9?this.modules[8][15-n-1+1]=i:this.modules[8][15-n-1]=i}this.modules[this.moduleCount-8][8]=!t},mapData:function(t,e){for(var r=-1,o=this.moduleCount-1,n=7,i=0,a=this.moduleCount-1;a>0;a-=2)for(6==a&&a--;;){for(var s=0;s<2;s++)if(null==this.modules[o][a-s]){var h=!1;i<t.length&&(h=1==(t[i]>>>n&1)),QRUtil.getMask(e,o,a-s)&&(h=!h),this.modules[o][a-s]=h,-1==--n&&(i++,n=7)}if((o+=r)<0||this.moduleCount<=o){o-=r,r=-r;break}}}},QRCodeModel.PAD0=236,QRCodeModel.PAD1=17,QRCodeModel.createData=function(t,e,r){for(var o=QRRSBlock.getRSBlocks(t,e),n=new QRBitBuffer,i=0;i<r.length;i++){var a=r[i];n.put(a.mode,4),n.put(a.getLength(),QRUtil.getLengthInBits(a.mode,t)),a.write(n)}var s=0;for(i=0;i<o.length;i++)s+=o[i].dataCount;if(n.getLengthInBits()>8*s)throw new Error("code length overflow. ("+n.getLengthInBits()+">"+8*s+")");for(n.getLengthInBits()+4<=8*s&&n.put(0,4);n.getLengthInBits()%8!=0;)n.putBit(!1);for(;!(n.getLengthInBits()>=8*s||(n.put(QRCodeModel.PAD0,8),n.getLengthInBits()>=8*s));)n.put(QRCodeModel.PAD1,8);return QRCodeModel.createBytes(n,o)},QRCodeModel.createBytes=function(t,e){for(var r=0,o=0,n=0,i=new Array(e.length),a=new Array(e.length),s=0;s<e.length;s++){var h=e[s].dataCount,l=e[s].totalCount-h;o=Math.max(o,h),n=Math.max(n,l),i[s]=new Array(h);for(var u=0;u<i[s].length;u++)i[s][u]=255&t.buffer[u+r];r+=h;var g=QRUtil.getErrorCorrectPolynomial(l),d=new QRPolynomial(i[s],g.getLength()-1).mod(g);a[s]=new Array(g.getLength()-1);for(u=0;u<a[s].length;u++){var f=u+d.getLength()-a[s].length;a[s][u]=f>=0?d.get(f):0}}var c=0;for(u=0;u<e.length;u++)c+=e[u].totalCount;var R=new Array(c),p=0;for(u=0;u<o;u++)for(s=0;s<e.length;s++)u<i[s].length&&(R[p++]=i[s][u]);for(u=0;u<n;u++)for(s=0;s<e.length;s++)u<a[s].length&&(R[p++]=a[s][u]);return R};for(var QRMode={MODE_NUMBER:1,MODE_ALPHA_NUM:2,MODE_8BIT_BYTE:4,MODE_KANJI:8},QRErrorCorrectLevel={L:1,M:0,Q:3,H:2},QRMaskPattern={PATTERN000:0,PATTERN001:1,PATTERN010:2,PATTERN011:3,PATTERN100:4,PATTERN101:5,PATTERN110:6,PATTERN111:7},QRUtil={PATTERN_POSITION_TABLE:[[],[6,18],[6,22],[6,26],[6,30],[6,34],[6,22,38],[6,24,42],[6,26,46],[6,28,50],[6,30,54],[6,32,58],[6,34,62],[6,26,46,66],[6,26,48,70],[6,26,50,74],[6,30,54,78],[6,30,56,82],[6,30,58,86],[6,34,62,90],[6,28,50,72,94],[6,26,50,74,98],[6,30,54,78,102],[6,28,54,80,106],[6,32,58,84,110],[6,30,58,86,114],[6,34,62,90,118],[6,26,50,74,98,122],[6,30,54,78,102,126],[6,26,52,78,104,130],[6,30,56,82,108,134],[6,34,60,86,112,138],[6,30,58,86,114,142],[6,34,62,90,118,146],[6,30,54,78,102,126,150],[6,24,50,76,102,128,154],[6,28,54,80,106,132,158],[6,32,58,84,110,136,162],[6,26,54,82,110,138,166],[6,30,58,86,114,142,170]],G15:1335,G18:7973,G15_MASK:21522,getBCHTypeInfo:function(t){for(var e=t<<10;QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G15)>=0;)e^=QRUtil.G15<<QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G15);return(t<<10|e)^QRUtil.G15_MASK},getBCHTypeNumber:function(t){for(var e=t<<12;QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G18)>=0;)e^=QRUtil.G18<<QRUtil.getBCHDigit(e)-QRUtil.getBCHDigit(QRUtil.G18);return t<<12|e},getBCHDigit:function(t){for(var e=0;0!=t;)e++,t>>>=1;return e},getPatternPosition:function(t){return QRUtil.PATTERN_POSITION_TABLE[t-1]},getMask:function(t,e,r){switch(t){case QRMaskPattern.PATTERN000:return(e+r)%2==0;case QRMaskPattern.PATTERN001:return e%2==0;case QRMaskPattern.PATTERN010:return r%3==0;case QRMaskPattern.PATTERN011:return(e+r)%3==0;case QRMaskPattern.PATTERN100:return(Math.floor(e/2)+Math.floor(r/3))%2==0;case QRMaskPattern.PATTERN101:return e*r%2+e*r%3==0;case QRMaskPattern.PATTERN110:return(e*r%2+e*r%3)%2==0;case QRMaskPattern.PATTERN111:return(e*r%3+(e+r)%2)%2==0;default:throw new Error("bad maskPattern:"+t)}},getErrorCorrectPolynomial:function(t){for(var e=new QRPolynomial([1],0),r=0;r<t;r++)e=e.multiply(new QRPolynomial([1,QRMath.gexp(r)],0));return e},getLengthInBits:function(t,e){if(1<=e&&e<10)switch(t){case QRMode.MODE_NUMBER:return 10;case QRMode.MODE_ALPHA_NUM:return 9;case QRMode.MODE_8BIT_BYTE:case QRMode.MODE_KANJI:return 8;default:throw new Error("mode:"+t)}else if(e<27)switch(t){case QRMode.MODE_NUMBER:return 12;case QRMode.MODE_ALPHA_NUM:return 11;case QRMode.MODE_8BIT_BYTE:return 16;case QRMode.MODE_KANJI:return 10;default:throw new Error("mode:"+t)}else{if(!(e<41))throw new Error("type:"+e);switch(t){case QRMode.MODE_NUMBER:return 14;case QRMode.MODE_ALPHA_NUM:return 13;case QRMode.MODE_8BIT_BYTE:return 16;case QRMode.MODE_KANJI:return 12;default:throw new Error("mode:"+t)}}},getLostPoint:function(t){for(var e=t.getModuleCount(),r=0,o=0;o<e;o++)for(var n=0;n<e;n++){for(var i=0,a=t.isDark(o,n),s=-1;s<=1;s++)if(!(o+s<0||e<=o+s))for(var h=-1;h<=1;h++)n+h<0||e<=n+h||0==s&&0==h||a==t.isDark(o+s,n+h)&&i++;i>5&&(r+=3+i-5)}for(o=0;o<e-1;o++)for(n=0;n<e-1;n++){var l=0;t.isDark(o,n)&&l++,t.isDark(o+1,n)&&l++,t.isDark(o,n+1)&&l++,t.isDark(o+1,n+1)&&l++,0!=l&&4!=l||(r+=3)}for(o=0;o<e;o++)for(n=0;n<e-6;n++)t.isDark(o,n)&&!t.isDark(o,n+1)&&t.isDark(o,n+2)&&t.isDark(o,n+3)&&t.isDark(o,n+4)&&!t.isDark(o,n+5)&&t.isDark(o,n+6)&&(r+=40);for(n=0;n<e;n++)for(o=0;o<e-6;o++)t.isDark(o,n)&&!t.isDark(o+1,n)&&t.isDark(o+2,n)&&t.isDark(o+3,n)&&t.isDark(o+4,n)&&!t.isDark(o+5,n)&&t.isDark(o+6,n)&&(r+=40);var u=0;for(n=0;n<e;n++)for(o=0;o<e;o++)t.isDark(o,n)&&u++;return r+=10*(Math.abs(100*u/e/e-50)/5)}},QRMath={glog:function(t){if(t<1)throw new Error("glog("+t+")");return QRMath.LOG_TABLE[t]},gexp:function(t){for(;t<0;)t+=255;for(;t>=256;)t-=255;return QRMath.EXP_TABLE[t]},EXP_TABLE:new Array(256),LOG_TABLE:new Array(256)},i=0;i<8;i++)QRMath.EXP_TABLE[i]=1<<i;for(i=8;i<256;i++)QRMath.EXP_TABLE[i]=QRMath.EXP_TABLE[i-4]^QRMath.EXP_TABLE[i-5]^QRMath.EXP_TABLE[i-6]^QRMath.EXP_TABLE[i-8];for(i=0;i<255;i++)QRMath.LOG_TABLE[QRMath.EXP_TABLE[i]]=i;function QRPolynomial(t,e){if(null==t.length)throw new Error(t.length+"/"+e);for(var r=0;r<t.length&&0==t[r];)r++;this.num=new Array(t.length-r+e);for(var o=0;o<t.length-r;o++)this.num[o]=t[o+r]}function QRRSBlock(t,e){this.totalCount=t,this.dataCount=e}function QRBitBuffer(){this.buffer=[],this.length=0}QRPolynomial.prototype={get:function(t){return this.num[t]},getLength:function(){return this.num.length},multiply:function(t){for(var e=new Array(this.getLength()+t.getLength()-1),r=0;r<this.getLength();r++)for(var o=0;o<t.getLength();o++)e[r+o]^=QRMath.gexp(QRMath.glog(this.get(r))+QRMath.glog(t.get(o)));return new QRPolynomial(e,0)},mod:function(t){if(this.getLength()-t.getLength()<0)return this;for(var e=QRMath.glog(this.get(0))-QRMath.glog(t.get(0)),r=new Array(this.getLength()),o=0;o<this.getLength();o++)r[o]=this.get(o);for(o=0;o<t.getLength();o++)r[o]^=QRMath.gexp(QRMath.glog(t.get(o))+e);return new QRPolynomial(r,0).mod(t)}},QRRSBlock.RS_BLOCK_TABLE=[[1,26,19],[1,26,16],[1,26,13],[1,26,9],[1,44,34],[1,44,28],[1,44,22],[1,44,16],[1,70,55],[1,70,44],[2,35,17],[2,35,13],[1,100,80],[2,50,32],[2,50,24],[4,25,9],[1,134,108],[2,67,43],[2,33,15,2,34,16],[2,33,11,2,34,12],[2,86,68],[4,43,27],[4,43,19],[4,43,15],[2,98,78],[4,49,31],[2,32,14,4,33,15],[4,39,13,1,40,14],[2,121,97],[2,60,38,2,61,39],[4,40,18,2,41,19],[4,40,14,2,41,15],[2,146,116],[3,58,36,2,59,37],[4,36,16,4,37,17],[4,36,12,4,37,13],[2,86,68,2,87,69],[4,69,43,1,70,44],[6,43,19,2,44,20],[6,43,15,2,44,16],[4,101,81],[1,80,50,4,81,51],[4,50,22,4,51,23],[3,36,12,8,37,13],[2,116,92,2,117,93],[6,58,36,2,59,37],[4,46,20,6,47,21],[7,42,14,4,43,15],[4,133,107],[8,59,37,1,60,38],[8,44,20,4,45,21],[12,33,11,4,34,12],[3,145,115,1,146,116],[4,64,40,5,65,41],[11,36,16,5,37,17],[11,36,12,5,37,13],[5,109,87,1,110,88],[5,65,41,5,66,42],[5,54,24,7,55,25],[11,36,12],[5,122,98,1,123,99],[7,73,45,3,74,46],[15,43,19,2,44,20],[3,45,15,13,46,16],[1,135,107,5,136,108],[10,74,46,1,75,47],[1,50,22,15,51,23],[2,42,14,17,43,15],[5,150,120,1,151,121],[9,69,43,4,70,44],[17,50,22,1,51,23],[2,42,14,19,43,15],[3,141,113,4,142,114],[3,70,44,11,71,45],[17,47,21,4,48,22],[9,39,13,16,40,14],[3,135,107,5,136,108],[3,67,41,13,68,42],[15,54,24,5,55,25],[15,43,15,10,44,16],[4,144,116,4,145,117],[17,68,42],[17,50,22,6,51,23],[19,46,16,6,47,17],[2,139,111,7,140,112],[17,74,46],[7,54,24,16,55,25],[34,37,13],[4,151,121,5,152,122],[4,75,47,14,76,48],[11,54,24,14,55,25],[16,45,15,14,46,16],[6,147,117,4,148,118],[6,73,45,14,74,46],[11,54,24,16,55,25],[30,46,16,2,47,17],[8,132,106,4,133,107],[8,75,47,13,76,48],[7,54,24,22,55,25],[22,45,15,13,46,16],[10,142,114,2,143,115],[19,74,46,4,75,47],[28,50,22,6,51,23],[33,46,16,4,47,17],[8,152,122,4,153,123],[22,73,45,3,74,46],[8,53,23,26,54,24],[12,45,15,28,46,16],[3,147,117,10,148,118],[3,73,45,23,74,46],[4,54,24,31,55,25],[11,45,15,31,46,16],[7,146,116,7,147,117],[21,73,45,7,74,46],[1,53,23,37,54,24],[19,45,15,26,46,16],[5,145,115,10,146,116],[19,75,47,10,76,48],[15,54,24,25,55,25],[23,45,15,25,46,16],[13,145,115,3,146,116],[2,74,46,29,75,47],[42,54,24,1,55,25],[23,45,15,28,46,16],[17,145,115],[10,74,46,23,75,47],[10,54,24,35,55,25],[19,45,15,35,46,16],[17,145,115,1,146,116],[14,74,46,21,75,47],[29,54,24,19,55,25],[11,45,15,46,46,16],[13,145,115,6,146,116],[14,74,46,23,75,47],[44,54,24,7,55,25],[59,46,16,1,47,17],[12,151,121,7,152,122],[12,75,47,26,76,48],[39,54,24,14,55,25],[22,45,15,41,46,16],[6,151,121,14,152,122],[6,75,47,34,76,48],[46,54,24,10,55,25],[2,45,15,64,46,16],[17,152,122,4,153,123],[29,74,46,14,75,47],[49,54,24,10,55,25],[24,45,15,46,46,16],[4,152,122,18,153,123],[13,74,46,32,75,47],[48,54,24,14,55,25],[42,45,15,32,46,16],[20,147,117,4,148,118],[40,75,47,7,76,48],[43,54,24,22,55,25],[10,45,15,67,46,16],[19,148,118,6,149,119],[18,75,47,31,76,48],[34,54,24,34,55,25],[20,45,15,61,46,16]],QRRSBlock.getRSBlocks=function(t,e){var r=QRRSBlock.getRsBlockTable(t,e);if(null==r)throw new Error("bad rs block @ typeNumber:"+t+"/errorCorrectLevel:"+e);for(var o=r.length/3,n=[],i=0;i<o;i++)for(var a=r[3*i+0],s=r[3*i+1],h=r[3*i+2],l=0;l<a;l++)n.push(new QRRSBlock(s,h));return n},QRRSBlock.getRsBlockTable=function(t,e){switch(e){case QRErrorCorrectLevel.L:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+0];case QRErrorCorrectLevel.M:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+1];case QRErrorCorrectLevel.Q:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+2];case QRErrorCorrectLevel.H:return QRRSBlock.RS_BLOCK_TABLE[4*(t-1)+3];default:return}},QRBitBuffer.prototype={get:function(t){var e=Math.floor(t/8);return 1==(this.buffer[e]>>>7-t%8&1)},put:function(t,e){for(var r=0;r<e;r++)this.putBit(1==(t>>>e-r-1&1))},getLengthInBits:function(){return this.length},putBit:function(t){var e=Math.floor(this.length/8);this.buffer.length<=e&&this.buffer.push(0),t&&(this.buffer[e]|=128>>>this.length%8),this.length++}};var QRCodeLimitLength=[[17,14,11,7],[32,26,20,14],[53,42,32,24],[78,62,46,34],[106,84,60,44],[134,106,74,58],[154,122,86,64],[192,152,108,84],[230,180,130,98],[271,213,151,119],[321,251,177,137],[367,287,203,155],[425,331,241,177],[458,362,258,194],[520,412,292,220],[586,450,322,250],[644,504,364,280],[718,560,394,310],[792,624,442,338],[858,666,482,382],[929,711,509,403],[1003,779,565,439],[1091,857,611,461],[1171,911,661,511],[1273,997,715,535],[1367,1059,751,593],[1465,1125,805,625],[1528,1190,868,658],[1628,1264,908,698],[1732,1370,982,742],[1840,1452,1030,790],[1952,1538,1112,842],[2068,1628,1168,898],[2188,1722,1228,958],[2303,1809,1283,983],[2431,1911,1351,1051],[2563,1989,1423,1093],[2699,2099,1499,1139],[2809,2213,1579,1219],[2953,2331,1663,1273]];function QRCode(t){if(this.options={padding:4,width:256,height:256,typeNumber:4,color:"#000000",background:"#ffffff",ecl:"M"},"string"==typeof t&&(t={content:t}),t)for(var e in t)this.options[e]=t[e];if("string"!=typeof this.options.content)throw new Error("Expected 'content' as string!");if(0===this.options.content.length)throw new Error("Expected 'content' to be non-empty!");if(!(this.options.padding>=0))throw new Error("Expected 'padding' value to be non-negative!");if(!(this.options.width>0&&this.options.height>0))throw new Error("Expected 'width' or 'height' value to be higher than zero!");var r=this.options.content,o=function(t,e){for(var r=function(t){var e=encodeURI(t).toString().replace(/\%[0-9a-fA-F]{2}/g,"a");return e.length+(e.length!=t?3:0)}(t),o=1,n=0,i=0,a=QRCodeLimitLength.length;i<=a;i++){var s=QRCodeLimitLength[i];if(!s)throw new Error("Content too long: expected "+n+" but got "+r);switch(e){case"L":n=s[0];break;case"M":n=s[1];break;case"Q":n=s[2];break;case"H":n=s[3];break;default:throw new Error("Unknwon error correction level: "+e)}if(r<=n)break;o++}if(o>QRCodeLimitLength.length)throw new Error("Content too long");return o}(r,this.options.ecl),n=function(t){switch(t){case"L":return QRErrorCorrectLevel.L;case"M":return QRErrorCorrectLevel.M;case"Q":return QRErrorCorrectLevel.Q;case"H":return QRErrorCorrectLevel.H;default:throw new Error("Unknwon error correction level: "+t)}}(this.options.ecl);this.qrcode=new QRCodeModel(o,n),this.qrcode.addData(r),this.qrcode.make()}QRCode.prototype.svg=function(t){var e=this.options||{},r=this.qrcode.modules;void 0===t&&(t={container:e.container||"svg"});for(var o=void 0===e.pretty||!!e.pretty,n=o?"  ":"",i=o?"\r\n":"",a=e.width,s=e.height,h=r.length,l=a/(h+2*e.padding),u=s/(h+2*e.padding),g=void 0!==e.join&&!!e.join,d=void 0!==e.swap&&!!e.swap,f=void 0===e.xmlDeclaration||!!e.xmlDeclaration,c=void 0!==e.predefined&&!!e.predefined,R=c?n+'<defs><path id="qrmodule" d="M0 0 h'+u+" v"+l+' H0 z" style="fill:'+e.color+';shape-rendering:crispEdges;" /></defs>'+i:"",p=n+'<rect x="0" y="0" width="'+a+'" height="'+s+'" style="fill:'+e.background+';shape-rendering:crispEdges;"/>'+i,m="",Q="",v=0;v<h;v++)for(var E=0;E<h;E++){if(r[E][v]){var M=E*l+e.padding*l,C=v*u+e.padding*u;if(d){var B=M;M=C,C=B}if(g){var w=l+M,L=u+C;M=Number.isInteger(M)?Number(M):M.toFixed(2),C=Number.isInteger(C)?Number(C):C.toFixed(2),w=Number.isInteger(w)?Number(w):w.toFixed(2),Q+="M"+M+","+C+" V"+(L=Number.isInteger(L)?Number(L):L.toFixed(2))+" H"+w+" V"+C+" H"+M+" Z "}else m+=c?n+'<use x="'+M.toString()+'" y="'+C.toString()+'" href="#qrmodule" />'+i:n+'<rect x="'+M.toString()+'" y="'+C.toString()+'" width="'+l+'" height="'+u+'" style="fill:'+e.color+';shape-rendering:crispEdges;"/>'+i}}g&&(m=n+'<path x="0" y="0" style="fill:'+e.color+';shape-rendering:crispEdges;" d="'+Q+'" />');var T="";switch(t.container){case"svg":f&&(T+='<?xml version="1.0" standalone="yes"?>'+i),T+='<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="'+a+'" height="'+s+'">'+i,T+=R+p+m,T+="</svg>";break;case"svg-viewbox":f&&(T+='<?xml version="1.0" standalone="yes"?>'+i),T+='<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 '+a+" "+s+'">'+i,T+=R+p+m,T+="</svg>";break;case"g":T+='<g width="'+a+'" height="'+s+'">'+i,T+=R+p+m,T+="</g>";break;default:T+=(R+p+m).replace(/^\s+/,"")}return T},QRCode.prototype.save=function(t,e){var r=this.svg();"function"!=typeof e&&(e=function(t,e){});try{require("fs").writeFile(t,r,e)}catch(t){e(t)}};</script>
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
   :root{
-    --bg:#0d0f18;--surface:#161923;--surface2:#1e2235;--border:#272d42;
-    --accent:#7c6eff;--accent2:#b4a4ff;--text:#eaecf4;--muted:#7880a0;
+    --bg:#07090f;--surface:#0d1120;--surface2:#131829;--border:#1e2640;
+    --accent:#c9a227;--accent2:#f0c84a;--text:#eaecf4;--muted:#7880a0;
     --green:#22c55e;--amber:#f59e0b;--red:#ef4444;
     --radius:16px;--font:'Segoe UI',system-ui,sans-serif;
-    --shadow-sm:0 2px 8px rgba(0,0,0,.28);
-    --shadow-md:0 8px 32px rgba(0,0,0,.45);
-    --shadow-lg:0 24px 64px rgba(0,0,0,.6);
+    --shadow-sm:0 2px 8px rgba(0,0,0,.4);
+    --shadow-md:0 8px 32px rgba(0,0,0,.55);
+    --shadow-lg:0 24px 64px rgba(0,0,0,.7);
     --blur:blur(20px)
+  }
+  :root.light{
+    --bg:#f0f2f8;--surface:#ffffff;--surface2:#e8ebf4;--border:#d0d6e8;
+    --accent:#b8911f;--accent2:#c9a227;--text:#111827;--muted:#5a6380;
+    --green:#16a34a;--amber:#d97706;--red:#dc2626;
+    --shadow-sm:0 2px 8px rgba(0,0,0,.08);
+    --shadow-md:0 8px 32px rgba(0,0,0,.12);
+    --shadow-lg:0 24px 64px rgba(0,0,0,.18)
   }
   *{box-sizing:border-box}
   html,body{height:100%;height:100dvh}
@@ -38,11 +46,15 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .field{margin-bottom:1rem}
   .field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
   .btn-primary{width:100%;padding:11px;border-radius:8px;background:var(--accent);color:#fff;font-weight:600;font-size:14px;margin-top:.5rem;transition:.15s}
-  .btn-primary:hover{background:#5a52e8}
+  .btn-primary:hover{background:#a8841e}
   .err{color:var(--red);font-size:12px;margin-top:.5rem}
   .ok-msg{color:var(--green);font-size:12px;margin-top:.5rem}
-
-  /* APP LAYOUT */
+  /* Email field with fixed domain */
+  .email-wrap{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border .2s,box-shadow .2s}
+  .email-wrap:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent)22}
+  .email-wrap input{background:transparent;border:none;border-radius:0;padding:10px 0 10px 14px;flex:1;min-width:0;outline:none;box-shadow:none!important}
+  .email-wrap input:focus{border:none;box-shadow:none}
+  .email-suffix{flex-shrink:0;padding:10px 14px 10px 2px;font-size:13px;color:var(--accent2);font-weight:600;white-space:nowrap;user-select:none;-webkit-user-select:none;pointer-events:none}
   .app{display:flex;height:100vh;height:100dvh;overflow:hidden}
 
   /* ── SIDEBAR EXPANDED ── */
@@ -145,7 +157,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   }
   .avatar{
     width:36px;height:36px;border-radius:10px;flex-shrink:0;
-    background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);
+    background:linear-gradient(135deg,var(--accent) 0%,#f0c84a 100%);
     display:flex;align-items:center;justify-content:center;
     font-weight:700;font-size:13px;color:#fff;
     box-shadow:0 2px 10px rgba(109,40,217,.35);
@@ -207,7 +219,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .table-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border)}
   .table-title{font-weight:600;font-size:15px}
   .btn-sm{padding:8px 16px;border-radius:10px;background:var(--accent);color:#fff;font-weight:600;font-size:13px;white-space:nowrap;box-shadow:0 2px 8px var(--accent)44}
-  .btn-sm:hover{background:#6b5ef0;box-shadow:0 4px 14px var(--accent)55;transform:translateY(-1px)}
+  .btn-sm:hover{background:#b8941e;box-shadow:0 4px 14px var(--accent)55;transform:translateY(-1px)}
   .filters{display:flex;gap:.75rem;padding:.75rem 1.25rem;border-bottom:1px solid var(--border);background:var(--surface2)}
   table{width:100%;border-collapse:collapse}
   th{text-align:left;padding:10px 16px;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;border-bottom:1px solid var(--border);font-weight:600;background:var(--surface2)}
@@ -272,7 +284,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .scan-btns{display:flex;flex-direction:column;gap:.75rem;margin-top:1.25rem}
   .scan-btn{width:100%;padding:12px;border-radius:10px;font-weight:600;font-size:14px;transition:.15s;border:none}
   .scan-btn.borrow{background:var(--accent);color:#fff}
-  .scan-btn.borrow:hover{background:#5a52e8}
+  .scan-btn.borrow:hover{background:#a8841e}
   .scan-btn.ret{background:var(--surface2);color:var(--text);border:1px solid var(--border)}
   .scan-btn.ret:hover{border-color:var(--muted)}
   .scan-btn:disabled{opacity:.35;cursor:not-allowed}
@@ -284,7 +296,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .pw-actions{display:flex;gap:.5rem;margin-top:.75rem}
   .pw-actions .btn-ghost{flex:1;padding:9px 0;text-align:center}
   .pw-confirm{flex:1;padding:9px 0;border-radius:8px;font-weight:600;font-size:13px;background:var(--accent);color:#fff;border:none}
-  .pw-confirm:hover{background:#5a52e8}
+  .pw-confirm:hover{background:#a8841e}
   .pw-confirm.green{background:#16a34a}
   .pw-confirm.green:hover{background:#15803d}
 
@@ -323,14 +335,14 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .ct-wrap{position:relative}
   .ct-trigger{width:100%;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border-radius:10px;background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:13px;cursor:pointer;transition:border-color .15s;box-sizing:border-box}
   .ct-trigger:hover{border-color:var(--accent)}
-  .ct-trigger.open{border-color:var(--accent);box-shadow:0 0 0 2px rgba(124,110,255,.18)}
+  .ct-trigger.open{border-color:var(--accent);box-shadow:0 0 0 2px rgba(201,162,39,.18)}
   .ct-chevron{transition:transform .18s;color:var(--muted);flex-shrink:0}
   .ct-trigger.open .ct-chevron{transform:rotate(180deg)}
   .ct-menu{position:absolute;top:calc(100% + 5px);left:0;right:0;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.55),0 0 0 1px rgba(255,255,255,.04);overflow:hidden;animation:ctFadeIn .15s ease}
   @keyframes ctFadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
   .ct-option{display:flex;align-items:center;gap:9px;padding:8px 12px;cursor:pointer;transition:background .12s;font-size:12.5px}
   .ct-option:hover{background:rgba(255,255,255,.06)}
-  .ct-option.selected{background:rgba(124,110,255,.12)}
+  .ct-option.selected{background:rgba(201,162,39,.12)}
   .ct-option.selected .ct-opt-label{color:var(--accent2);font-weight:700}
 
   /* PDF PREVIEW MODAL */
@@ -346,7 +358,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
   .ac-wrap label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
   .ac-list{position:fixed;z-index:9999;background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:0 12px 36px rgba(0,0,0,.55);overflow-y:auto;max-height:220px;animation:ctFadeIn .12s ease}
   .ac-item{padding:8px 13px;font-size:13px;cursor:pointer;color:var(--text);transition:background .1s;white-space:normal;word-break:break-word;line-height:1.4}
-  .ac-item:hover,.ac-item.active{background:rgba(124,110,255,.15);color:var(--accent2)}
+  .ac-item:hover,.ac-item.active{background:rgba(201,162,39,.15);color:var(--accent2)}
   .ac-item em{color:var(--accent2);font-style:normal;font-weight:700}
 
   /* ══════════════════════════════════════════════════════════════════
@@ -886,7 +898,7 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     box-shadow: 0 3px 14px var(--accent)55;
     transition: background .15s;
   }
-  #crop-overlay .crop-btn-apply:active { background: #6b5ef0; }
+  #crop-overlay .crop-btn-apply:active { background: #b8941e; }
   /* Zoom slider */
   #crop-zoom {
     -webkit-appearance: none; appearance: none;
@@ -904,6 +916,34 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
     background: #fff; border: none; cursor: pointer;
   }
 
+  /* ── THEME TOGGLE ── */
+  .theme-toggle{
+    position:relative;width:52px;height:28px;border-radius:14px;
+    background:var(--surface2);border:1.5px solid var(--border);
+    cursor:pointer;transition:background .25s,border-color .25s;flex-shrink:0;
+    display:flex;align-items:center;padding:0 3px;-webkit-tap-highlight-color:transparent;
+  }
+  .theme-toggle .toggle-knob{
+    width:20px;height:20px;border-radius:50%;
+    background:var(--muted);transition:transform .25s cubic-bezier(.4,0,.2,1),background .25s;
+    display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  }
+  :root.light .theme-toggle{background:var(--surface2);border-color:var(--accent)}
+  :root.light .theme-toggle .toggle-knob{transform:translateX(24px);background:var(--accent)}
+  .acct-page-header{display:flex;align-items:flex-start;justify-content:space-between;gap:.75rem;margin-bottom:.75rem}
+  .acct-page-header-controls{display:flex;align-items:center;gap:.4rem;flex-shrink:0;padding-top:2px}
+  .signout-top-btn{
+    padding:4px 10px;border-radius:8px;
+    background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);
+    color:var(--red);font-weight:600;font-size:11px;
+    cursor:pointer;transition:all .15s;white-space:nowrap;
+    display:flex;align-items:center;gap:4px;
+    -webkit-tap-highlight-color:transparent;
+  }
+  /* Light mode additional overrides */
+  :root.light input,:root.light select,:root.light textarea{background:var(--surface2);color:var(--text);border-color:var(--border)}
+  :root.light select option{background:var(--surface);color:var(--text)}
+
   @media print{
     body *{visibility:hidden}
     .qr-print-area,.qr-print-area *{visibility:visible}
@@ -918,19 +958,19 @@ function QR8bitByte(t){this.mode=QRMode.MODE_8BIT_BYTE,this.data=t,this.parsedDa
 <script>
 // ── Data ───────────────────────────────────────────────────────────────
 let users = [
-  {id:1,name:'Admin User',email:'admin@filetrace.com',password:'admin123',role:'admin',title:'Administrator',avatar:null},
-  {id:2,name:'Maria Santos',email:'maria@filetrace.com',password:'pass123',role:'user',title:'Lawyer',avatar:null},
-  {id:3,name:'James Lee',email:'james@filetrace.com',password:'pass123',role:'user',title:'Lawyer',avatar:null},
-  {id:4,name:'Alex Reyes',email:'staff@filetrace.com',password:'staff123',role:'user',title:'Staff',avatar:null},
+  {id:1,name:'Admin User',email:'admin@stlaftrace.com',password:'admin123',role:'admin',title:'Administrator',avatar:null},
+  {id:2,name:'Maria Santos',email:'maria@stlaftrace.com',password:'pass123',role:'user',title:'Lawyer',avatar:null},
+  {id:3,name:'James Lee',email:'james@stlaftrace.com',password:'pass123',role:'user',title:'Lawyer',avatar:null},
+  {id:4,name:'Alex Reyes',email:'staff@stlaftrace.com',password:'staff123',role:'user',title:'Staff',avatar:null},
 ];
 
 let files = [
   {id:'2016-PRC-001',name:'RUBY GANIPAN vs. ENGR. MICHAEL MAGNO',category:'Administrative',location:'Cabinet A - Row 1',status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes:'',caseType:'admin',caseNo:'Administrative Case No. 870',court:'Professional Regulations Commission, Manila (Board of Civil Engineering)',caseNature:'Unprofessional and/or Dishonorable Conduct',borrowHistory:[{borrower:'James Lee',borrowedOn:'2025-03-12',returnedOn:'2025-03-19'},{borrower:'Maria Santos',borrowedOn:'2025-04-01',returnedOn:'2025-04-08'}]},
-  {id:'2016-PRC-002',name:'RUBY GANIPAN vs. PHILIPP C. SANTIAGO III',category:'Administrative',location:'Cabinet A - Row 2',status:'borrowed',borrower:'Maria Santos',borrowerEmail:'maria@filetrace.com',borrowDate:'2025-05-10',dueDate:'2025-05-20',notes:'',caseType:'admin',caseNo:'Administrative Case No. 850',court:'Professional Regulations Commission, Manila (Board of Civil Engineering)',caseNature:'Unprofessional and/or Dishonorable Conduct',borrowHistory:[{borrower:'Admin User',borrowedOn:'2025-02-03',returnedOn:'2025-02-10'}]},
-  {id:'2016-PRC-006',name:'RUBY GANIPAN vs. ENGR. ALEJO R. PONIO',category:'Administrative',location:'Cabinet A - Row 3',status:'borrowed',borrower:'James Lee',borrowerEmail:'james@filetrace.com',borrowDate:'2025-05-01',dueDate:'2025-05-08',notes:'',caseType:'admin',caseNo:'Administrative Case No. 863',court:'Professional Regulations Commission, Manila (Board of Medicine)',caseNature:'Immoral and/or Dishonorable Conduct',borrowHistory:[]},
+  {id:'2016-PRC-002',name:'RUBY GANIPAN vs. PHILIPP C. SANTIAGO III',category:'Administrative',location:'Cabinet A - Row 2',status:'borrowed',borrower:'Maria Santos',borrowerEmail:'maria@stlaftrace.com',borrowDate:'2025-05-10',dueDate:'2025-05-20',notes:'',caseType:'admin',caseNo:'Administrative Case No. 850',court:'Professional Regulations Commission, Manila (Board of Civil Engineering)',caseNature:'Unprofessional and/or Dishonorable Conduct',borrowHistory:[{borrower:'Admin User',borrowedOn:'2025-02-03',returnedOn:'2025-02-10'}]},
+  {id:'2016-PRC-006',name:'RUBY GANIPAN vs. ENGR. ALEJO R. PONIO',category:'Administrative',location:'Cabinet A - Row 3',status:'borrowed',borrower:'James Lee',borrowerEmail:'james@stlaftrace.com',borrowDate:'2025-05-01',dueDate:'2025-05-08',notes:'',caseType:'admin',caseNo:'Administrative Case No. 863',court:'Professional Regulations Commission, Manila (Board of Medicine)',caseNature:'Immoral and/or Dishonorable Conduct',borrowHistory:[]},
   {id:'2016-PRC-007',name:'RUBY GANIPAN vs. ENGR. JOSE DELA CRUZ',category:'Administrative',location:'Cabinet B - Row 1',status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes:'',caseType:'admin',caseNo:'Administrative Case No. 2655',court:'Professional Regulations Commission, Manila',caseNature:'Unprofessional Conduct',borrowHistory:[]},
   {id:'FT-001',name:'Q1 Financial Report 2025',category:'Finance',location:'Cabinet B - Row 2',status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes:'Audited copy',caseType:'others',caseNo:'',court:'',caseNature:'',borrowHistory:[]},
-  {id:'FT-002',name:'Employee Handbook v3',category:'HR',location:'Cabinet C - Row 1',status:'borrowed',borrower:'Admin User',borrowerEmail:'admin@filetrace.com',borrowDate:'2025-05-15',dueDate:'2025-05-25',notes:'',caseType:'others',caseNo:'',court:'',caseNature:'',borrowHistory:[]},
+  {id:'FT-002',name:'Employee Handbook v3',category:'HR',location:'Cabinet C - Row 1',status:'borrowed',borrower:'Admin User',borrowerEmail:'admin@stlaftrace.com',borrowDate:'2025-05-15',dueDate:'2025-05-25',notes:'',caseType:'others',caseNo:'',court:'',caseNature:'',borrowHistory:[]},
 ];
 
 let nextFileId = 10;
@@ -1066,6 +1106,23 @@ function hasColSearch(){return filterSearch.trim()!==''||Object.values(colSearch
 function clearColSearch(){filterSearch='';colSearch={id:'',caseType:'',name:'',caseNo:'',court:'',borrower:''}}
 function getStats(){return{total:files.length,available:files.filter(f=>f.status==='available').length,borrowed:files.filter(f=>f.status==='borrowed').length}}
 
+// ── Theme toggle ───────────────────────────────────────────────────────
+(function initTheme(){
+  try{if(localStorage.getItem('ftTheme')==='light')document.documentElement.classList.add('light')}catch(e){}
+})();
+function toggleTheme(){
+  const isLight=document.documentElement.classList.toggle('light');
+  try{localStorage.setItem('ftTheme',isLight?'light':'dark')}catch(e){}
+  const icon=document.getElementById('theme-icon');
+  if(icon){
+    if(isLight){
+      icon.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+    } else {
+      icon.innerHTML='<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>';
+    }
+  }
+}
+
 // ── Root render ────────────────────────────────────────────────────────
 function render(){
   syncOverdue();
@@ -1077,6 +1134,10 @@ function render(){
   if(!currentUser){root.innerHTML=renderAuth();attachAuth();return}
   root.innerHTML=renderApp();
   attachApp();
+  const _ti=document.getElementById('theme-icon');
+  if(_ti&&document.documentElement.classList.contains('light')){
+    _ti.innerHTML='<circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>';
+  }
   if(focusId){
     const el=document.getElementById(focusId);
     if(el){el.focus();if(focusSel!=null&&el.setSelectionRange)el.setSelectionRange(focusSel,focusSel);}
@@ -1090,24 +1151,34 @@ function renderAuth(){
   return`
 <div class="auth-wrap">
   <div class="auth-box">
-    <div class="logo">File<span>Trace</span></div>
+    <div class="logo">STLAF<span>Trace</span></div>
     <div class="auth-sub">Borrow &amp; Return Tracking System</div>
     <div class="auth-tabs">
       <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Login</button>
       <button class="tab-btn" id="tab-reg" onclick="switchTab('register')">Register</button>
     </div>
     <div id="auth-login">
-      <div class="field"><label>Email</label><input id="l-email" type="email" placeholder="you@email.com"/></div>
+      <div class="field"><label>Email</label>
+        <div class="email-wrap">
+          <input id="l-email" type="text" placeholder="username" autocomplete="username"/>
+          <span class="email-suffix">@stlaftrace.com</span>
+        </div>
+      </div>
       <div class="field"><label>Password</label><input id="l-pass" type="password" placeholder="••••••••"/></div>
       <div id="l-err" class="err"></div>
       <button class="btn-primary" onclick="doLogin()">Sign In</button>
       <div style="font-size:12px;color:var(--muted);margin-top:1rem;text-align:center">
-        Demo accounts:<br>admin@filetrace.com / admin123<br>maria@filetrace.com / pass123<br>james@filetrace.com / pass123<br>staff@filetrace.com / staff123
+        Demo accounts:<br>admin / admin123<br>maria / pass123<br>james / pass123<br>staff / staff123
       </div>
     </div>
     <div id="auth-register" style="display:none">
       <div class="field"><label>Full Name</label><input id="r-name" placeholder="Your Name"/></div>
-      <div class="field"><label>Email</label><input id="r-email" type="email" placeholder="you@email.com"/></div>
+      <div class="field"><label>Email</label>
+        <div class="email-wrap">
+          <input id="r-email" type="text" placeholder="username" autocomplete="username"/>
+          <span class="email-suffix">@stlaftrace.com</span>
+        </div>
+      </div>
       <div class="field"><label>Password</label><input id="r-pass" type="password" placeholder="Min 6 chars"/></div>
       <div id="r-err" class="err"></div>
       <button class="btn-primary" onclick="doRegister()">Create Account</button>
@@ -1122,7 +1193,8 @@ function switchTab(t){
   document.getElementById('tab-reg').className='tab-btn'+(t==='register'?' active':'');
 }
 function doLogin(){
-  const e=document.getElementById('l-email').value.trim();
+  const raw=document.getElementById('l-email').value.trim();
+  const e=raw.includes('@')?raw:raw+'@stlaftrace.com';
   const p=document.getElementById('l-pass').value;
   const u=users.find(u=>u.email===e&&u.password===p);
   if(!u){document.getElementById('l-err').textContent='Invalid email or password.';return}
@@ -1130,17 +1202,27 @@ function doLogin(){
 }
 function doRegister(){
   const n=document.getElementById('r-name').value.trim();
-  const e=document.getElementById('r-email').value.trim();
+  const raw=document.getElementById('r-email').value.trim();
+  const e=raw.includes('@')?raw:raw+'@stlaftrace.com';
   const p=document.getElementById('r-pass').value;
   const err=document.getElementById('r-err');
-  if(!n||!e||!p){err.textContent='All fields required.';return}
+  if(!n||!raw||!p){err.textContent='All fields required.';return}
   if(p.length<6){err.textContent='Password min 6 chars.';return}
   if(users.find(u=>u.email===e)){err.textContent='Email already registered.';return}
   users.push({id:Date.now(),name:n,email:e,password:p,role:'user'});
   currentUser=users[users.length-1];render();
 }
 function attachAuth(){
-  document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+  const lEmail=document.getElementById('l-email');
+  const lPass=document.getElementById('l-pass');
+  if(lEmail) lEmail.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();lPass&&lPass.focus();}});
+  if(lPass) lPass.addEventListener('keydown',e=>{if(e.key==='Enter')doLogin()});
+  const rName=document.getElementById('r-name');
+  const rEmail=document.getElementById('r-email');
+  const rPass=document.getElementById('r-pass');
+  if(rName) rName.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rEmail&&rEmail.focus();}});
+  if(rEmail) rEmail.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();rPass&&rPass.focus();}});
+  if(rPass) rPass.addEventListener('keydown',e=>{if(e.key==='Enter')doRegister()});
 }
 
 // ══════════════════════════════════════════════════════════════════════
@@ -1187,8 +1269,8 @@ function renderStaffBorrowModal(){
       ${lawyers.length===0
         ?`<div style="font-size:13px;color:var(--muted);padding:.75rem;background:var(--surface2);border-radius:10px;text-align:center">No lawyer accounts found</div>`
         :lawyers.map(l=>`
-      <div onclick="staffBorrowForEmail='${esc(l.email)}';showStaffBorrowModalDOM()" style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:12px;border:1px solid ${staffBorrowForEmail===l.email?'var(--accent)':'var(--border)'};background:${staffBorrowForEmail===l.email?'rgba(124,110,255,.10)':'var(--bg)'};cursor:pointer;transition:all .13s;-webkit-tap-highlight-color:transparent">
-        <div style="width:32px;height:32px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${initials(l.name)}</div>
+      <div onclick="staffBorrowForEmail='${esc(l.email)}';showStaffBorrowModalDOM()" style="display:flex;align-items:center;gap:10px;padding:10px 13px;border-radius:12px;border:1px solid ${staffBorrowForEmail===l.email?'var(--accent)':'var(--border)'};background:${staffBorrowForEmail===l.email?'rgba(201,162,39,.10)':'var(--bg)'};cursor:pointer;transition:all .13s;-webkit-tap-highlight-color:transparent">
+        <div style="width:32px;height:32px;border-radius:10px;flex-shrink:0;background:linear-gradient(135deg,var(--accent),#f0c84a);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">${initials(l.name)}</div>
         <div style="flex:1;min-width:0">
           <div style="font-size:13px;font-weight:600;color:var(--text)">${esc(l.name)}</div>
           <div style="font-size:11px;color:var(--accent);font-weight:600">${esc(lawyerAbbrev(l.name))}</div>
@@ -1224,13 +1306,19 @@ function renderScanPage(){
 
   const canBorrow=f.status==='available';
   const canReturn=f.status==='borrowed';
+  const activeLH=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;
+  const isMyReturn=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email||(activeLH&&activeLH.borrowForEmail&&activeLH.borrowForEmail===currentUser.email));
   const statusLabel=f.status.charAt(0).toUpperCase()+f.status.slice(1);
   const bgColor=f.status==='available'?'#22c55e0d':'#f59e0b0d';
+  // For staff borrows, show the lawyer name in "Borrowed by"
+  const borrowedByDisplay=activeLH&&activeLH.borrowFor&&!activeLH.returnedOn
+    ? esc(lawyerAbbrev(activeLH.borrowFor))
+    : esc(borrowerDisplay(f.borrower, f.borrowerEmail));
 
   return`
 <div class="scan-landing">
   <div class="scan-card">
-    <div class="scan-brand">File<span>Trace</span> &nbsp;<span style="font-weight:400;font-size:12px">· Folder Scan</span></div>
+    <div class="scan-brand">STLAF<span>Trace</span> &nbsp;<span style="font-weight:400;font-size:12px">· Folder Scan</span></div>
 
     <div class="folder-block" style="background:${bgColor}">
       <div class="folder-name">${esc(f.name)}</div>
@@ -1240,7 +1328,7 @@ function renderScanPage(){
         <div class="status-label ${f.status}">${statusLabel}</div>
       </div>
       <div class="info-row"><span class="info-key">Location</span><span>${esc(f.location)}</span></div>
-      ${f.borrower?`<div class="info-row"><span class="info-key">Borrowed by</span><span>${esc(f.borrower)}</span></div>`:''}
+      ${f.borrower?`<div class="info-row"><span class="info-key">Borrowed by</span><span>${borrowedByDisplay}</span></div>`:''}
 
       ${f.notes?`<div class="info-row"><span class="info-key">Notes</span><span style="font-size:12px">${esc(f.notes)}</span></div>`:''}
     </div>
@@ -1250,8 +1338,8 @@ function renderScanPage(){
         <button class="scan-btn borrow" onclick="setScanAction('borrow')" ${canBorrow?'':'disabled'}>
           ${canBorrow?'↗ Borrow this Folder':'Not available to borrow'}
         </button>
-        <button class="scan-btn ret" onclick="setScanAction('return')" ${canReturn?'':'disabled'}>
-          ${canReturn?'↩ Return this Folder':'Nothing to return'}
+        <button class="scan-btn ret" onclick="setScanAction('return')" ${isMyReturn?'':'disabled'}>
+          ${canReturn?(isMyReturn?'↩ Return this Folder':'Borrowed by someone else'):'Nothing to return'}
         </button>
       </div>
       ${scanAction ? renderPwPanel(f) : ''}
@@ -1271,6 +1359,7 @@ function renderScanSuccess(f){
   <div class="scan-success-icon">✅</div>
   <div class="scan-success-msg">${isBorrow?'Folder Borrowed':'Folder Returned'}</div>
   <div class="scan-success-sub">${isBorrow?`${esc(f.name)} is now borrowed`:`${esc(f.name)} is now available`}</div>
+  <button onclick="closeScan()" style="margin-top:.85rem;padding:9px 28px;border-radius:30px;background:var(--accent);border:none;color:#fff;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.3px">Done</button>
 </div>`;
 }
 
@@ -1282,7 +1371,7 @@ function renderPwPanel(f){
   <div class="pw-title">${isBorrow?'Confirm Borrow':'Confirm Return'}</div>
   <div class="pw-sub">Enter your password to confirm.</div>
   <div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid var(--border);margin-bottom:.75rem">
-    <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${currentUser.avatar?`<img src="${currentUser.avatar}" style="width:100%;height:100%;object-fit:cover;display:block"/>`:initials(currentUser.name)}</div>
+    <div style="width:32px;height:32px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),#f0c84a);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">${currentUser.avatar?`<img src="${currentUser.avatar}" style="width:100%;height:100%;object-fit:cover;display:block"/>`:initials(currentUser.name)}</div>
     <div style="min-width:0">
       <div style="font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(currentUser.name)}</div>
       <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(currentUser.email)}</div>
@@ -1303,8 +1392,7 @@ function renderPwPanel(f){
 function setScanAction(a){
   _confirmingScan=false;
   scanAction=a;scanMsg=null;
-  document.getElementById('root').innerHTML=renderScanPage();
-  attachScan();
+  render();
 }
 
 let _confirmingScan = false;
@@ -1330,8 +1418,10 @@ function confirmScan(){
     }
   } else {
     if(f.status==='available'){scanMsg={type:'err',text:'This folder is already available.'};_confirmingScan=false;setScanAction(scanAction);return}
-    if(u.role!=='admin'&&f.borrowerEmail&&u.email!==f.borrowerEmail){
-      scanMsg={type:'err',text:'Only '+f.borrower+' (who borrowed it) or an admin can return this folder.'};
+    const _lhR=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;
+    const _isBorrowForLawyer=_lhR&&_lhR.borrowForEmail&&u.email===_lhR.borrowForEmail;
+    if(u.role!=='admin'&&f.borrowerEmail&&u.email!==f.borrowerEmail&&!_isBorrowForLawyer){
+      scanMsg={type:'err',text:'Only '+f.borrower+(_lhR&&_lhR.borrowFor?' (on behalf of '+lawyerAbbrev(_lhR.borrowFor)+')':'')+', '+(_lhR&&_lhR.borrowFor?lawyerAbbrev(_lhR.borrowFor)+',':'')+' or an admin can return this folder.'};
       _confirmingScan=false;setScanAction(scanAction);return;
     }
     if(!f.borrowHistory)f.borrowHistory=[];
@@ -1348,8 +1438,7 @@ function confirmScan(){
   scanDone=true;
   scanAction=null;
   _confirmingScan=false;
-  document.getElementById('root').innerHTML=renderScanPage();
-  attachScan();
+  render();
 }
 
 function attachScan(){
@@ -1430,7 +1519,7 @@ function renderSidebar(){
   <div class="sidebar-inner">
     <div class="sidebar-logo">
       <div class="logo-icon">${iFile}</div>
-      <div class="logo-text">File<span>Trace</span></div>
+      <div class="logo-text">STLAF<span>Trace</span></div>
       <button class="sidebar-toggle" onclick="toggleSidebar()" title="${c?'Expand':'Collapse'} sidebar">${iChev}</button>
     </div>
     ${nav('dashboard','Dashboard',iDash)}
@@ -1487,7 +1576,7 @@ function renderDashboard(){
         const dot=o.color?`<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${o.color};flex-shrink:0"></span>`:'';
         return`<button onclick="filterStatus='${o.v}';render()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1px solid ${active?(o.color||'var(--accent)'):'var(--border)'};background:${active?(o.color?o.color+'22':'var(--accent)22'):'transparent'};color:${active?(o.color||'var(--accent2)'):'var(--muted)'}">${dot}${o.label}</button>`;
       }).join('')}
-      <button onclick="searchModalOpen=!searchModalOpen;render()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1px solid ${searchModalOpen||hasCS?'var(--accent)':'var(--border)'};background:${searchModalOpen||hasCS?'rgba(124,110,255,.12)':'transparent'};color:${searchModalOpen||hasCS?'var(--accent2)':'var(--muted)'}">
+      <button onclick="searchModalOpen=!searchModalOpen;render()" style="display:inline-flex;align-items:center;gap:5px;padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;flex-shrink:0;border:1px solid ${searchModalOpen||hasCS?'var(--accent)':'var(--border)'};background:${searchModalOpen||hasCS?'rgba(201,162,39,.12)':'transparent'};color:${searchModalOpen||hasCS?'var(--accent2)':'var(--muted)'}">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         Search${hasCS?` <span style="background:var(--accent);color:#fff;border-radius:10px;padding:0 5px;font-size:10px;font-weight:700">${fs.length}</span>`:''}
       </button>
@@ -1505,7 +1594,7 @@ function renderDashboard(){
       </div>
       <div style="display:flex;align-items:center;gap:.5rem">
         ${hasCS?`<button onclick="clearColSearch();render()" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.25);cursor:pointer;transition:.15s" title="Clear all search filters">✕ Clear Filters</button>`:''}
-        <button onclick="searchModalOpen=!searchModalOpen;render()" style="display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid ${searchModalOpen||hasCS?'var(--accent)':'var(--border)'};background:${searchModalOpen||hasCS?'rgba(124,110,255,.12)':'transparent'};color:${searchModalOpen||hasCS?'var(--accent2)':'var(--muted)'}">
+        <button onclick="searchModalOpen=!searchModalOpen;render()" style="display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .15s;border:1px solid ${searchModalOpen||hasCS?'var(--accent)':'var(--border)'};background:${searchModalOpen||hasCS?'rgba(201,162,39,.12)':'transparent'};color:${searchModalOpen||hasCS?'var(--accent2)':'var(--muted)'}">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
           Search${hasCS?` <span style="background:var(--accent);color:#fff;border-radius:10px;padding:1px 6px;font-size:10px;font-weight:700;margin-left:2px">${fs.length}</span>`:''}
         </button>
@@ -1526,7 +1615,7 @@ function renderDashboard(){
       <div style="font-size:10.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.35rem">Filter by column</div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem" class="search-grid-mobile">
         <div>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Folder ID</div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Case Folder No.</div>
           <input id="cs-id" placeholder="e.g. 2016-PRC…" value="${esc(colSearch.id)}" oninput="colSearch.id=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.id?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
         </div>
         <div>
@@ -1534,7 +1623,7 @@ function renderDashboard(){
           <input id="cs-caseType" placeholder="e.g. ADMIN, CIVIL…" value="${esc(colSearch.caseType)}" oninput="colSearch.caseType=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.caseType?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
         </div>
         <div>
-          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Folder Name / Location</div>
+          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600">Case Title / Location</div>
           <input id="cs-name" placeholder="e.g. Ganipan, Cabinet A…" value="${esc(colSearch.name)}" oninput="colSearch.name=this.value;render()" style="width:100%;font-size:11.5px;padding:5px 9px;border-radius:8px;background:var(--bg);border:1px solid ${colSearch.name?'var(--accent)':'var(--border)'};color:var(--text);outline:none;box-sizing:border-box"/>
         </div>
         <div>
@@ -1556,15 +1645,15 @@ function renderDashboard(){
       </div>
     </div>`:''}
 
-    ${fs.length===0?`<div class="empty" style="padding:3rem;text-align:center"><div class="empty-icon">📂</div><div style="color:var(--muted);margin-top:.5rem">No folders match your filters</div>${hasCS?`<button onclick="clearColSearch();render()" style="margin-top:.75rem;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(124,110,255,.12);color:var(--accent2);border:1px solid var(--accent);cursor:pointer">Clear Filters</button>`:''}
+    ${fs.length===0?`<div class="empty" style="padding:3rem;text-align:center"><div class="empty-icon">📂</div><div style="color:var(--muted);margin-top:.5rem">No folders match your filters</div>${hasCS?`<button onclick="clearColSearch();render()" style="margin-top:.75rem;padding:5px 16px;border-radius:20px;font-size:12px;font-weight:600;background:rgba(201,162,39,.12);color:var(--accent2);border:1px solid var(--accent);cursor:pointer">Clear Filters</button>`:''}
 </div>`:
     `<table>
       <thead>
         <tr>
           <th style="width:28px"></th>
-          <th style="width:130px">FOLDER ID</th>
+          <th style="width:130px">CASE FOLDER NO.</th>
           <th style="width:130px">CASE TYPE</th>
-          <th>FOLDER NAME</th>
+          <th>CASE TITLE</th>
           <th style="width:200px">CASE NO.</th>
           <th style="width:220px">COURT</th>
           <th style="width:120px">BORROWER</th>
@@ -1618,7 +1707,7 @@ function renderMobileCards(fs, hasCS){
       </div>
       <div class="mobile-card-right">
         <span class="mobile-card-badge ${f.status}">${f.status.charAt(0).toUpperCase()+f.status.slice(1)}</span>
-        ${f.borrower?`<div class="mobile-card-borrower">${esc(f.borrower)}${(()=>{const _lh=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;return _lh&&_lh.borrowFor&&!_lh.returnedOn?`<div style="font-size:10px;color:var(--accent2);font-weight:600;margin-top:1px">For: ${esc(lawyerAbbrev(_lh.borrowFor))}</div>`:''})()}</div>`:''}
+        ${f.borrower?`<div class="mobile-card-borrower">${(()=>{const _lh=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;const _name=_lh&&_lh.borrowFor&&!_lh.returnedOn?esc(lawyerAbbrev(_lh.borrowFor)):esc(borrowerDisplay(f.borrower,f.borrowerEmail));const _via=_lh&&_lh.borrowFor&&!_lh.returnedOn?`<div style="font-size:10px;color:var(--muted);font-weight:500;margin-top:1px">via ${esc(borrowerDisplay(f.borrower,f.borrowerEmail))}</div>`:'';return _name+_via})()}</div>`:''}
         ${chevron}
       </div>
     </div>`).join('')}
@@ -1630,7 +1719,7 @@ function renderLookupPage(){
   return`
 <div style="max-width:480px">
   <div class="page-title">Folder Lookup</div>
-  <div class="page-sub">Scan a QR code or enter a Folder ID manually</div>
+  <div class="page-sub">Scan a QR code or enter a Case Folder No. manually</div>
 
   <!-- Camera QR Scanner -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:1rem">
@@ -1866,7 +1955,7 @@ function _onQRResult(text){
   }
   const f = files.find(f=>f.id===fid);
   if(!f){
-    showCamErr(`Folder ID "${fid}" not found in the system.`);
+    showCamErr(`Case Folder No. "${fid}" not found in the system.`);
     return;
   }
   hideCamErr();
@@ -1899,8 +1988,8 @@ function renderAddModal(){
     </div>
     <div class="${isMobile?'add-modal-body':''}">
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
-      <div class="field" style="margin:0">${renderSmartInput('a-id','Folder ID','e.g. 2016-PRC-001','folderid')}</div>
-      <div class="field" style="margin:0;grid-column:span 2"><label>Folder Name</label><input id="a-name" placeholder="e.g. RUBY GANIPAN vs. ENGR. MICHAEL MAGNO"/></div>
+      <div class="field" style="margin:0">${renderSmartInput('a-id','Case Folder No.','e.g. 2016-PRC-001','folderid')}</div>
+      <div class="field" style="margin:0;grid-column:span 2"><label>Case Title</label><input id="a-name" placeholder="e.g. RUBY GANIPAN vs. ENGR. MICHAEL MAGNO"/></div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
@@ -1946,7 +2035,7 @@ function renderAddConfirm(){
     </div>
     <div class="modal-sub">Review the details below, then generate a QR code to attach to the physical folder.</div>
     <div style="background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:1rem;margin-bottom:1rem">
-      <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Folder ID</span><span style="font-weight:600;color:var(--accent2)">${esc(f.id)}</span></div>
+      <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Case Folder No.</span><span style="font-weight:600;color:var(--accent2)">${esc(f.id)}</span></div>
       <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Name</span><span style="font-weight:500;max-width:60%;text-align:right">${esc(f.name)}</span></div>
       <div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Location</span><span style="max-width:60%;text-align:right">${esc(f.location)}</span></div>
       ${f.caseNo?`<div class="qr-info-row" style="display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:1px solid var(--border)44"><span style="color:var(--muted)">Case No.</span><span style="font-weight:500;max-width:60%;text-align:right">${esc(f.caseNo)}</span></div>`:''}
@@ -1993,7 +2082,7 @@ function renderQRModal(){
     <div class="modal-sub">Print and attach to the physical folder</div>
     <div class="qr-print-area"><div class="qr-box">${makeQRImg(f.id,200)}</div><div class="qr-print-id">${esc(f.id)}</div></div>
     <div class="qr-info">
-      <div class="qr-info-row"><span class="qr-info-key">Folder ID</span><span>${esc(f.id)}</span></div>
+      <div class="qr-info-row"><span class="qr-info-key">Case Folder No.</span><span>${esc(f.id)}</span></div>
       <div class="qr-info-row"><span class="qr-info-key">Name</span><span style="font-size:11px">${esc(f.name)}</span></div>
       <div class="qr-info-row"><span class="qr-info-key">Location</span><span>${esc(f.location)}</span></div>
     </div>
@@ -2025,10 +2114,10 @@ function renderDetailModal(){
   const statusBorder=f.status==='available'?'rgba(34,197,94,.2)':f.status==='borrowed'?'rgba(245,158,11,.2)':'rgba(239,68,68,.2)';
   const canBorrow=f.status==='available';
   const canReturn=f.status==='borrowed';
-  const isMyBorrow=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email);
+  const _lhMB=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;const isMyBorrow=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email||(_lhMB&&_lhMB.borrowForEmail&&_lhMB.borrowForEmail===currentUser.email));
   let actionBtn='';
   if(canBorrow){
-    actionBtn=`<button onclick="closeModal();openScan('${esc(f.id)}')" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:13.5px;border:none;cursor:pointer;box-shadow:0 3px 12px var(--accent)44;transition:all .17s" onmouseover="this.style.background='#6b5ef0';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--accent)';this.style.transform='none'">${SVG.borrow} Borrow</button>`;
+    actionBtn=`<button onclick="closeModal();openScan('${esc(f.id)}')" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:12px;background:var(--accent);color:#fff;font-weight:600;font-size:13.5px;border:none;cursor:pointer;box-shadow:0 3px 12px var(--accent)44;transition:all .17s" onmouseover="this.style.background='#b8941e';this.style.transform='translateY(-1px)'" onmouseout="this.style.background='var(--accent)';this.style.transform='none'">${SVG.borrow} Borrow</button>`;
   } else if(canReturn){
     if(isMyBorrow){
       actionBtn=`<button onclick="closeModal();openScan('${esc(f.id)}')" style="width:100%;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 0;border-radius:12px;background:var(--amber);color:#fff;font-weight:600;font-size:13.5px;border:none;cursor:pointer;box-shadow:0 3px 12px rgba(245,158,11,.35);transition:all .17s" onmouseover="this.style.opacity='.88';this.style.transform='translateY(-1px)'" onmouseout="this.style.opacity='1';this.style.transform='none'">${SVG.return} Return</button>`;
@@ -2080,7 +2169,7 @@ function renderDetailModal(){
         const historyTable = count ?
           allEntries.map((h,i,arr)=>`
             <div style="padding:10px 12px;${i<arr.length-1?'border-bottom:1px solid rgba(255,255,255,.07)':''}">
-              <div style="font-size:12.5px;font-weight:${h.active?'700':'500'};color:var(--text);margin-bottom:5px">${esc(borrowerDisplay(h.borrower, h.borrowerEmail||f.borrowerEmail))}${h.borrowFor?`<span style="font-size:10px;color:var(--accent2);font-weight:600;margin-left:6px;background:rgba(124,110,255,.13);border:1px solid rgba(124,110,255,.3);padding:1px 7px;border-radius:20px">For: ${esc(lawyerAbbrev(h.borrowFor))}</span>`:''}</div>
+              <div style="font-size:12.5px;font-weight:${h.active?'700':'500'};color:var(--text);margin-bottom:5px">${esc(borrowerDisplay(h.borrower, h.borrowerEmail||f.borrowerEmail))}${h.borrowFor?`<span style="font-size:10px;color:var(--accent2);font-weight:600;margin-left:6px;background:rgba(201,162,39,.13);border:1px solid rgba(201,162,39,.3);padding:1px 7px;border-radius:20px">For: ${esc(lawyerAbbrev(h.borrowFor))}</span>`:''}</div>
               <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
                 <div style="font-size:10.5px;color:var(--muted)">Borrowed: <span style="color:rgba(255,255,255,.55)">${formatDate(h.borrowedOn)}</span></div>
                 <div style="flex-shrink:0">${h.returnedOn
@@ -2249,7 +2338,7 @@ function openCtxMenu(e,fid){
   const f=files.find(f=>f.id===fid);
   const canBorrow=f.status==='available';
   const canReturn=f.status==='borrowed';
-  const isMyBorrow=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email);
+  const _lhMB=f.borrowHistory&&f.borrowHistory.length?f.borrowHistory[f.borrowHistory.length-1]:null;const isMyBorrow=canReturn&&currentUser&&(currentUser.role==='admin'||f.borrowerEmail===currentUser.email||(_lhMB&&_lhMB.borrowForEmail&&_lhMB.borrowForEmail===currentUser.email));
   const menu=document.createElement('div');
   menu.className='ctx-menu';menu.id='ctx-menu';
   menu.style.left=e.clientX+'px';menu.style.top=e.clientY+'px';
@@ -2264,11 +2353,12 @@ function openCtxMenu(e,fid){
       borrowReturnBtn=`<button class="ctx-item" disabled style="opacity:.35;cursor:not-allowed">${SVG.return} Return</button>`;
     }
   }
+  const isAdmin = currentUser && currentUser.role === 'admin';
   menu.innerHTML=`
-    <button class="ctx-item" onclick="openEditModal('${esc(fid)}')">${SVG.edit} Edit</button>
+    ${isAdmin ? `<button class="ctx-item" onclick="openEditModal('${esc(fid)}')">${SVG.edit} Edit</button>` : ''}
     ${borrowReturnBtn}
-    <div style="border-top:1px solid var(--border);margin:4px 0"></div>
-    <button class="ctx-item danger" onclick="openDelete('${esc(fid)}')">${SVG.trash} Delete</button>`;
+    ${isAdmin ? `<div style="border-top:1px solid var(--border);margin:4px 0"></div>
+    <button class="ctx-item danger" onclick="openDelete('${esc(fid)}')">${SVG.trash} Delete</button>` : ''}`;
   document.body.appendChild(menu);
   const rect=menu.getBoundingClientRect();
   if(rect.right>window.innerWidth)menu.style.left=(e.clientX-rect.width)+'px';
@@ -2298,7 +2388,7 @@ function renderEditModal(){
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
-      <div class="field" style="margin:0;grid-column:span 3"><label>Folder Name</label><input id="e-name" value="${esc(f.name)}"/></div>
+      <div class="field" style="margin:0;grid-column:span 3"><label>Case Title</label><input id="e-name" value="${esc(f.name)}"/></div>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.65rem .9rem;margin-bottom:.65rem">
@@ -2333,7 +2423,7 @@ function doEdit(){
   const caseType=document.getElementById('e-type').value||'others';
   const notes=document.getElementById('e-notes').value.trim();
   const err=document.getElementById('e-err');
-  if(!name){err.textContent='Folder Name is required.';return}
+  if(!name){err.textContent='Case Title is required.';return}
   if(!loc){err.textContent='Location is required.';return}
   if(!caseNo){err.textContent='Case No. is required.';return}
   if(!court){err.textContent='Court / Agency is required.';return}
@@ -2350,7 +2440,7 @@ function openQR(fid){selectedFile=files.find(f=>f.id===fid);modal='qr';render()}
 function openDelete(fid){selectedFile=files.find(f=>f.id===fid);modal='delete';render()}
 function closeModal(e,el){if(e&&el&&e.target!==el)return;modal=null;selectedFile=null;addStep='form';document.body.classList.remove('detail-open');document.body.classList.remove('add-open');render()}
 function doAdd(){
-  const folderId=document.getElementById('a-id').value.trim();
+  const caseFolderNo=document.getElementById('a-id').value.trim();
   const name=document.getElementById('a-name').value.trim();
   const loc=document.getElementById('a-loc').value.trim();
   const caseNo=document.getElementById('a-caseno').value.trim();
@@ -2359,16 +2449,16 @@ function doAdd(){
   const caseType=document.getElementById('a-type').value||'others';
   const notes=document.getElementById('a-notes').value.trim();
   const err=document.getElementById('a-err');
-  if(!folderId){err.textContent='Folder ID is required.';return}
-  if(files.find(f=>f.id===folderId)){err.textContent='A folder with that ID already exists.';return}
-  if(!name){err.textContent='Folder Name is required.';return}
+  if(!caseFolderNo){err.textContent='Case Folder No. is required.';return}
+  if(files.find(f=>f.id===caseFolderNo)){err.textContent='A folder with that Case Folder No. already exists.';return}
+  if(!name){err.textContent='Case Title is required.';return}
   if(!loc){err.textContent='Location is required.';return}
   if(!caseNo){err.textContent='Case No. is required.';return}
   if(!court){err.textContent='Court / Agency is required.';return}
   if(!caseNature){err.textContent='Nature of Case is required.';return}
   err.textContent='';
   const drive=document.getElementById('a-drive').value.trim();
-  const newFolder={id:folderId,name,category:'',location:loc,status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes,caseType,caseNo,court,caseNature,driveLink:drive,borrowHistory:[]};
+  const newFolder={id:caseFolderNo,name,category:'',location:loc,status:'available',borrower:null,borrowerEmail:null,borrowDate:null,dueDate:null,notes,caseType,caseNo,court,caseNature,driveLink:drive,borrowHistory:[]};
   files.unshift(newFolder);
   selectedFile=newFolder;
   addStep='confirm';
@@ -2442,7 +2532,7 @@ function attachApp(){
     if(main)main.scrollTo({top:0,behavior:'smooth'});
     else window.scrollTo({top:0,behavior:'smooth'});
   };
-  btn.onmouseover=()=>{btn.style.background='#6b5ef0';btn.style.transform='translateY(-2px)'};
+  btn.onmouseover=()=>{btn.style.background='#b8941e';btn.style.transform='translateY(-2px)'};
   btn.onmouseout=()=>{btn.style.background='var(--accent)';btn.style.transform=btn._visible?'translateY(0)':'translateY(8px)'};
   document.body.appendChild(btn);
 })();
@@ -2789,10 +2879,16 @@ function renderAccountPage(){
   const u = currentUser;
   const isAdmin = u.role === 'admin';
   const abbrev = u.abbrev || (u.title==='Lawyer' ? lawyerAbbrev(u.name) : '');
-  const myBorrows = files.filter(f => f.status === 'borrowed' && f.borrowerEmail === u.email);
+  const myBorrows = files.filter(f => {
+    if(f.status !== 'borrowed') return false;
+    if(f.borrowerEmail === u.email) return true;
+    // Also show files a staff member borrowed on behalf of this user
+    const lh = f.borrowHistory&&f.borrowHistory.length ? f.borrowHistory[f.borrowHistory.length-1] : null;
+    return lh && !lh.returnedOn && lh.borrowForEmail === u.email;
+  });
   const myHistory = files.flatMap(f =>
     (f.borrowHistory||[])
-      .filter(h => h.borrowerEmail === u.email && h.returnedOn)
+      .filter(h => h.returnedOn && (h.borrowerEmail === u.email || h.borrowForEmail === u.email))
       .map(h => ({...h, fileId: f.id, fileName: f.name}))
   ).sort((a,b) => (b.borrowedOn||'').localeCompare(a.borrowedOn||''));
 
@@ -2802,14 +2898,27 @@ function renderAccountPage(){
 
   return `
 <div class="account-page">
-  <div class="page-title">Account</div>
-  <div class="page-sub">Manage your profile and activity</div>
+  <div class="acct-page-header">
+    <div>
+      <div class="page-title">Account</div>
+      <div class="page-sub" style="margin-bottom:0">Manage your profile and activity</div>
+    </div>
+    <div class="acct-page-header-controls">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle theme">
+        <div class="toggle-knob">
+          <svg id="theme-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </div>
+      </button>
+    </div>
+  </div>
 
   <!-- Header + Avatar card -->
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-bottom:1rem;box-shadow:var(--shadow-sm)">
     <!-- Header banner — tap = view photo (if set), hold = action sheet -->
     <div id="acct-banner-zone"
-      style="position:relative;width:100%;height:0;padding-top:calc(100% * 88 / 480);background:${u.banner?'transparent':'linear-gradient(135deg,#312e81 0%,#4c1d95 50%,#1e1b4b 100%)'};overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;transition:filter .15s">
+      style="position:relative;width:100%;height:0;padding-top:calc(100% * 88 / 480);background:${u.banner?'transparent':'linear-gradient(135deg,#0a1628 0%,#0d1e3a 50%,#071020 100%)'};overflow:hidden;-webkit-tap-highlight-color:transparent;user-select:none;transition:filter .15s">
       ${u.banner?`<img src="${u.banner}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" draggable="false"/>`:''}
     </div>
     <!-- Avatar row -->
@@ -2817,7 +2926,7 @@ function renderAccountPage(){
       <!-- Avatar — tap = view photo (if set), hold = action sheet -->
       <div style="position:relative;flex-shrink:0">
         <div id="acct-avatar-zone"
-          style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:3px solid var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.4);background:linear-gradient(135deg,var(--accent) 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;-webkit-tap-highlight-color:transparent;user-select:none;transition:transform .15s,box-shadow .15s">
+          style="width:56px;height:56px;border-radius:14px;overflow:hidden;border:3px solid var(--surface);box-shadow:0 4px 14px rgba(0,0,0,.4);background:linear-gradient(135deg,var(--accent) 0%,#f0c84a 100%);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;color:#fff;-webkit-tap-highlight-color:transparent;user-select:none;transition:transform .15s,box-shadow .15s">
           ${u.avatar?`<img src="${u.avatar}" style="width:100%;height:100%;object-fit:cover;display:block;pointer-events:none" draggable="false"/>`:`<span style="pointer-events:none">${initials(u.name)}</span>`}
         </div>
       </div>
@@ -2828,7 +2937,7 @@ function renderAccountPage(){
       </div>
       <!-- Role + borrow count -->
       <div style="text-align:right;flex-shrink:0;padding-top:28px">
-        <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${u.role==='admin'?'rgba(124,110,255,.18)':u.title==='Lawyer'?'rgba(99,102,241,.12)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':u.title==='Lawyer'?'var(--accent)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(124,110,255,.3)':u.title==='Lawyer'?'rgba(99,102,241,.3)':'var(--border)'};margin-bottom:4px">${roleLabel}</div>
+        <div style="display:inline-flex;align-items:center;gap:4px;padding:2px 9px;border-radius:20px;font-size:10px;font-weight:700;background:${u.role==='admin'?'rgba(201,162,39,.18)':u.title==='Lawyer'?'rgba(99,102,241,.12)':'rgba(255,255,255,.07)'};color:${u.role==='admin'?'var(--accent2)':u.title==='Lawyer'?'var(--accent)':'var(--muted)'};border:1px solid ${u.role==='admin'?'rgba(201,162,39,.3)':u.title==='Lawyer'?'rgba(99,102,241,.3)':'var(--border)'};margin-bottom:4px">${roleLabel}</div>
         <div style="font-size:10px;color:var(--muted)">Borrows: <span style="color:${myBorrows.length>0?'var(--amber)':'var(--green)'};font-weight:700">${myBorrows.length}</span></div>
       </div>
     </div>
@@ -2925,7 +3034,14 @@ ${myBorrows.length > 0 ? `
       <div style="font-size:9.5px;font-weight:700;color:var(--accent2);background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:1px 7px;display:inline-block;margin-bottom:2px">${esc(f.id)}</div>
       <div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(f.name)}</div>
       <div style="font-size:11px;color:var(--muted);margin-top:1px">Borrowed: <span style="color:var(--text);font-weight:600">${formatDate(f.borrowDate)}</span> · <span style="color:var(--muted)">${esc(f.location)}</span></div>
-      ${_lh&&_lh.borrowFor&&!_lh.returnedOn?`<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">For: ${esc(lawyerAbbrev(_lh.borrowFor))}</div>`:''}
+      ${(()=>{
+        if(!_lh||_lh.returnedOn) return '';
+        if(_lh.borrowForEmail===u.email && _lh.borrower)
+          return `<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">Via staff: ${esc(_lh.borrower)}</div>`;
+        if(_lh.borrowFor&&_lh.borrowForEmail!==u.email)
+          return `<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">For: ${esc(lawyerAbbrev(_lh.borrowFor))}</div>`;
+        return '';
+      })()}
     </div>
     <div style="color:var(--border);flex-shrink:0">${chevron}</div>
   </div>`;}).join('')}
@@ -2956,7 +3072,8 @@ ${myBorrows.length > 0 ? `
           ? `Returned <span style="color:var(--green)">${formatDate(h.returnedOn)}</span>`
           : `<span style="color:var(--amber);font-weight:600">Not returned yet</span>`}
         ${borrowedByOther ? `· <span style="color:var(--amber)">Now with: ${esc(otherBorrowerDisplay)}</span>` : ''}
-        ${h.borrowFor ? `<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">For: ${esc(lawyerAbbrev(h.borrowFor))}</div>` : ''}
+        ${h.borrowFor && h.borrowerEmail === u.email ? `<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">For: ${esc(lawyerAbbrev(h.borrowFor))}</div>` : ''}
+        ${h.borrowForEmail === u.email && h.borrower ? `<div style="font-size:10.5px;color:var(--accent2);font-weight:600;margin-top:2px">Via staff: ${esc(h.borrower)}</div>` : ''}
       </div>
     </div>
     <div style="color:var(--border);flex-shrink:0;margin-top:2px">${chevron}</div>
@@ -3054,7 +3171,7 @@ function renderAdminUsers(currentU){
     return `
   <div style="padding:.9rem 1.1rem;border-bottom:1px solid var(--border)33;display:flex;flex-direction:column;gap:.5rem">
     <div style="display:flex;align-items:center;gap:.75rem">
-      <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),#a78bfa);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">
+      <div style="width:36px;height:36px;border-radius:50%;flex-shrink:0;overflow:hidden;background:linear-gradient(135deg,var(--accent),#f0c84a);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">
         ${usr.avatar?`<img src="${usr.avatar}" style="width:100%;height:100%;object-fit:cover"/>`:initials(usr.name)}
       </div>
       <div style="flex:1;min-width:0">
@@ -3098,10 +3215,10 @@ function renderAdminUsers(currentU){
   transition:all .15s ease;letter-spacing:.2px;
 }
 .role-opt-active{
-  background:rgba(124,110,255,.18)!important;
+  background:rgba(201,162,39,.18)!important;
   border-color:var(--accent)!important;
   color:var(--accent2)!important;
-  box-shadow:0 0 0 2px rgba(124,110,255,.15);
+  box-shadow:0 0 0 2px rgba(201,162,39,.15);
 }
 </style>`;
 }
